@@ -1,26 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Student Dashboard')
-@section('heading', 'Student Dashboard')
+@section('title', 'Student Portal')
+@section('heading', 'Student Academic Portal')
 
 @section('content')
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-label">Registration Number</div>
+            <div class="stat-label">Student Number</div>
             <div class="stat-value" style="font-size: 1.35rem;">{{ $student->student_number }}</div>
-            <div class="stat-subtext">{{ $student->full_name }}</div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Department</div>
             <div class="stat-value" style="font-size: 1.35rem;">{{ $student->department?->code ?? 'N/A' }}</div>
-            <div class="stat-subtext">{{ $student->department?->name ?? 'N/A' }} — Year {{ $student->year_of_study }}</div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Department Courses</div>
             <div class="stat-value">{{ $courses->count() }}</div>
-            <div class="stat-subtext">Courses in your department</div>
         </div>
 
         <div class="stat-card">
@@ -32,7 +29,6 @@
                     N/A
                 @endif
             </div>
-            <div class="stat-subtext">{{ $presentAttendance }} present / {{ $absentAttendance }} absent ({{ $totalAttendance }} total)</div>
         </div>
     </div>
 
@@ -46,7 +42,7 @@
                 <dd>{{ $student->full_name }}</dd>
             </div>
             <div class="detail-item">
-                <dt>Registration Number</dt>
+                <dt>Student Number</dt>
                 <dd>{{ $student->student_number }}</dd>
             </div>
             <div class="detail-item">

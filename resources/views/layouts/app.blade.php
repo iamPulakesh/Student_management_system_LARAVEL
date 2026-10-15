@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @endif
 </head>
-<body>
+<body class="{{ auth()->check() ? 'role-' . auth()->user()->role : '' }}">
     @auth
         <div class="app-shell">
             <aside class="sidebar" aria-label="Primary Navigation">
@@ -58,7 +58,7 @@
                         </li>
                     @elseif (auth()->user()->isStudent())
                         <li>
-                            <a href="{{ route('student.dashboard') }}" class="{{ request()->routeIs('student.dashboard') ? 'active' : '' }}">Dashboard</a>
+                            <a href="{{ route('student.dashboard') }}" class="{{ request()->routeIs('student.*') ? 'active' : '' }}">Dashboard</a>
                         </li>
                     @endif
                 </ul>
@@ -85,6 +85,15 @@
                 </main>
             </div>
         </div>
+
+        <!-- Stop redirecting to previous page after logout -->
+        <script>
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted || (window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation')[0]?.type === 'back_forward')) {
+                    window.location.reload();
+                }
+            });
+        </script>
     @else
         <main class="auth-shell">
             <div class="auth-card">

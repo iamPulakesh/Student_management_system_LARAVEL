@@ -24,7 +24,28 @@
     --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.05);
 }
 
-*, *::before, *::after {
+/* Admin Theme */
+body.role-admin {
+    --bg-sidebar: #2a1015;
+    --bg-sidebar-hover: #3d1a22;
+    --bg-sidebar-active: #dc143c;
+    --primary: #dc143c;
+    --primary-hover: #b91030;
+}
+
+/* Teacher Theme */
+body.role-teacher {
+    --bg-sidebar: #2a1d0e;
+    --bg-sidebar-hover: #3d2a14;
+    --bg-sidebar-active: #e67e22;
+    --primary: #e67e22;
+    --primary-hover: #c96b1a;
+}
+
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -309,6 +330,14 @@ a:hover {
     border-color: var(--primary);
 }
 
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
 .form-help {
     display: block;
     margin-top: 0.25rem;
@@ -512,6 +541,8 @@ a:hover {
     margin: 0.25rem 0 0;
     font-size: 0.98rem;
     font-weight: 500;
+    text-decoration: none;
+    border-bottom: none;
 }
 
 /* Pagination */

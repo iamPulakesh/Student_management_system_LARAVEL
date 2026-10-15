@@ -29,12 +29,13 @@ class StoreStudentRequest extends FormRequest
             'student_number' => ['required', 'string', 'max:8', 'regex:/^[a-zA-Z0-9]+$/', 'unique:students,student_number'],
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'max:255'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'string', 'max:30'],
             'address' => ['nullable', 'string', 'max:1000'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
-            'year_of_study' => ['required', 'integer', 'min:1', 'max:6'],
+            'year_of_study' => ['required', 'integer', 'min:1', 'max:8'],
         ];
     }
 }

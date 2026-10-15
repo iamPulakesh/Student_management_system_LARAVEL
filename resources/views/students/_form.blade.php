@@ -59,6 +59,20 @@
     </div>
 
     <div class="form-group">
+        <label for="email" class="form-label">Email Address *</label>
+        <input
+            id="email"
+            type="email"
+            name="email"
+            value="{{ old('email', $student->user?->email) }}"
+            class="form-control"
+            required
+            placeholder="e.g. student@example.com"
+        >
+        <x-form-error field="email" />
+    </div>
+
+    <div class="form-group">
         <label for="department_id" class="form-label">Department *</label>
         <select id="department_id" name="department_id" class="form-control" required>
             <option value="">Select a department...</option>
@@ -75,20 +89,19 @@
     </div>
 
     <div class="form-group">
-        <label for="year_of_study" class="form-label">Year of Study (1–6) *</label>
+        <label for="year_of_study" class="form-label">Semester *</label>
         <select id="year_of_study" name="year_of_study" class="form-control" required>
-            @for ($year = 1; $year <= 6; $year++)
+            @for ($sem = 1; $sem <= 8; $sem++)
                 <option
-                    value="{{ $year }}"
-                    @selected((int) old('year_of_study', $student->year_of_study ?? 1) === $year)
+                    value="{{ $sem }}"
+                    @selected((int) old('year_of_study', $student->year_of_study ?? 1) === $sem)
                 >
-                    Year {{ $year }}
+                    Semester {{ $sem }}
                 </option>
             @endfor
         </select>
         <x-form-error field="year_of_study" />
     </div>
-
 
     <div class="form-group">
         <label for="date_of_birth" class="form-label">Date of Birth</label>
@@ -100,6 +113,18 @@
             class="form-control"
         >
         <x-form-error field="date_of_birth" />
+    </div>
+
+    <div class="form-group">
+        <label for="gender" class="form-label">Gender</label>
+        <select id="gender" name="gender" class="form-control">
+            <option value="">Select Gender...</option>
+            <option value="Male" @selected(old('gender', $student->gender) === 'Male')>Male</option>
+            <option value="Female" @selected(old('gender', $student->gender) === 'Female')>Female</option>
+            <option value="Other" @selected(old('gender', $student->gender) === 'Other')>Other</option>
+            <option value="Prefer not to say" @selected(old('gender', $student->gender) === 'Prefer not to say')>Prefer not to say</option>
+        </select>
+        <x-form-error field="gender" />
     </div>
 </div>
 

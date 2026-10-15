@@ -30,22 +30,33 @@ class LoginController extends Controller
         ]);
 
         $loginId = trim($credentials['login_id']);
-        
-        $email = $loginId;
-        if ($credentials['role'] === User::ROLE_TEACHER) {
-            $email = strtolower($loginId) . '@teacher.system';
-        } elseif ($credentials['role'] === User::ROLE_STUDENT) {
-            $email = strtolower($loginId) . '@student.system';
+
+        $attemptSuccess = false;
+
+        if ($credentials['role'] === User::ROLE_STUDENT) {
+            $student = \App\Models\Student::where('student_number', strtoupper($loginId))->first();
+            if ($student) {
+                $attemptSuccess = Auth::attempt([
+                    'id' => $student->user_id,
+                    'password' => $credentials['password'],
+                ]);
+            }
+        } elseif ($credentials['role'] === User::ROLE_TEACHER) {
+            $teacher = \App\Models\Teacher::where('employee_number', strtoupper($loginId))->first();
+            if ($teacher) {
+                $attemptSuccess = Auth::attempt([
+                    'id' => $teacher->user_id,
+                    'password' => $credentials['password'],
+                ]);
+            }
         } else {
-            $email = strtolower($loginId);
+            $attemptSuccess = Auth::attempt([
+                'email' => strtolower($loginId),
+                'password' => $credentials['password'],
+            ]);
         }
 
-        $normalizedCredentials = [
-            'email' => $email,
-            'password' => $credentials['password'],
-        ];
-
-        if (! Auth::attempt($normalizedCredentials)) {
+        if (! $attemptSuccess) {
             return back()
                 ->withErrors(['login_id' => 'The provided credentials do not match our records.'])
                 ->onlyInput('login_id', 'role');

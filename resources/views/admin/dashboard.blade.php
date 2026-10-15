@@ -61,7 +61,7 @@
                                 <th>Reg. #</th>
                                 <th>Name</th>
                                 <th>Department</th>
-                                <th>Year</th>
+                                <th>Semester</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,7 +70,7 @@
                                     <td><a href="{{ route('admin.students.show', $student) }}">{{ $student->student_number }}</a></td>
                                     <td>{{ $student->full_name }}</td>
                                     <td>{{ $student->department?->code ?? 'N/A' }}</td>
-                                    <td>Year {{ $student->year_of_study }}</td>
+                                    <td>Semester {{ $student->year_of_study }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

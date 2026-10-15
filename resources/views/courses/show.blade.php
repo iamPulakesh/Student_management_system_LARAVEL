@@ -62,7 +62,7 @@
                             <th>Reg. #</th>
                             <th>Full Name</th>
                             <th>Email</th>
-                            <th>Year of Study</th>
+                            <th>Semester</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,7 +71,7 @@
                                 <td><strong>{{ $student->student_number }}</strong></td>
                                 <td>{{ $student->full_name }}</td>
                                 <td>{{ $student->user?->email }}</td>
-                                <td>Year {{ $student->year_of_study }}</td>
+                                <td>Semester {{ $student->year_of_study }}</td>
                             </tr>
                         @endforeach
                     </tbody>

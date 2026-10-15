@@ -40,12 +40,13 @@ class UpdateStudentRequest extends FormRequest
             ],
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($student->user_id)],
             'password' => ['nullable', 'string', 'min:8', 'max:255'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'string', 'max:30'],
             'address' => ['nullable', 'string', 'max:1000'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
-            'year_of_study' => ['required', 'integer', 'min:1', 'max:6'],
+            'year_of_study' => ['required', 'integer', 'min:1', 'max:8'],
         ];
     }
 }

@@ -66,11 +66,10 @@ class StudentController extends Controller
 
         DB::transaction(function () use ($validated): void {
             $fullName = trim("{$validated['first_name']} {$validated['last_name']}");
-            $generatedEmail = strtolower($validated['student_number']) . '@student.system';
 
             $user = User::createWithRole([
                 'name' => $fullName,
-                'email' => $generatedEmail,
+                'email' => $validated['email'],
                 'password' => $validated['password'],
             ], User::ROLE_STUDENT);
 
@@ -141,11 +140,10 @@ class StudentController extends Controller
 
         DB::transaction(function () use ($validated, $student): void {
             $fullName = trim("{$validated['first_name']} {$validated['last_name']}");
-            $generatedEmail = strtolower($validated['student_number']) . '@student.system';
 
             $userAttributes = [
                 'name' => $fullName,
-                'email' => $generatedEmail,
+                'email' => $validated['email'],
             ];
 
             if (! empty($validated['password'])) {

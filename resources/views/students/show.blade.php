@@ -31,8 +31,12 @@
                 <dd>{{ $student->department?->name }} ({{ $student->department?->code }})</dd>
             </div>
             <div class="detail-item">
-                <dt>Year of Study</dt>
-                <dd>Year {{ $student->year_of_study }}</dd>
+                <dt>Semester</dt>
+                <dd>Semester {{ $student->year_of_study }}</dd>
+            </div>
+            <div class="detail-item">
+                <dt>Gender</dt>
+                <dd>{{ $student->gender ?: 'Not provided' }}</dd>
             </div>
             <div class="detail-item">
                 <dt>Phone</dt>

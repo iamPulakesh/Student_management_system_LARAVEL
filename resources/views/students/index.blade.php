@@ -36,12 +36,12 @@
             </div>
 
             <div class="form-group">
-                <label for="year_of_study" class="form-label">Year of Study</label>
+                <label for="year_of_study" class="form-label">Semester</label>
                 <select id="year_of_study" name="year_of_study" class="form-control">
-                    <option value="">All Years</option>
-                    @for ($year = 1; $year <= 6; $year++)
-                        <option value="{{ $year }}" @selected((string) $selectedYear === (string) $year)>
-                            Year {{ $year }}
+                    <option value="">All Semesters</option>
+                    @for ($sem = 1; $sem <= 8; $sem++)
+                        <option value="{{ $sem }}" @selected((string) $selectedYear === (string) $sem)>
+                            Semester {{ $sem }}
                         </option>
                     @endfor
                 </select>
@@ -64,7 +64,7 @@
                             <th>Full Name</th>
                             <th>Email</th>
                             <th>Department</th>
-                            <th>Year</th>
+                            <th>Semester</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -75,7 +75,7 @@
                                 <td><a href="{{ route('admin.students.show', $student) }}">{{ $student->full_name }}</a></td>
                                 <td>{{ $student->user?->email }}</td>
                                 <td>{{ $student->department?->name }} ({{ $student->department?->code }})</td>
-                                <td>Year {{ $student->year_of_study }}</td>
+                                <td>Semester {{ $student->year_of_study }}</td>
                                 <td>
                                     <div class="actions-group">
                                         <a href="{{ route('admin.students.show', $student) }}" class="btn btn-secondary btn-sm">View</a>

@@ -82,7 +82,7 @@
                                 <tr>
                                     <th>Registration Number</th>
                                     <th>Student Name</th>
-                                    <th>Year</th>
+                                    <th>Semester</th>
                                     <th>Existing Status ({{ $attendanceDate }})</th>
                                     <th>Mark Status</th>
                                 </tr>
@@ -95,7 +95,7 @@
                                     <tr>
                                         <td><strong>{{ $student->student_number }}</strong></td>
                                         <td>{{ $student->full_name }}</td>
-                                        <td>Year {{ $student->year_of_study }}</td>
+                                        <td>Semester {{ $student->year_of_study }}</td>
                                         <td>
                                             @if ($existingAttendance->has($student->id))
                                                 <span class="badge {{ $existingAttendance->get($student->id) === 'present' ? 'badge-success' : 'badge-danger' }}">

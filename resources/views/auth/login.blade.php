@@ -22,7 +22,7 @@
         </div>
 
         <div class="form-group">
-            <label for="login_id" class="form-label">Email / ID Number</label>
+            <label for="login_id" id="login-id-label" class="form-label">Reg No</label>
             <input
                 id="login_id"
                 type="text"
@@ -32,6 +32,7 @@
                 required
                 autofocus
                 autocomplete="username"
+                placeholder="Enter your Reg No"
             >
             <x-form-error field="login_id" />
         </div>
@@ -45,10 +46,37 @@
                 class="form-control"
                 required
                 autocomplete="current-password"
+                placeholder="Enter your password"
             >
             <x-form-error field="password" />
         </div>
 
         <button type="submit" class="btn btn-primary btn-block">Sign In</button>
     </form>
+
+    <script>
+        (function() {
+            const roleSelect = document.getElementById('role');
+            const loginLabel = document.getElementById('login-id-label');
+            const loginInput = document.getElementById('login_id');
+
+            const fieldConfig = {
+                student:  { label: 'Registration No', placeholder: 'Enter your Reg No', type: 'text' },
+                admin:    { label: 'Email', placeholder: 'Enter your email address', type: 'email' },
+                teacher:  { label: 'Employee Code', placeholder: 'Enter your Employee Code', type: 'text' }
+            };
+
+            function updateLoginField() {
+                const config = fieldConfig[roleSelect.value] || fieldConfig.student;
+                loginLabel.textContent = config.label;
+                loginInput.placeholder = config.placeholder;
+                loginInput.type = config.type;
+            }
+
+            roleSelect.addEventListener('change', updateLoginField);
+
+            // Set initial state based on selected role (handles old() values)
+            updateLoginField();
+        })();
+    </script>
 @endsection
