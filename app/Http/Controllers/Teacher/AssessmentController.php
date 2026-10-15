@@ -1,0 +1,273 @@
+<?php
+
+namespace App\Http\Controllers\Teacher;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAssessmentRequest;
+use App\Http\Requests\UpdateAssessmentRequest;
+use App\Models\Assessment;
+use App\Models\Course;
+use App\Models\Student;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+class AssessmentController extends Controller
+{
+    /**
+     * Display a listing of assessments with optional course/student/search filters.
+     */
+    public function index(Request $request): View
+    {
+        $routePrefix = $this->routePrefix($request);
+        $courses = $this->allowedCoursesQuery($request)->get();
+        $allowedCourseIds = $courses->pluck('id');
+
+        $courseId = $request->input('course_id');
+        $studentId = $request->input('student_id');
+        $search = trim((string) $request->input('search', ''));
+        $selectedCourse = null;
+
+        if ($courseId !== null && $courseId !== '') {
+            $selectedCourse = Course::with('department')->findOrFail((int) $courseId);
+            $this->authorizeCourseAccess($request, $selectedCourse);
+        }
+
+        $query = Assessment::with(['student.department', 'course.department', 'recordedBy']);
+
+        if ($request->user()->isTeacher()) {
+            $query->whereIn('course_id', $allowedCourseIds);
+        }
+
+        if ($selectedCourse !== null) {
+            $query->where('course_id', $selectedCourse->id);
+        }
+
+        if ($studentId !== null && $studentId !== '') {
+            $query->where('student_id', (int) $studentId);
+        }
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('assessment_name', 'like', "%{$search}%")
+                    ->orWhereHas('student', function ($sq) use ($search) {
+                        $sq->where('student_number', 'like', "%{$search}%")
+                            ->orWhere('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $assessments = $query
+            ->orderByDesc('assessment_date')
+            ->orderByDesc('id')
+            ->paginate(15)
+            ->withQueryString();
+
+        $students = $this->eligibleStudentsQuery($request, $courses, $selectedCourse)->get();
+
+        return view('assessments.index', [
+            'routePrefix' => $routePrefix,
+            'courses' => $courses,
+            'students' => $students,
+            'selectedCourse' => $selectedCourse,
+            'courseId' => $courseId,
+            'studentId' => $studentId,
+            'search' => $search,
+            'assessments' => $assessments,
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new assessment mark.
+     */
+    public function create(Request $request): View
+    {
+        $routePrefix = $this->routePrefix($request);
+        $courses = $this->allowedCoursesQuery($request)->get();
+
+        $courseId = $request->input('course_id');
+        $selectedCourse = null;
+
+        if ($courseId !== null && $courseId !== '') {
+            $selectedCourse = Course::with('department')->findOrFail((int) $courseId);
+            $this->authorizeCourseAccess($request, $selectedCourse);
+        }
+
+        $students = $this->eligibleStudentsQuery($request, $courses, $selectedCourse)->get();
+
+        return view('assessments.create', [
+            'routePrefix' => $routePrefix,
+            'courses' => $courses,
+            'students' => $students,
+            'selectedCourse' => $selectedCourse,
+        ]);
+    }
+
+    /**
+     * Store a newly created assessment mark in storage.
+     */
+    public function store(StoreAssessmentRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+        $course = Course::findOrFail((int) $validated['course_id']);
+        $this->authorizeCourseAccess($request, $course);
+
+        Assessment::create([
+            'course_id' => $course->id,
+            'student_id' => $validated['student_id'],
+            'assessment_name' => $validated['assessment_name'],
+            'marks_obtained' => $validated['marks_obtained'],
+            'max_marks' => $validated['max_marks'],
+            'assessment_date' => $validated['assessment_date'] ?? null,
+            'recorded_by_user_id' => $request->user()->id,
+        ]);
+
+        return redirect()
+            ->route($this->routePrefix($request) . '.assessments.index', ['course_id' => $course->id])
+            ->with('success', 'Assessment mark recorded successfully.');
+    }
+
+    /**
+     * Show the form for editing the specified assessment mark.
+     */
+    public function edit(Request $request, Assessment $assessment): View
+    {
+        $assessment->load(['course.department', 'student.department']);
+        $course = $assessment->course;
+
+        if ($course === null) {
+            abort(404);
+        }
+
+        $this->authorizeCourseAccess($request, $course);
+
+        $routePrefix = $this->routePrefix($request);
+        $courses = $this->allowedCoursesQuery($request)->get();
+        $students = $this->eligibleStudentsQuery($request, $courses, null)->get();
+
+        return view('assessments.edit', [
+            'routePrefix' => $routePrefix,
+            'assessment' => $assessment,
+            'courses' => $courses,
+            'students' => $students,
+            'selectedCourse' => $course,
+        ]);
+    }
+
+    /**
+     * Update the specified assessment mark in storage.
+     */
+    public function update(UpdateAssessmentRequest $request, Assessment $assessment): RedirectResponse
+    {
+        $existingCourse = $assessment->course;
+        if ($existingCourse === null) {
+            abort(404);
+        }
+
+        $this->authorizeCourseAccess($request, $existingCourse);
+
+        $validated = $request->validated();
+        $newCourse = Course::findOrFail((int) $validated['course_id']);
+        $this->authorizeCourseAccess($request, $newCourse);
+
+        $assessment->update([
+            'course_id' => $newCourse->id,
+            'student_id' => $validated['student_id'],
+            'assessment_name' => $validated['assessment_name'],
+            'marks_obtained' => $validated['marks_obtained'],
+            'max_marks' => $validated['max_marks'],
+            'assessment_date' => $validated['assessment_date'] ?? null,
+            'recorded_by_user_id' => $request->user()->id,
+        ]);
+
+        return redirect()
+            ->route($this->routePrefix($request) . '.assessments.index', ['course_id' => $newCourse->id])
+            ->with('success', 'Assessment mark updated successfully.');
+    }
+
+    /**
+     * Remove the specified assessment mark from storage.
+     */
+    public function destroy(Request $request, Assessment $assessment): RedirectResponse
+    {
+        $course = $assessment->course;
+        if ($course === null) {
+            abort(404);
+        }
+
+        $this->authorizeCourseAccess($request, $course);
+
+        $assessment->delete();
+
+        return redirect()
+            ->route($this->routePrefix($request) . '.assessments.index')
+            ->with('success', 'Assessment mark deleted successfully.');
+    }
+
+    /**
+     * Get the query builder for courses accessible to the current user.
+     */
+    private function allowedCoursesQuery(Request $request): Builder
+    {
+        $user = $request->user();
+
+        if ($user->isAdmin()) {
+            return Course::with('department')->orderBy('code');
+        }
+
+        $teacher = $user->teacher;
+        if ($teacher === null) {
+            abort(403, 'Teacher profile not found.');
+        }
+
+        return Course::with('department')
+            ->where('teacher_id', $teacher->id)
+            ->orderBy('code');
+    }
+
+    /**
+     * Get the query builder for students eligible for the user's courses.
+     */
+    private function eligibleStudentsQuery(Request $request, $courses, ?Course $selectedCourse): Builder
+    {
+        $query = Student::with('department')->orderBy('student_number');
+
+        if ($selectedCourse !== null) {
+            return $query->where('department_id', $selectedCourse->department_id);
+        }
+
+        if ($request->user()->isTeacher()) {
+            $departmentIds = $courses->pluck('department_id')->unique()->values();
+            return $query->whereIn('department_id', $departmentIds);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Ensure the current user can access the specified course.
+     */
+    private function authorizeCourseAccess(Request $request, Course $course): void
+    {
+        $user = $request->user();
+
+        if ($user->isAdmin()) {
+            return;
+        }
+
+        $teacher = $user->teacher;
+        if ($teacher === null || (int) $course->teacher_id !== (int) $teacher->id) {
+            abort(403, 'You are not authorized to access assessments for this course.');
+        }
+    }
+
+    /**
+     * Determine the route name prefix for the current user's role.
+     */
+    private function routePrefix(Request $request): string
+    {
+        return $request->user()->isAdmin() ? 'admin' : 'teacher';
+    }
+}
