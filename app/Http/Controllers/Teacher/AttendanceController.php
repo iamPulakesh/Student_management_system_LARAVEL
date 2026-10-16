@@ -35,26 +35,6 @@ class AttendanceController extends Controller
             $this->authorizeCourseAccess($request, $selectedCourse);
         }
 
-        $query = Attendance::with(['student.department', 'course.department', 'recordedBy']);
-
-        if ($request->user()->isTeacher()) {
-            $query->whereIn('course_id', $allowedCourseIds);
-        }
-
-        if ($selectedCourse !== null) {
-            $query->where('course_id', $selectedCourse->id);
-        }
-
-        if ($attendanceDate !== '') {
-            $query->whereDate('attendance_date', $attendanceDate);
-        }
-
-        $attendances = $query
-            ->orderByDesc('attendance_date')
-            ->orderByDesc('id')
-            ->paginate(15)
-            ->withQueryString();
-
         $studentSummaries = collect();
         if ($selectedCourse !== null) {
             $students = Student::with('user')
@@ -71,15 +51,33 @@ class AttendanceController extends Controller
                 ->orderBy('student_number')
                 ->get();
 
-            $studentSummaries = $students->map(function (Student $student) {
+            if ($attendanceDate !== '') {
+                $attendancesByStudent = Attendance::with('recordedBy')
+                    ->where('course_id', $selectedCourse->id)
+                    ->whereDate('attendance_date', $attendanceDate)
+                    ->get()
+                    ->keyBy('student_id');
+            } else {
+                $attendancesByStudent = Attendance::with('recordedBy')
+                    ->where('course_id', $selectedCourse->id)
+                    ->orderByDesc('attendance_date')
+                    ->orderByDesc('id')
+                    ->get()
+                    ->unique('student_id')
+                    ->keyBy('student_id');
+            }
+
+            $studentSummaries = $students->map(function (Student $student) use ($attendancesByStudent) {
                 $total = (int) $student->total_attendance_count;
                 $present = (int) $student->present_attendance_count;
+                $attendance = $attendancesByStudent->get($student->id);
 
                 return [
                     'student' => $student,
                     'total' => $total,
                     'present' => $present,
                     'percentage' => $total > 0 ? round(($present / $total) * 100, 1) : null,
+                    'attendance' => $attendance,
                 ];
             });
         }
@@ -90,7 +88,6 @@ class AttendanceController extends Controller
             'selectedCourse' => $selectedCourse,
             'courseId' => $courseId,
             'attendanceDate' => $attendanceDate,
-            'attendances' => $attendances,
             'studentSummaries' => $studentSummaries,
         ]);
     }
@@ -266,10 +263,16 @@ class AttendanceController extends Controller
 
         $this->authorizeCourseAccess($request, $course);
 
+        $courseId = $attendance->course_id;
+        $attendanceDate = $attendance->attendance_date?->format('Y-m-d');
+
         $attendance->delete();
 
         return redirect()
-            ->route($this->routePrefix($request) . '.attendance.index')
+            ->route($this->routePrefix($request) . '.attendance.index', array_filter([
+                'course_id' => $courseId,
+                'attendance_date' => $attendanceDate,
+            ]))
             ->with('success', 'Attendance record deleted successfully.');
     }
 

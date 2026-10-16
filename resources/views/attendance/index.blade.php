@@ -49,13 +49,6 @@
 
     @if ($selectedCourse !== null)
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    Student Attendance Summary — {{ $selectedCourse->code }} ({{ $selectedCourse->name }})
-                </h3>
-                <span class="badge badge-info">Department: {{ $selectedCourse->department?->name }}</span>
-            </div>
-
             @if ($studentSummaries->isEmpty())
                 <div class="empty-state">No students are currently enrolled in {{ $selectedCourse->department?->name }}.</div>
             @else
@@ -67,6 +60,9 @@
                                 <th>Student Name</th>
                                 <th>Present / Total</th>
                                 <th>Attendance Percentage</th>
+                                <th>Status</th>
+                                <th>Recorded By</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -84,6 +80,37 @@
                                             <span class="text-muted">N/A (0 records)</span>
                                         @endif
                                     </td>
+                                    <td>
+                                        @if ($summary['attendance'])
+                                            <span class="badge {{ $summary['attendance']->status === 'present' ? 'badge-success' : 'badge-danger' }}">
+                                                {{ ucfirst($summary['attendance']->status) }}
+                                            </span>
+                                            @if ($attendanceDate === '' && $summary['attendance']->attendance_date)
+                                                <div class="text-muted" style="font-size: 0.75rem;">{{ $summary['attendance']->attendance_date->format('Y-m-d') }}</div>
+                                            @endif
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $summary['attendance']?->recordedBy?->name ?? '—' }}
+                                    </td>
+                                    <td>
+                                        @if ($summary['attendance'])
+                                            <div class="actions-group">
+                                                @if ($routePrefix === 'admin')
+                                                    <a href="{{ route('admin.attendance.edit', $summary['attendance']) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                                @endif
+                                                <form method="POST" action="{{ route($routePrefix . '.attendance.destroy', $summary['attendance']) }}" onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                </form>
+                                            </div>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -92,65 +119,4 @@
             @endif
         </div>
     @endif
-
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Attendance History ({{ $attendances->total() }})</h3>
-        </div>
-
-        @if ($attendances->isEmpty())
-            <div class="empty-state">No attendance records found matching the selected criteria.</div>
-        @else
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Course</th>
-                            <th>Registration Number</th>
-                            <th>Student Name</th>
-                            <th>Status</th>
-                            <th>Recorded By</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($attendances as $attendance)
-                            <tr>
-                                <td>{{ $attendance->attendance_date->format('Y-m-d') }}</td>
-                                <td>
-                                    <strong>{{ $attendance->course?->code }}</strong>
-                                    <div class="text-muted">{{ $attendance->course?->name }}</div>
-                                </td>
-                                <td>{{ $attendance->student?->student_number }}</td>
-                                <td>{{ $attendance->student?->full_name }}</td>
-                                <td>
-                                    <span class="badge {{ $attendance->status === 'present' ? 'badge-success' : 'badge-danger' }}">
-                                        {{ ucfirst($attendance->status) }}
-                                    </span>
-                                </td>
-                                <td>{{ $attendance->recordedBy?->name ?? 'N/A' }}</td>
-                                <td>
-                                    <div class="actions-group">
-                                        @if ($routePrefix === 'admin')
-                                            <a href="{{ route('admin.attendance.edit', $attendance) }}" class="btn btn-secondary btn-sm">Edit</a>
-                                        @endif
-                                        <form method="POST" action="{{ route($routePrefix . '.attendance.destroy', $attendance) }}" onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pagination-wrapper">
-                {{ $attendances->links() }}
-            </div>
-        @endif
-    </div>
 @endsection
