@@ -13,77 +13,71 @@
 </head>
 <body class="{{ auth()->check() ? 'role-' . auth()->user()->role : '' }}">
     @auth
-        <div class="app-shell">
-            <aside class="sidebar" aria-label="Primary Navigation">
-                <div class="sidebar-brand">
-                    <h1>University SMS</h1>
-                    <span>{{ auth()->user()->role }} Portal</span>
-                </div>
-
-                <ul class="sidebar-nav">
-                    @if (auth()->user()->isAdmin())
-                        <li>
-                            <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.students.index') }}" class="{{ request()->routeIs('admin.students.*') ? 'active' : '' }}">Students</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.teachers.index') }}" class="{{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}">Teachers</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.departments.index') }}" class="{{ request()->routeIs('admin.departments.*') ? 'active' : '' }}">Departments</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.courses.index') }}" class="{{ request()->routeIs('admin.courses.*') ? 'active' : '' }}">Courses</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.attendance.index') }}" class="{{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}">Attendance</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.assessments.index') }}" class="{{ request()->routeIs('admin.assessments.*') ? 'active' : '' }}">Assessments</a>
-                        </li>
-                    @elseif (auth()->user()->isTeacher())
-                        <li>
-                            <a href="{{ route('teacher.dashboard') }}" class="{{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('teacher.courses.index') }}" class="{{ request()->routeIs('teacher.courses.*') ? 'active' : '' }}">My Courses</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('teacher.attendance.index') }}" class="{{ request()->routeIs('teacher.attendance.*') ? 'active' : '' }}">Attendance</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('teacher.assessments.index') }}" class="{{ request()->routeIs('teacher.assessments.*') ? 'active' : '' }}">Assessments / Marks</a>
-                        </li>
-                    @elseif (auth()->user()->isStudent())
-                        <li>
-                            <a href="{{ route('student.dashboard') }}" class="{{ request()->routeIs('student.*') ? 'active' : '' }}">Dashboard</a>
-                        </li>
-                    @endif
-                </ul>
-
-                <div class="sidebar-footer">
-                    <div class="sidebar-user-name">{{ auth()->user()->name }}</div>
-                    <div class="sidebar-user-role">{{ auth()->user()->email }} ({{ auth()->user()->role }})</div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-secondary btn-sm btn-block">Sign Out</button>
-                    </form>
-                </div>
-            </aside>
-
-            <div class="main-area">
-                <header class="topbar">
+        <div class="app-layout">
+            <header class="topbar" aria-label="Primary Navigation">
+                <div class="topbar-inner">
                     <h2 class="topbar-title">@yield('heading', 'Dashboard')</h2>
-                    @yield('topbar_meta')
-                </header>
 
-                <main class="content-container">
-                    @include('components.flash-message')
-                    @yield('content')
-                </main>
-            </div>
+                    @if (auth()->user()->isAdmin() || auth()->user()->isTeacher())
+                        <nav class="nav-links">
+                            <ul>
+                                @if (auth()->user()->isAdmin())
+                                    <li>
+                                        <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">Dashboard</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.students.index') }}" class="{{ request()->routeIs('admin.students.*') ? 'active' : '' }}">Students</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.teachers.index') }}" class="{{ request()->routeIs('admin.teachers.*') ? 'active' : '' }}">Teachers</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.departments.index') }}" class="{{ request()->routeIs('admin.departments.*') ? 'active' : '' }}">Departments</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.courses.index') }}" class="{{ request()->routeIs('admin.courses.*') ? 'active' : '' }}">Courses</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.attendance.index') }}" class="{{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}">Attendance</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('admin.assessments.index') }}" class="{{ request()->routeIs('admin.assessments.*') ? 'active' : '' }}">Assessments</a>
+                                    </li>
+                                @elseif (auth()->user()->isTeacher())
+                                    <li>
+                                        <a href="{{ route('teacher.dashboard') }}" class="{{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">Dashboard</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('teacher.courses.index') }}" class="{{ request()->routeIs('teacher.courses.*') ? 'active' : '' }}">My Courses</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('teacher.attendance.index') }}" class="{{ request()->routeIs('teacher.attendance.*') ? 'active' : '' }}">Attendance</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('teacher.assessments.index') }}" class="{{ request()->routeIs('teacher.assessments.*') ? 'active' : '' }}">Assessments / Marks</a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </nav>
+                    @endif
+
+                    <div class="user-action-group">
+                        <div class="user-details">
+                            <span class="user-display-name">{{ auth()->user()->name }}</span>
+                            <span class="user-display-meta">{{ auth()->user()->email }}</span>
+                        </div>
+                        <form method="POST" action="{{ route('logout') }}" class="logout-form">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary btn-sm">Sign Out</button>
+                        </form>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content-container">
+                @include('components.flash-message')
+                @yield('content')
+            </main>
         </div>
 
         <!-- Stop redirecting to previous page after logout -->
