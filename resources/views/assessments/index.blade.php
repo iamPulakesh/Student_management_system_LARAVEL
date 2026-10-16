@@ -7,9 +7,11 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Filter Assessments</h3>
-            <a href="{{ route($routePrefix . '.assessments.create', array_filter(['course_id' => $courseId])) }}" class="btn btn-primary">
-                Record Assessment Mark
-            </a>
+            @if ($routePrefix === 'teacher')
+                <a href="{{ route('teacher.assessments.create', array_filter(['course_id' => $courseId])) }}" class="btn btn-primary">
+                    Record Assessment Mark
+                </a>
+            @endif
         </div>
 
         <form method="GET" action="{{ route($routePrefix . '.assessments.index') }}" class="filter-bar">
@@ -50,17 +52,18 @@
 
             <div class="actions-group">
                 <button type="submit" class="btn btn-secondary">Filter</button>
-                @if ($courseId || $studentId || $search !== '')
+                @if ($courseId || $studentId || $search !== '' || ($routePrefix === 'admin' && ($isFiltered ?? false)))
                     <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn btn-secondary">Reset</a>
                 @endif
             </div>
         </form>
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Recorded Assessments ({{ $assessments->total() }})</h3>
-        </div>
+    @if ($routePrefix !== 'admin' || ($isFiltered ?? false))
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Recorded Assessments ({{ $assessments->total() }})</h3>
+            </div>
 
         @if ($assessments->isEmpty())
             <div class="empty-state">No assessment records found matching the selected criteria.</div>
@@ -119,4 +122,5 @@
             </div>
         @endif
     </div>
+    @endif
 @endsection

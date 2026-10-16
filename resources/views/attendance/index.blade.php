@@ -4,16 +4,20 @@
 @section('heading', 'Attendance Management')
 
 @section('content')
-    <div class="alert alert-info">
-        <strong>Prototype Scope:</strong> One attendance record is stored per student, course, and date (single daily session per course).
-    </div>
+    @if ($routePrefix === 'teacher')
+        <div class="alert alert-info">
+            <strong>Prototype Scope:</strong> One attendance record is stored per student, course, and date (single daily session per course).
+        </div>
+    @endif
 
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Filter Attendance Records</h3>
-            <a href="{{ route($routePrefix . '.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn btn-primary">
-                Record Attendance
-            </a>
+            @if ($routePrefix === 'teacher')
+                <a href="{{ route('teacher.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn btn-primary">
+                    Record Attendance
+                </a>
+            @endif
         </div>
 
         <form method="GET" action="{{ route($routePrefix . '.attendance.index') }}" class="filter-bar">
@@ -127,11 +131,16 @@
                                 </td>
                                 <td>{{ $attendance->recordedBy?->name ?? 'N/A' }}</td>
                                 <td>
-                                    <form method="POST" action="{{ route($routePrefix . '.attendance.destroy', $attendance) }}" onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
+                                    <div class="actions-group">
+                                        @if ($routePrefix === 'admin')
+                                            <a href="{{ route('admin.attendance.edit', $attendance) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                        @endif
+                                        <form method="POST" action="{{ route($routePrefix . '.attendance.destroy', $attendance) }}" onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

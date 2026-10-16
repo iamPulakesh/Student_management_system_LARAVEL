@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Departments')
-@section('heading', 'Departments')
 
 @section('content')
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">All Departments</h3>
-            <a href="{{ route('admin.departments.create') }}" class="btn btn-primary">New Department</a>
+            <a href="{{ route('admin.departments.create') }}" class="btn btn-primary">Add Department</a>
         </div>
 
         <form method="GET" action="{{ route('admin.departments.index') }}" class="filter-bar">
@@ -47,7 +46,7 @@
                         @foreach ($departments as $department)
                             <tr>
                                 <td><strong>{{ $department->code }}</strong></td>
-                                <td><a href="{{ route('admin.departments.show', $department) }}">{{ $department->name }}</a></td>
+                                <td>{{ $department->name }}</td>
                                 <td>{{ $department->students_count }}</td>
                                 <td>{{ $department->teachers_count }}</td>
                                 <td>{{ $department->courses_count }}</td>

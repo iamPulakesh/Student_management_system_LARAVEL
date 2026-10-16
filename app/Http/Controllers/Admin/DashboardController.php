@@ -46,8 +46,6 @@ class DashboardController extends Controller
             'totalTeachers' => $totalTeachers,
             'totalDepartments' => $totalDepartments,
             'totalCourses' => $totalCourses,
-            'totalAttendanceRecords' => $totalAttendanceRecords,
-            'presentAttendanceRecords' => $presentAttendanceRecords,
             'overallAttendancePercentage' => $overallAttendancePercentage,
             'recentStudents' => $recentStudents,
             'recentAssessments' => $recentAssessments,

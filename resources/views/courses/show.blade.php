@@ -59,7 +59,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Reg. #</th>
+                            <th>Reg No</th>
                             <th>Full Name</th>
                             <th>Email</th>
                             <th>Semester</th>

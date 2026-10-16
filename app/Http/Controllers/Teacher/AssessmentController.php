@@ -59,11 +59,11 @@ class AssessmentController extends Controller
             });
         }
 
-        $assessments = $query
-            ->orderByDesc('assessment_date')
-            ->orderByDesc('id')
-            ->paginate(15)
-            ->withQueryString();
+        $isFiltered = $request->hasAny(['course_id', 'student_id', 'search']);
+
+        $assessments = ($routePrefix === 'admin' && ! $isFiltered)
+            ? Assessment::whereRaw('1 = 0')->paginate(15)
+            : $query->orderByDesc('assessment_date')->orderByDesc('id')->paginate(15)->withQueryString();
 
         $students = $this->eligibleStudentsQuery($request, $courses, $selectedCourse)->get();
 
@@ -76,6 +76,7 @@ class AssessmentController extends Controller
             'studentId' => $studentId,
             'search' => $search,
             'assessments' => $assessments,
+            'isFiltered' => $isFiltered,
         ]);
     }
 
@@ -84,6 +85,10 @@ class AssessmentController extends Controller
      */
     public function create(Request $request): View
     {
+        if ($request->user()->isAdmin()) {
+            abort(403, 'Admins cannot record assessments.');
+        }
+
         $routePrefix = $this->routePrefix($request);
         $courses = $this->allowedCoursesQuery($request)->get();
 
@@ -110,6 +115,10 @@ class AssessmentController extends Controller
      */
     public function store(StoreAssessmentRequest $request): RedirectResponse
     {
+        if ($request->user()->isAdmin()) {
+            abort(403, 'Admins cannot record assessments.');
+        }
+
         $validated = $request->validated();
         $course = Course::findOrFail((int) $validated['course_id']);
         $this->authorizeCourseAccess($request, $course);

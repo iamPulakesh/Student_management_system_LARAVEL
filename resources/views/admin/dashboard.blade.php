@@ -1,32 +1,27 @@
 @extends('layouts.app')
 
 @section('title', 'Admin Dashboard')
-@section('heading', 'Administrator Dashboard')
 
 @section('content')
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-label">Total Students</div>
             <div class="stat-value">{{ $totalStudents }}</div>
-            <div class="stat-subtext"><a href="{{ route('admin.students.index') }}">Manage students</a></div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Total Teachers</div>
             <div class="stat-value">{{ $totalTeachers }}</div>
-            <div class="stat-subtext"><a href="{{ route('admin.teachers.index') }}">Manage teachers</a></div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Departments</div>
             <div class="stat-value">{{ $totalDepartments }}</div>
-            <div class="stat-subtext"><a href="{{ route('admin.departments.index') }}">Manage departments</a></div>
         </div>
 
         <div class="stat-card">
             <div class="stat-label">Courses</div>
             <div class="stat-value">{{ $totalCourses }}</div>
-            <div class="stat-subtext"><a href="{{ route('admin.courses.index') }}">Manage courses</a></div>
         </div>
 
         <div class="stat-card">
@@ -37,9 +32,6 @@
                 @else
                     N/A
                 @endif
-            </div>
-            <div class="stat-subtext">
-                {{ $presentAttendanceRecords }} present of {{ $totalAttendanceRecords }} recorded entries
             </div>
         </div>
     </div>
@@ -58,7 +50,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Reg. #</th>
+                                <th>Reg No</th>
                                 <th>Name</th>
                                 <th>Department</th>
                                 <th>Semester</th>
@@ -67,7 +59,7 @@
                         <tbody>
                             @foreach ($recentStudents as $student)
                                 <tr>
-                                    <td><a href="{{ route('admin.students.show', $student) }}">{{ $student->student_number }}</a></td>
+                                    <td><strong>{{ $student->student_number }}</strong></td>
                                     <td>{{ $student->full_name }}</td>
                                     <td>{{ $student->department?->code ?? 'N/A' }}</td>
                                     <td>Semester {{ $student->year_of_study }}</td>
@@ -82,7 +74,6 @@
         <section class="card">
             <div class="card-header">
                 <h3 class="card-title">Recently Recorded Assessments</h3>
-                <a href="{{ route('admin.assessments.create') }}" class="btn btn-primary btn-sm">Record Marks</a>
             </div>
 
             @if ($recentAssessments->isEmpty())

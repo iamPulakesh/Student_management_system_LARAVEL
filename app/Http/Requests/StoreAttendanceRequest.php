@@ -21,7 +21,7 @@ class StoreAttendanceRequest extends FormRequest
         }
 
         if ($user->isAdmin()) {
-            return true;
+            return false;
         }
 
         if ($user->isTeacher()) {

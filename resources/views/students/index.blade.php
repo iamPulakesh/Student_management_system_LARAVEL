@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Students')
-@section('heading', 'Students')
 
 @section('content')
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">All Students</h3>
-            <a href="{{ route('admin.students.create') }}" class="btn btn-primary">New Student</a>
+            <a href="{{ route('admin.students.create') }}" class="btn btn-primary">Add Student</a>
         </div>
 
         <form method="GET" action="{{ route('admin.students.index') }}" class="filter-bar">
@@ -18,7 +17,7 @@
                     type="text"
                     name="search"
                     value="{{ $search }}"
-                    placeholder="Reg #, first/last name, or email"
+                    placeholder="Reg No, first/last name, or email"
                     class="form-control"
                 >
             </div>
@@ -60,7 +59,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Reg. #</th>
+                            <th>Reg No</th>
                             <th>Full Name</th>
                             <th>Email</th>
                             <th>Department</th>
@@ -72,7 +71,7 @@
                         @foreach ($students as $student)
                             <tr>
                                 <td><strong>{{ $student->student_number }}</strong></td>
-                                <td><a href="{{ route('admin.students.show', $student) }}">{{ $student->full_name }}</a></td>
+                                <td>{{ $student->full_name }}</td>
                                 <td>{{ $student->user?->email }}</td>
                                 <td>{{ $student->department?->name }} ({{ $student->department?->code }})</td>
                                 <td>Semester {{ $student->year_of_study }}</td>

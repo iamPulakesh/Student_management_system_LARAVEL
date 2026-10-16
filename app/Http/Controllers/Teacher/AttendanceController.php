@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -99,6 +100,10 @@ class AttendanceController extends Controller
      */
     public function create(Request $request): View
     {
+        if ($request->user()->isAdmin()) {
+            abort(403, 'Admins cannot record attendance.');
+        }
+
         $routePrefix = $this->routePrefix($request);
         $courses = $this->allowedCoursesQuery($request)->get();
 
@@ -141,6 +146,10 @@ class AttendanceController extends Controller
      */
     public function store(StoreAttendanceRequest $request): RedirectResponse
     {
+        if ($request->user()->isAdmin()) {
+            abort(403, 'Admins cannot record attendance.');
+        }
+
         $validated = $request->validated();
         $course = Course::findOrFail((int) $validated['course_id']);
         $this->authorizeCourseAccess($request, $course);
@@ -190,6 +199,59 @@ class AttendanceController extends Controller
                 'attendance_date' => $validated['attendance_date'],
             ])
             ->with('success', 'Attendance recorded successfully.');
+    }
+
+    /**
+     * Show the form for editing an attendance record.
+     */
+    public function edit(Request $request, Attendance $attendance): View
+    {
+        if (! $request->user()->isAdmin()) {
+            abort(403, 'Only administrators can modify attendance records.');
+        }
+
+        $attendance->load(['student.department', 'course.department', 'recordedBy']);
+
+        return view('attendance.edit', [
+            'attendance' => $attendance,
+            'routePrefix' => 'admin',
+        ]);
+    }
+
+    /**
+     * Update the specified attendance record in storage.
+     */
+    public function update(Request $request, Attendance $attendance): RedirectResponse
+    {
+        if (! $request->user()->isAdmin()) {
+            abort(403, 'Only administrators can modify attendance records.');
+        }
+
+        $validated = $request->validate([
+            'status' => ['required', 'string', Rule::in([Attendance::STATUS_PRESENT, Attendance::STATUS_ABSENT])],
+            'attendance_date' => [
+                'required',
+                'date',
+                Rule::unique('attendances', 'attendance_date')
+                    ->where(fn ($query) => $query->where('student_id', $attendance->student_id)->where('course_id', $attendance->course_id))
+                    ->ignore($attendance->id),
+            ],
+        ], [
+            'attendance_date.unique' => 'An attendance record already exists for this student on the specified date.',
+            'status.in' => 'Attendance status must be either present or absent.',
+        ]);
+
+        $attendance->update([
+            'status' => $validated['status'],
+            'attendance_date' => $validated['attendance_date'],
+        ]);
+
+        return redirect()
+            ->route('admin.attendance.index', [
+                'course_id' => $attendance->course_id,
+                'attendance_date' => $attendance->attendance_date->format('Y-m-d'),
+            ])
+            ->with('success', "Attendance record for {$attendance->student?->full_name} updated successfully.");
     }
 
     /**

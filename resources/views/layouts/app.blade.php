@@ -16,7 +16,9 @@
         <div class="app-layout">
             <header class="topbar" aria-label="Primary Navigation">
                 <div class="topbar-inner">
-                    <h2 class="topbar-title">@yield('heading', 'Dashboard')</h2>
+                    @if (!auth()->user()->isAdmin())
+                        <h2 class="topbar-title">@yield('heading', 'Dashboard')</h2>
+                    @endif
 
                     @if (auth()->user()->isAdmin() || auth()->user()->isTeacher())
                         <nav class="nav-links">

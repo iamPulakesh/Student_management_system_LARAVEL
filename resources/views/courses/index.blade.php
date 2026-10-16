@@ -8,7 +8,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ !empty($isTeacherView) ? 'Courses Assigned to Me' : 'All Courses' }}</h3>
             @if (empty($isTeacherView))
-                <a href="{{ route('admin.courses.create') }}" class="btn btn-primary">New Course</a>
+                <a href="{{ route('admin.courses.create') }}" class="btn btn-primary">Add Course</a>
             @endif
         </div>
 
@@ -64,11 +64,7 @@
                         @foreach ($courses as $course)
                             <tr>
                                 <td><strong>{{ $course->code }}</strong></td>
-                                <td>
-                                    <a href="{{ !empty($isTeacherView) ? route('teacher.courses.show', $course) : route('admin.courses.show', $course) }}">
-                                        {{ $course->name }}
-                                    </a>
-                                </td>
+                                <td>{{ $course->name }}</td>
                                 <td>{{ $course->department?->name }} ({{ $course->department?->code }})</td>
                                 <td>{{ $course->credits }}</td>
                                 <td>{{ $course->teacher?->user?->name ?? 'Unassigned' }}</td>
