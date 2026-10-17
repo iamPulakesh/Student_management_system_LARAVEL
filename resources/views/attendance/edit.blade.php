@@ -4,14 +4,6 @@
 @section('heading', 'Edit Attendance Record')
 
 @section('content')
-    <!-- <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Update Attendance</h3>
-            <a href="{{ route('admin.attendance.index', ['course_id' => $attendance->course_id, 'attendance_date' => $attendance->attendance_date->format('Y-m-d')]) }}" class="btn btn-secondary btn-sm">
-                Back to Attendance
-            </a>
-        </div> -->
-
         <form method="POST" action="{{ route('admin.attendance.update', $attendance) }}">
             @csrf
             @method('PUT')
@@ -47,5 +39,4 @@
                 </a>
             </div>
         </form>
-    </div>
 @endsection

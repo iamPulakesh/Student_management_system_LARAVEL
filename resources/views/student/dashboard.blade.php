@@ -32,7 +32,7 @@
         </div>
     </div>
 
-    <section class="card" id="profile">
+    <section id="profile" style="margin-bottom: 2rem;">
         <div class="card-header">
             <h3 class="card-title">Profile </h3>
             <button type="button" id="edit-profile-btn" class="btn btn-primary btn-sm" onclick="toggleProfileEdit(true)">Update Profile</button>
@@ -82,7 +82,7 @@
         @include('student._profile_edit_form')
     </section>
 
-    <section class="card" id="courses">
+    <section id="courses" style="margin-bottom: 2rem;">
         <div class="card-header">
             <h3 class="card-title">Courses for {{ $student->department?->name }}</h3>
         </div>
@@ -116,7 +116,7 @@
     </section>
 
     <div class="two-col-grid">
-        <section class="card" id="attendance">
+        <section id="attendance">
             <div class="card-header">
                 <h3 class="card-title">My Attendance History</h3>
             </div>
@@ -151,7 +151,7 @@
             @endif
         </section>
 
-        <section class="card" id="marks">
+        <section id="marks">
             <div class="card-header">
                 <h3 class="card-title">My Assessment Marks</h3>
             </div>

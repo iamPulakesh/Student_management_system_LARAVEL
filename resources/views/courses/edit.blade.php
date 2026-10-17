@@ -4,11 +4,9 @@
 @section('heading', 'Edit Course')
 
 @section('content')
-    <div class="card">
-        <form method="POST" action="{{ route('admin.courses.update', $course) }}">
-            @csrf
-            @method('PUT')
-            @include('courses._form', ['submitLabel' => 'Update Course'])
-        </form>
-    </div>
+    <form method="POST" action="{{ route('admin.courses.update', $course) }}">
+        @csrf
+        @method('PUT')
+        @include('courses._form', ['submitLabel' => 'Update Course'])
+    </form>
 @endsection

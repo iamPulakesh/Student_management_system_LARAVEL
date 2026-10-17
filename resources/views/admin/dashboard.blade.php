@@ -37,7 +37,7 @@
     </div>
 
     <div class="two-col-grid">
-        <section class="card">
+        <section>
             <div class="card-header">
                 <h3 class="card-title">Recent Students</h3>
                 <a href="{{ route('admin.students.create') }}" class="btn btn-primary btn-sm">Add Student</a>
@@ -71,7 +71,7 @@
             @endif
         </section>
 
-        <section class="card">
+        <section>
             <div class="card-header">
                 <h3 class="card-title">Recently Recorded Assessments</h3>
             </div>

@@ -4,67 +4,65 @@
 @section('heading', 'Student Details: ' . $student->full_name)
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">{{ $student->full_name }} ({{ $student->student_number }})</h3>
-            <div class="actions-group">
-                <a href="{{ route('admin.students.edit', $student) }}" class="btn btn-primary btn-sm">Edit Student</a>
-                <a href="{{ route('admin.students.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
-            </div>
+    <div class="card-header">
+        <h3 class="card-title">{{ $student->full_name }} ({{ $student->student_number }})</h3>
+        <div class="actions-group">
+            <a href="{{ route('admin.students.edit', $student) }}" class="btn btn-primary btn-sm">Edit Student</a>
+            <a href="{{ route('admin.students.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
         </div>
-
-        <dl class="detail-list">
-            <div class="detail-item">
-                <dt>Registration Number</dt>
-                <dd>{{ $student->student_number }}</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Full Name</dt>
-                <dd>{{ $student->full_name }}</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Email</dt>
-                <dd>{{ $student->user?->email }}</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Department</dt>
-                <dd>{{ $student->department?->name }} ({{ $student->department?->code }})</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Semester</dt>
-                <dd>Semester {{ $student->year_of_study }}</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Gender</dt>
-                <dd>{{ $student->gender ?: 'Not provided' }}</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Phone</dt>
-                <dd>{{ $student->phone ?: 'Not provided' }}</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Date of Birth</dt>
-                <dd>{{ $student->date_of_birth ? $student->date_of_birth->format('Y-m-d') : 'Not provided' }}</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Address</dt>
-                <dd>{{ $student->address ?: 'Not provided' }}</dd>
-            </div>
-            <div class="detail-item">
-                <dt>Attendance Summary</dt>
-                <dd>
-                    @if ($attendancePercentage !== null)
-                        {{ number_format($attendancePercentage, 1) }}% ({{ $presentAttendance }} / {{ $totalAttendance }})
-                    @else
-                        N/A (0 records)
-                    @endif
-                </dd>
-            </div>
-        </dl>
     </div>
 
+    <dl class="detail-list" style="margin-bottom: 2rem;">
+        <div class="detail-item">
+            <dt>Registration Number</dt>
+            <dd>{{ $student->student_number }}</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Full Name</dt>
+            <dd>{{ $student->full_name }}</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Email</dt>
+            <dd>{{ $student->user?->email }}</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Department</dt>
+            <dd>{{ $student->department?->name }} ({{ $student->department?->code }})</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Semester</dt>
+            <dd>Semester {{ $student->year_of_study }}</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Gender</dt>
+            <dd>{{ $student->gender ?: 'Not provided' }}</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Phone</dt>
+            <dd>{{ $student->phone ?: 'Not provided' }}</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Date of Birth</dt>
+            <dd>{{ $student->date_of_birth ? $student->date_of_birth->format('Y-m-d') : 'Not provided' }}</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Address</dt>
+            <dd>{{ $student->address ?: 'Not provided' }}</dd>
+        </div>
+        <div class="detail-item">
+            <dt>Attendance Summary</dt>
+            <dd>
+                @if ($attendancePercentage !== null)
+                    {{ number_format($attendancePercentage, 1) }}% ({{ $presentAttendance }} / {{ $totalAttendance }})
+                @else
+                    N/A (0 records)
+                @endif
+            </dd>
+        </div>
+    </dl>
+
     <div class="two-col-grid">
-        <section class="card">
+        <section>
             <div class="card-header">
                 <h3 class="card-title">Recent Attendance</h3>
             </div>
@@ -99,7 +97,7 @@
             @endif
         </section>
 
-        <section class="card">
+        <section>
             <div class="card-header">
                 <h3 class="card-title">Assessment Marks</h3>
             </div>

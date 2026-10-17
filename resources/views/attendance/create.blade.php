@@ -8,44 +8,41 @@
         <strong>Prototype Note:</strong> Only one attendance record per student, course, and date is allowed. Selecting a course loads all students belonging to that course's department.
     </div>
 
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Step 1: Select Course &amp; Date</h3>
-            <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary btn-sm">Back to Attendance</a>
-        </div>
-
-        <form method="GET" action="{{ route($routePrefix . '.attendance.create') }}" class="filter-bar">
-            <div class="form-group">
-                <label for="course_id">Course <span class="required">*</span></label>
-                <select id="course_id" name="course_id" required>
-                    <option value="">-- Choose a Course --</option>
-                    @foreach ($courses as $course)
-                        <option value="{{ $course->id }}" {{ (string) optional($selectedCourse)->id === (string) $course->id ? 'selected' : '' }}>
-                            {{ $course->code }} — {{ $course->name }} ({{ $course->department?->code }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="attendance_date">Attendance Date <span class="required">*</span></label>
-                <input type="date" id="attendance_date" name="attendance_date" value="{{ $attendanceDate }}" required>
-            </div>
-
-            <div class="actions-group">
-                <button type="submit" class="btn btn-primary">Load Eligible Students</button>
-            </div>
-        </form>
+    <div class="card-header">
+        <h3 class="card-title">Step 1: Select Course &amp; Date</h3>
+        <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary btn-sm">Back to Attendance</a>
     </div>
 
+    <form method="GET" action="{{ route($routePrefix . '.attendance.create') }}" class="filter-bar">
+        <div class="form-group">
+            <label for="course_id">Course <span class="required">*</span></label>
+            <select id="course_id" name="course_id" required>
+                <option value="">-- Choose a Course --</option>
+                @foreach ($courses as $course)
+                    <option value="{{ $course->id }}" {{ (string) optional($selectedCourse)->id === (string) $course->id ? 'selected' : '' }}>
+                        {{ $course->code }} — {{ $course->name }} ({{ $course->department?->code }})
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="attendance_date">Attendance Date <span class="required">*</span></label>
+            <input type="date" id="attendance_date" name="attendance_date" value="{{ $attendanceDate }}" required>
+        </div>
+
+        <div class="actions-group">
+            <button type="submit" class="btn btn-primary">Load Eligible Students</button>
+        </div>
+    </form>
+
     @if ($selectedCourse !== null)
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    Step 2: Mark Attendance — {{ $selectedCourse->code }} ({{ $selectedCourse->name }})
-                </h3>
-                <span class="badge badge-info">Department: {{ $selectedCourse->department?->name }}</span>
-            </div>
+        <div class="card-header" style="margin-top: 2rem;">
+            <h3 class="card-title">
+                Step 2: Mark Attendance — {{ $selectedCourse->code }} ({{ $selectedCourse->name }})
+            </h3>
+            <span class="badge badge-info">Department: {{ $selectedCourse->department?->name }}</span>
+        </div>
 
             @if ($existingAttendance->isNotEmpty())
                 <div class="alert alert-warning">
@@ -127,6 +124,5 @@
                     </div>
                 </form>
             @endif
-        </div>
     @endif
 @endsection

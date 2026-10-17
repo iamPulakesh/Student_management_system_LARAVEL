@@ -4,11 +4,9 @@
 @section('heading', 'Edit Department')
 
 @section('content')
-    <div class="card">
-        <form method="POST" action="{{ route('admin.departments.update', $department) }}">
-            @csrf
-            @method('PUT')
-            @include('departments._form', ['submitLabel' => 'Update Department'])
-        </form>
-    </div>
+    <form method="POST" action="{{ route('admin.departments.update', $department) }}">
+        @csrf
+        @method('PUT')
+        @include('departments._form', ['submitLabel' => 'Update Department'])
+    </form>
 @endsection

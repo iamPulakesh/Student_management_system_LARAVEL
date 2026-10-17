@@ -4,10 +4,10 @@
 @section('heading', 'Create Student Account & Profile')
 
 @section('content')
-    <div class="card">
+
         <form method="POST" action="{{ route('admin.students.store') }}">
             @csrf
-            @include('students._form', ['submitLabel' => 'Create Student'])
+            @include('students._form', ['submitLabel' => 'Create'])
         </form>
-    </div>
+
 @endsection

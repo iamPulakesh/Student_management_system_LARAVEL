@@ -4,10 +4,8 @@
 @section('heading', 'Create Department')
 
 @section('content')
-    <div class="card">
-        <form method="POST" action="{{ route('admin.departments.store') }}">
-            @csrf
-            @include('departments._form', ['submitLabel' => 'Create Department'])
-        </form>
-    </div>
+    <form method="POST" action="{{ route('admin.departments.store') }}">
+        @csrf
+        @include('departments._form', ['submitLabel' => 'Create Department'])
+    </form>
 @endsection

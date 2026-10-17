@@ -30,7 +30,7 @@
         </div>
     </div>
 
-    <section class="card">
+    <section>
         <div class="card-header">
             <h3 class="card-title">My Assigned Courses</h3>
             <div class="actions-group">
@@ -77,7 +77,7 @@
     </section>
 
     <div class="two-col-grid">
-        <section class="card">
+        <section>
             <div class="card-header">
                 <h3 class="card-title">Recent Attendance Activity</h3>
                 <a href="{{ route('teacher.attendance.index') }}" class="btn btn-secondary btn-sm">View All</a>
@@ -115,7 +115,7 @@
             @endif
         </section>
 
-        <section class="card">
+        <section>
             <div class="card-header">
                 <h3 class="card-title">Recent Assessments</h3>
                 <a href="{{ route('teacher.assessments.index') }}" class="btn btn-secondary btn-sm">View All</a>

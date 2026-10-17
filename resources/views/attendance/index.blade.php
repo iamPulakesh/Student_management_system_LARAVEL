@@ -10,46 +10,43 @@
         </div>
     @endif
 
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Filter Attendance Records</h3>
-            @if ($routePrefix === 'teacher')
-                <a href="{{ route('teacher.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn btn-primary">
-                    Record Attendance
-                </a>
-            @endif
-        </div>
-
-        <form method="GET" action="{{ route($routePrefix . '.attendance.index') }}" class="filter-bar">
-            <div class="form-group">
-                <label for="course_id">Course</label>
-                <select id="course_id" name="course_id">
-                    <option value="">All Accessible Courses</option>
-                    @foreach ($courses as $course)
-                        <option value="{{ $course->id }}" {{ (string) $courseId === (string) $course->id ? 'selected' : '' }}>
-                            {{ $course->code }} — {{ $course->name }} ({{ $course->department?->code }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="attendance_date">Date</label>
-                <input type="date" id="attendance_date" name="attendance_date" value="{{ $attendanceDate }}">
-            </div>
-
-            <div class="actions-group">
-                <button type="submit" class="btn btn-secondary">Apply Filter</button>
-                @if ($courseId || $attendanceDate !== '')
-                    <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary">Reset</a>
-                @endif
-            </div>
-        </form>
+    <div class="card-header">
+        <h3 class="card-title">Filter Attendance Records</h3>
+        @if ($routePrefix === 'teacher')
+            <a href="{{ route('teacher.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn btn-primary">
+                Record Attendance
+            </a>
+        @endif
     </div>
 
+    <form method="GET" action="{{ route($routePrefix . '.attendance.index') }}" class="filter-bar">
+        <div class="form-group">
+            <label for="course_id">Course</label>
+            <select id="course_id" name="course_id">
+                <option value="">All Accessible Courses</option>
+                @foreach ($courses as $course)
+                    <option value="{{ $course->id }}" {{ (string) $courseId === (string) $course->id ? 'selected' : '' }}>
+                        {{ $course->code }} — {{ $course->name }} ({{ $course->department?->code }})
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="attendance_date">Date</label>
+            <input type="date" id="attendance_date" name="attendance_date" value="{{ $attendanceDate }}">
+        </div>
+
+        <div class="actions-group">
+            <button type="submit" class="btn btn-secondary">Apply Filter</button>
+            @if ($courseId || $attendanceDate !== '')
+                <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary">Reset</a>
+            @endif
+        </div>
+    </form>
+
     @if ($selectedCourse !== null)
-        <div class="card">
-            @if ($studentSummaries->isEmpty())
+        @if ($studentSummaries->isEmpty())
                 <div class="empty-state">No students are currently enrolled in {{ $selectedCourse->department?->name }}.</div>
             @else
                 <div class="table-responsive">
@@ -117,6 +114,5 @@
                     </table>
                 </div>
             @endif
-        </div>
     @endif
 @endsection

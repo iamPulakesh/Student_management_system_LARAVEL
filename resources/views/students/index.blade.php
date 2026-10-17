@@ -3,8 +3,7 @@
 @section('title', 'Students')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
+    <div class="card-header">
             <h3 class="card-title">All Students</h3>
             <a href="{{ route('admin.students.create') }}" class="btn btn-primary">Add Student</a>
         </div>
@@ -96,5 +95,4 @@
                 {{ $students->links() }}
             </div>
         @endif
-    </div>
 @endsection

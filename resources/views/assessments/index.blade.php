@@ -4,64 +4,61 @@
 @section('heading', 'Assessments & Marks')
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Filter Assessments</h3>
-            @if ($routePrefix === 'teacher')
-                <a href="{{ route('teacher.assessments.create', array_filter(['course_id' => $courseId])) }}" class="btn btn-primary">
-                    Record Assessment Mark
-                </a>
-            @endif
-        </div>
-
-        <form method="GET" action="{{ route($routePrefix . '.assessments.index') }}" class="filter-bar">
-            <div class="form-group">
-                <label for="course_id">Course</label>
-                <select id="course_id" name="course_id">
-                    <option value="">All Accessible Courses</option>
-                    @foreach ($courses as $course)
-                        <option value="{{ $course->id }}" {{ (string) $courseId === (string) $course->id ? 'selected' : '' }}>
-                            {{ $course->code }} — {{ $course->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="student_id">Student</label>
-                <select id="student_id" name="student_id">
-                    <option value="">All Eligible Students</option>
-                    @foreach ($students as $student)
-                        <option value="{{ $student->id }}" {{ (string) $studentId === (string) $student->id ? 'selected' : '' }}>
-                            {{ $student->student_number }} — {{ $student->full_name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="search">Search</label>
-                <input
-                    type="text"
-                    id="search"
-                    name="search"
-                    value="{{ $search }}"
-                    placeholder="Assessment name or student..."
-                >
-            </div>
-
-            <div class="actions-group">
-                <button type="submit" class="btn btn-secondary">Filter</button>
-                @if ($courseId || $studentId || $search !== '' || ($routePrefix === 'admin' && ($isFiltered ?? false)))
-                    <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn btn-secondary">Reset</a>
-                @endif
-            </div>
-        </form>
+    <div class="card-header">
+        <h3 class="card-title">Filter Assessments</h3>
+        @if ($routePrefix === 'teacher')
+            <a href="{{ route('teacher.assessments.create', array_filter(['course_id' => $courseId])) }}" class="btn btn-primary">
+                Record Assessment Mark
+            </a>
+        @endif
     </div>
 
+    <form method="GET" action="{{ route($routePrefix . '.assessments.index') }}" class="filter-bar">
+        <div class="form-group">
+            <label for="course_id">Course</label>
+            <select id="course_id" name="course_id">
+                <option value="">All Accessible Courses</option>
+                @foreach ($courses as $course)
+                    <option value="{{ $course->id }}" {{ (string) $courseId === (string) $course->id ? 'selected' : '' }}>
+                        {{ $course->code }} — {{ $course->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="student_id">Student</label>
+            <select id="student_id" name="student_id">
+                <option value="">All Eligible Students</option>
+                @foreach ($students as $student)
+                    <option value="{{ $student->id }}" {{ (string) $studentId === (string) $student->id ? 'selected' : '' }}>
+                        {{ $student->student_number }} — {{ $student->full_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="search">Search</label>
+            <input
+                type="text"
+                id="search"
+                name="search"
+                value="{{ $search }}"
+                placeholder="Assessment name or student..."
+            >
+        </div>
+
+        <div class="actions-group">
+            <button type="submit" class="btn btn-secondary">Filter</button>
+            @if ($courseId || $studentId || $search !== '' || ($routePrefix === 'admin' && ($isFiltered ?? false)))
+                <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn btn-secondary">Reset</a>
+            @endif
+        </div>
+    </form>
+
     @if ($routePrefix !== 'admin' || ($isFiltered ?? false))
-        <div class="card">
-            <div class="card-header">
+        <div class="card-header">
                 <h3 class="card-title">Recorded Assessments ({{ $assessments->total() }})</h3>
             </div>
 
@@ -121,6 +118,5 @@
                 {{ $assessments->links() }}
             </div>
         @endif
-    </div>
     @endif
 @endsection

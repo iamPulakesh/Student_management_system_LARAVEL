@@ -214,13 +214,8 @@ a:hover {
     font-size: 0.9rem;
 }
 
-/* Cards & Grid */
+/* Content Sections & Grid */
 .card {
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
@@ -247,11 +242,7 @@ a:hover {
 }
 
 .stat-card {
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    box-shadow: var(--shadow);
+    padding: 0.5rem 0;
 }
 
 .stat-label {

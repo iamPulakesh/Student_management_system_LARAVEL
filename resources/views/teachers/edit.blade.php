@@ -4,11 +4,9 @@
 @section('heading', 'Edit Teacher Profile')
 
 @section('content')
-    <div class="card">
-        <form method="POST" action="{{ route('admin.teachers.update', $teacher) }}">
-            @csrf
-            @method('PUT')
-            @include('teachers._form', ['submitLabel' => 'Update Teacher'])
-        </form>
-    </div>
+    <form method="POST" action="{{ route('admin.teachers.update', $teacher) }}">
+        @csrf
+        @method('PUT')
+        @include('teachers._form', ['submitLabel' => 'Update Teacher'])
+    </form>
 @endsection
