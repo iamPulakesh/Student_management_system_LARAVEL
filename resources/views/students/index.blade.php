@@ -24,7 +24,7 @@
             <div class="form-group">
                 <label for="department_id" class="form-label">Department</label>
                 <select id="department_id" name="department_id" class="form-control">
-                    <option value="">All Departments</option>
+                    <option value="">Select Department...</option>
                     @foreach ($departments as $department)
                         <option value="{{ $department->id }}" @selected((string) $selectedDepartmentId === (string) $department->id)>
                             {{ $department->name }} ({{ $department->code }})
@@ -36,7 +36,7 @@
             <div class="form-group">
                 <label for="year_of_study" class="form-label">Semester</label>
                 <select id="year_of_study" name="year_of_study" class="form-control">
-                    <option value="">All Semesters</option>
+                    <option value="">Select Semester...</option>
                     @for ($sem = 1; $sem <= 8; $sem++)
                         <option value="{{ $sem }}" @selected((string) $selectedYear === (string) $sem)>
                             Semester {{ $sem }}

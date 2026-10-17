@@ -11,9 +11,6 @@
                 <a href="{{ route('teacher.attendance.create', ['course_id' => $course->id]) }}" class="btn btn-primary btn-sm">Record Attendance</a>
                 <a href="{{ route('teacher.assessments.create', ['course_id' => $course->id]) }}" class="btn btn-secondary btn-sm">Record Marks</a>
                 <a href="{{ route('teacher.courses.index') }}" class="btn btn-secondary btn-sm">Back to My Courses</a>
-            @else
-                <a href="{{ route('admin.courses.edit', $course) }}" class="btn btn-primary btn-sm">Edit Course</a>
-                <a href="{{ route('admin.courses.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
             @endif
         </div>
     </div>
@@ -36,17 +33,17 @@
             <dd>{{ $course->credits }}</dd>
         </div>
         <div class="detail-item">
-            <dt>Assigned Faculty</dt>
-            <dd>{{ $course->teacher?->user?->name ?? 'Unassigned' }}</dd>
+            <dt>Semester</dt>
+            <dd>Semester {{ $course->semester }}</dd>
         </div>
         <div class="detail-item">
-            <dt>Description</dt>
-            <dd>{{ $course->description ?: 'No description provided.' }}</dd>
+            <dt>Assigned Faculty</dt>
+            <dd>{{ $course->teacher?->user?->name ?? 'Unassigned' }}</dd>
         </div>
     </dl>
 
     <div class="card-header">
-        <h3 class="card-title">Eligible Students ({{ $course->department?->name }})</h3>
+        <h3 class="card-title">Students ({{ $course->department?->name }})</h3>
     </div>
 
     @if ($students->isEmpty())

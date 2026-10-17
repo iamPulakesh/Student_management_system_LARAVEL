@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="card-header">
-        <h3 class="card-title">All Departments</h3>
+        <h3 class="card-title">Departments</h3>
         <a href="{{ route('admin.departments.create') }}" class="btn btn-primary">Add Department</a>
     </div>
 
@@ -51,7 +51,6 @@
                             <td>{{ $department->courses_count }}</td>
                             <td>
                                 <div class="actions-group">
-                                    <a href="{{ route('admin.departments.show', $department) }}" class="btn btn-secondary btn-sm">View</a>
                                     <a href="{{ route('admin.departments.edit', $department) }}" class="btn btn-secondary btn-sm">Edit</a>
                                     <form method="POST" action="{{ route('admin.departments.destroy', $department) }}" onsubmit="return confirm('Are you sure you want to delete this department?');">
                                         @csrf

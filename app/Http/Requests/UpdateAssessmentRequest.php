@@ -82,7 +82,7 @@ class UpdateAssessmentRequest extends FormRequest
             ],
             'marks_obtained' => ['required', 'numeric', 'min:0', 'max:999.99', 'lte:max_marks'],
             'max_marks' => ['required', 'numeric', 'gt:0', 'max:999.99'],
-            'assessment_date' => ['nullable', 'date'],
+            'assessment_date' => ['nullable', 'date', 'before_or_equal:today'],
         ];
     }
 

@@ -50,7 +50,8 @@
                             <th>Course Name</th>
                             <th>Department</th>
                             <th>Credits</th>
-                            <th>Eligible Students</th>
+                            <th>Semester</th>
+                            <th>Students</th>
                             <th>Quick Actions</th>
                         </tr>
                     </thead>
@@ -61,6 +62,7 @@
                                 <td><a href="{{ route('teacher.courses.show', $course) }}">{{ $course->name }}</a></td>
                                 <td>{{ $course->department?->name }} ({{ $course->department?->code }})</td>
                                 <td>{{ $course->credits }}</td>
+                                <td>Semester {{ $course->semester }}</td>
                                 <td>{{ $course->eligible_students_count ?? 0 }}</td>
                                 <td>
                                     <div class="actions-group">

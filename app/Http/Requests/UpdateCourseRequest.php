@@ -44,8 +44,8 @@ class UpdateCourseRequest extends FormRequest
                 Rule::unique('courses', 'code')->ignore($course->id),
             ],
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
             'credits' => ['required', 'integer', 'min:1', 'max:10'],
+            'semester' => ['required', 'integer', 'min:1', 'max:8'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
             'teacher_id' => ['nullable', 'integer', 'exists:teachers,id'],
         ];

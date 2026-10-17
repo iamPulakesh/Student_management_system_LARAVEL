@@ -11,8 +11,8 @@ class Course extends Model
     protected $fillable = [
         'code',
         'name',
-        'description',
         'credits',
+        'semester',
         'department_id',
         'teacher_id',
     ];
@@ -21,6 +21,7 @@ class Course extends Model
     {
         return [
             'credits' => 'integer',
+            'semester' => 'integer',
         ];
     }
 

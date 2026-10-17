@@ -28,11 +28,11 @@
 
         <div class="form-group">
             <label for="attendance_date">Attendance Date <span class="required">*</span></label>
-            <input type="date" id="attendance_date" name="attendance_date" value="{{ $attendanceDate }}" required>
+            <input type="date" id="attendance_date" name="attendance_date" value="{{ $attendanceDate }}" max="{{ now()->toDateString() }}" required>
         </div>
 
         <div class="actions-group">
-            <button type="submit" class="btn btn-primary">Load Eligible Students</button>
+            <button type="submit" class="btn btn-primary">Load Students</button>
         </div>
     </form>
 

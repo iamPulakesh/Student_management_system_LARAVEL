@@ -7,6 +7,6 @@
         <form method="POST" action="{{ route($routePrefix . '.assessments.update', $assessment) }}">
             @csrf
             @method('PUT')
-            @include('assessments._form', ['submitLabel' => 'Update Assessment'])
+            @include('assessments._form', ['submitLabel' => 'Update'])
         </form>
 @endsection

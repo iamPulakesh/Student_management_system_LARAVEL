@@ -74,7 +74,7 @@
     <div class="form-group">
         <label for="department_id" class="form-label">Department *</label>
         <select id="department_id" name="department_id" class="form-control" required>
-            <option value="">Select a department...</option>
+            <option value="">Select Department...</option>
             @foreach ($departments as $department)
                 <option
                     value="{{ $department->id }}"
@@ -109,6 +109,7 @@
             type="date"
             name="date_of_birth"
             value="{{ old('date_of_birth', $student->date_of_birth?->format('Y-m-d')) }}"
+            max="{{ now()->toDateString() }}"
             class="form-control"
         >
         <x-form-error field="date_of_birth" />

@@ -33,7 +33,7 @@ class AttendanceController extends Controller
         if ($request->user()->isAdmin() && ($request->has('course_id') || $request->has('attendance_date'))) {
             $request->validate([
                 'course_id' => ['required', 'integer', 'exists:courses,id'],
-                'attendance_date' => ['required', 'date'],
+                'attendance_date' => ['required', 'date', 'before_or_equal:today'],
             ], [], [
                 'course_id' => 'course',
                 'attendance_date' => 'date',
@@ -241,6 +241,7 @@ class AttendanceController extends Controller
             'attendance_date' => [
                 'required',
                 'date',
+                'before_or_equal:today',
                 Rule::unique('attendances', 'attendance_date')
                     ->where(fn ($query) => $query->where('student_id', $attendance->student_id)->where('course_id', $attendance->course_id))
                     ->ignore($attendance->id),

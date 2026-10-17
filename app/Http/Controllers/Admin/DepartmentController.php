@@ -50,20 +50,6 @@ class DepartmentController extends Controller
             ->with('success', 'Department created successfully.');
     }
 
-    public function show(Department $department): View
-    {
-        $department->loadCount(['students', 'teachers', 'courses']);
-        $department->load([
-            'courses.teacher.user',
-            'teachers.user',
-            'students.user',
-        ]);
-
-        return view('departments.show', [
-            'department' => $department,
-        ]);
-    }
-
     public function edit(Department $department): View
     {
         return view('departments.edit', [

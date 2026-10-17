@@ -82,13 +82,24 @@
             </main>
         </div>
 
-        <!-- Stop redirecting to previous page after logout -->
+        <!-- Stop redirecting to previous page after logout and enforce max today on date inputs -->
         <script>
             window.addEventListener('pageshow', function (event) {
                 if (event.persisted || (window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation')[0]?.type === 'back_forward')) {
                     window.location.reload();
                 }
             });
+
+            function enforceMaxDateOnInputs() {
+                const today = new Date().toLocaleDateString('en-CA');
+                document.querySelectorAll('input[type="date"]').forEach(function (input) {
+                    if (!input.getAttribute('max') || input.getAttribute('max') > today) {
+                        input.setAttribute('max', today);
+                    }
+                });
+            }
+            document.addEventListener('DOMContentLoaded', enforceMaxDateOnInputs);
+            window.addEventListener('pageshow', enforceMaxDateOnInputs);
         </script>
     @else
         <main class="auth-shell">

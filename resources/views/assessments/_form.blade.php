@@ -56,6 +56,7 @@
             id="assessment_date"
             name="assessment_date"
             value="{{ $assessmentDateValue }}"
+            max="{{ now()->toDateString() }}"
         >
         <x-form-error field="assessment_date" />
     </div>

@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('code', 30)->unique();
             $table->string('name');
-            $table->text('description')->nullable();
             $table->unsignedSmallInteger('credits');
+            $table->unsignedTinyInteger('semester')->default(1);
             $table->foreignId('department_id')->constrained('departments')->restrictOnDelete();
             $table->foreignId('teacher_id')->nullable()->constrained('teachers')->restrictOnDelete();
             $table->timestamps();

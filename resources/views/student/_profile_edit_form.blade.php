@@ -23,6 +23,7 @@
                 type="date"
                 name="date_of_birth"
                 value="{{ old('date_of_birth', $student->date_of_birth?->format('Y-m-d')) }}"
+                max="{{ now()->toDateString() }}"
                 class="form-control"
             >
             <x-form-error field="date_of_birth" />

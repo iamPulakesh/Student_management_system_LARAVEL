@@ -16,6 +16,7 @@
                         type="date"
                         name="attendance_date"
                         value="{{ old('attendance_date', $attendance->attendance_date->format('Y-m-d')) }}"
+                        max="{{ now()->toDateString() }}"
                         class="form-control"
                         required
                     >
@@ -33,7 +34,7 @@
             </div>
 
             <div class="actions-group">
-                <button type="submit" class="btn btn-primary">Update Attendance</button>
+                <button type="submit" class="btn btn-primary">Update</button>
                 <a href="{{ route('admin.attendance.index', ['course_id' => $attendance->course_id, 'attendance_date' => $attendance->attendance_date->format('Y-m-d')]) }}" class="btn btn-secondary">
                     Cancel
                 </a>

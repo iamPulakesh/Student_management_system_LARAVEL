@@ -53,7 +53,7 @@ class StoreAttendanceRequest extends FormRequest
     {
         return [
             'course_id' => ['required', 'integer', 'exists:courses,id'],
-            'attendance_date' => ['required', 'date'],
+            'attendance_date' => ['required', 'date', 'before_or_equal:today'],
             'statuses' => ['required', 'array', 'min:1'],
             'statuses.*' => [
                 'required',

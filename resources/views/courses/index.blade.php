@@ -28,12 +28,24 @@
             <div class="form-group">
                 <label for="department_id" class="form-label">Department</label>
                 <select id="department_id" name="department_id" class="form-control">
-                    <option value="">All Departments</option>
+                    <option value="">Select Department...</option>
                     @foreach ($departments as $department)
                         <option value="{{ $department->id }}" @selected((string) ($selectedDepartmentId ?? '') === (string) $department->id)>
                             {{ $department->name }} ({{ $department->code }})
                         </option>
                     @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="semester" class="form-label">Semester</label>
+                <select id="semester" name="semester" class="form-control">
+                    <option value="">Select Semester...</option>
+                    @for ($sem = 1; $sem <= 8; $sem++)
+                        <option value="{{ $sem }}" @selected((string) ($selectedSemester ?? '') === (string) $sem)>
+                            Semester {{ $sem }}
+                        </option>
+                    @endfor
                 </select>
             </div>
 
@@ -56,6 +68,7 @@
                             <th>Name</th>
                             <th>Department</th>
                             <th>Credits</th>
+                            <th>Semester</th>
                             <th>Assigned Faculty</th>
                             <th>Actions</th>
                         </tr>
@@ -67,6 +80,7 @@
                                 <td>{{ $course->name }}</td>
                                 <td>{{ $course->department?->name }} ({{ $course->department?->code }})</td>
                                 <td>{{ $course->credits }}</td>
+                                <td>Semester {{ $course->semester }}</td>
                                 <td>{{ $course->teacher?->user?->name ?? 'Unassigned' }}</td>
                                 <td>
                                     @if (!empty($isTeacherView))
@@ -77,7 +91,6 @@
                                         </div>
                                     @else
                                         <div class="actions-group">
-                                            <a href="{{ route('admin.courses.show', $course) }}" class="btn btn-secondary btn-sm">View</a>
                                             <a href="{{ route('admin.courses.edit', $course) }}" class="btn btn-secondary btn-sm">Edit</a>
                                             <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" onsubmit="return confirm('Are you sure you want to delete this course?');">
                                                 @csrf

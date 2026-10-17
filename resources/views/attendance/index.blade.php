@@ -11,7 +11,7 @@
     @endif
 
     <div class="card-header">
-        <h3 class="card-title">Filter Attendance Records</h3>
+        <h3 class="card-title">Attendance Records</h3>
         @if ($routePrefix === 'teacher')
             <a href="{{ route('teacher.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn btn-primary">
                 Record Attendance
@@ -23,7 +23,7 @@
         <div class="form-group">
             <label for="course_id" class="form-label">Course @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
             <select id="course_id" name="course_id" class="form-control" {{ $routePrefix === 'admin' ? 'required' : '' }}>
-                <option value="">{{ $routePrefix === 'admin' ? 'Select a Course...' : 'All Accessible Courses' }}</option>
+                <option value="">{{ $routePrefix === 'admin' ? 'Select a Course...' : 'All Courses' }}</option>
                 @foreach ($courses as $course)
                     <option value="{{ $course->id }}" {{ (string) old('course_id', $courseId) === (string) $course->id ? 'selected' : '' }}>
                         {{ $course->code }} — {{ $course->name }} ({{ $course->department?->code }})
@@ -40,6 +40,7 @@
                 id="attendance_date"
                 name="attendance_date"
                 value="{{ old('attendance_date', $attendanceDate) }}"
+                max="{{ now()->toDateString() }}"
                 class="form-control"
                 {{ $routePrefix === 'admin' ? 'required' : '' }}
             >

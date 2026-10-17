@@ -34,8 +34,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::resource('students', StudentController::class);
     Route::resource('teachers', TeacherController::class);
-    Route::resource('departments', DepartmentController::class);
-    Route::resource('courses', CourseController::class);
+    Route::resource('departments', DepartmentController::class)->except(['show']);
+    Route::resource('courses', CourseController::class)->except(['show']);
 
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/{attendance}/edit', [AttendanceController::class, 'edit'])->name('attendance.edit');

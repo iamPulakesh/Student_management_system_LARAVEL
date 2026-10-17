@@ -25,7 +25,6 @@ class AssessmentController extends Controller
         $allowedCourseIds = $courses->pluck('id');
 
         $courseId = $request->input('course_id');
-        $studentId = $request->input('student_id');
         $search = trim((string) $request->input('search', ''));
         $selectedCourse = null;
 
@@ -44,10 +43,6 @@ class AssessmentController extends Controller
             $query->where('course_id', $selectedCourse->id);
         }
 
-        if ($studentId !== null && $studentId !== '') {
-            $query->where('student_id', (int) $studentId);
-        }
-
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('assessment_name', 'like', "%{$search}%")
@@ -59,21 +54,17 @@ class AssessmentController extends Controller
             });
         }
 
-        $isFiltered = $request->hasAny(['course_id', 'student_id', 'search']);
+        $isFiltered = $request->hasAny(['course_id', 'search']);
 
         $assessments = ($routePrefix === 'admin' && ! $isFiltered)
             ? Assessment::whereRaw('1 = 0')->paginate(15)
             : $query->orderByDesc('assessment_date')->orderByDesc('id')->paginate(15)->withQueryString();
 
-        $students = $this->eligibleStudentsQuery($request, $courses, $selectedCourse)->get();
-
         return view('assessments.index', [
             'routePrefix' => $routePrefix,
             'courses' => $courses,
-            'students' => $students,
             'selectedCourse' => $selectedCourse,
             'courseId' => $courseId,
-            'studentId' => $studentId,
             'search' => $search,
             'assessments' => $assessments,
             'isFiltered' => $isFiltered,

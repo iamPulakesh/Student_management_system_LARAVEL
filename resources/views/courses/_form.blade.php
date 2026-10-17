@@ -41,9 +41,24 @@
     </div>
 
     <div class="form-group">
+        <label for="semester" class="form-label">Semester *</label>
+        <select id="semester" name="semester" class="form-control" required>
+            @for ($sem = 1; $sem <= 8; $sem++)
+                <option
+                    value="{{ $sem }}"
+                    @selected((int) old('semester', $course->semester ?? 1) === $sem)
+                >
+                    Semester {{ $sem }}
+                </option>
+            @endfor
+        </select>
+        <x-form-error field="semester" />
+    </div>
+
+    <div class="form-group">
         <label for="department_id" class="form-label">Department *</label>
         <select id="department_id" name="department_id" class="form-control" required>
-            <option value="">Select a department...</option>
+            <option value="">Select Department...</option>
             @foreach ($departments as $department)
                 <option
                     value="{{ $department->id }}"
@@ -71,17 +86,6 @@
         </select>
         <x-form-error field="teacher_id" />
     </div>
-</div>
-
-<div class="form-group">
-    <label for="description" class="form-label">Course Description</label>
-    <textarea
-        id="description"
-        name="description"
-        rows="3"
-        class="form-control"
-    >{{ old('description', $course->description) }}</textarea>
-    <x-form-error field="description" />
 </div>
 
 <div class="actions-group">

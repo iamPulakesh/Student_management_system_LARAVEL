@@ -19,8 +19,11 @@ class CourseController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $departmentId = $request->query('department_id');
+        $semester = $request->query('semester');
 
-        $hasFilter = $search !== '' || ($departmentId !== null && $departmentId !== '');
+        $hasFilter = $search !== ''
+            || ($departmentId !== null && $departmentId !== '')
+            || ($semester !== null && $semester !== '');
 
         $courses = null;
 
@@ -34,6 +37,7 @@ class CourseController extends Controller
                     });
                 })
                 ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
+                ->when($semester, fn ($query) => $query->where('semester', (int) $semester))
                 ->orderBy('code')
                 ->paginate(10)
                 ->withQueryString();
@@ -47,6 +51,7 @@ class CourseController extends Controller
             'departments' => $departments,
             'search' => $search,
             'selectedDepartmentId' => $departmentId,
+            'selectedSemester' => $semester,
             'isTeacherView' => false,
         ]);
     }
@@ -67,24 +72,6 @@ class CourseController extends Controller
         return redirect()
             ->route('admin.courses.index')
             ->with('success', 'Course created successfully.');
-    }
-
-    public function show(Course $course): View
-    {
-        $course->load(['department', 'teacher.user']);
-
-        $students = Student::query()
-            ->with('user')
-            ->where('department_id', $course->department_id)
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->paginate(15);
-
-        return view('courses.show', [
-            'course' => $course,
-            'students' => $students,
-            'isTeacherView' => false,
-        ]);
     }
 
     public function edit(Course $course): View

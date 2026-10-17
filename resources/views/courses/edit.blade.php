@@ -7,6 +7,6 @@
     <form method="POST" action="{{ route('admin.courses.update', $course) }}">
         @csrf
         @method('PUT')
-        @include('courses._form', ['submitLabel' => 'Update Course'])
+        @include('courses._form', ['submitLabel' => 'Update'])
     </form>
 @endsection

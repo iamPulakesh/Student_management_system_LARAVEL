@@ -5,7 +5,7 @@
 
 @section('content')
     <div class="card-header">
-        <h3 class="card-title">Filter Assessments</h3>
+        <h3 class="card-title">Assessments Records</h3>
         @if ($routePrefix === 'teacher')
             <a href="{{ route('teacher.assessments.create', array_filter(['course_id' => $courseId])) }}" class="btn btn-primary">
                 Record Assessment Mark
@@ -17,22 +17,10 @@
         <div class="form-group">
             <label for="course_id">Course</label>
             <select id="course_id" name="course_id">
-                <option value="">All Accessible Courses</option>
+                <option value="">All Courses</option>
                 @foreach ($courses as $course)
                     <option value="{{ $course->id }}" {{ (string) $courseId === (string) $course->id ? 'selected' : '' }}>
                         {{ $course->code }} — {{ $course->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="student_id">Student</label>
-            <select id="student_id" name="student_id">
-                <option value="">All Eligible Students</option>
-                @foreach ($students as $student)
-                    <option value="{{ $student->id }}" {{ (string) $studentId === (string) $student->id ? 'selected' : '' }}>
-                        {{ $student->student_number }} — {{ $student->full_name }}
                     </option>
                 @endforeach
             </select>
@@ -51,7 +39,7 @@
 
         <div class="actions-group">
             <button type="submit" class="btn btn-secondary">Filter</button>
-            @if ($courseId || $studentId || $search !== '' || ($routePrefix === 'admin' && ($isFiltered ?? false)))
+            @if ($courseId || $search !== '' || ($routePrefix === 'admin' && ($isFiltered ?? false)))
                 <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn btn-secondary">Reset</a>
             @endif
         </div>
