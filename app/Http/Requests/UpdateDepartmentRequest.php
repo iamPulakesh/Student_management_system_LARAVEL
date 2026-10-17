@@ -50,7 +50,6 @@ class UpdateDepartmentRequest extends FormRequest
                 'alpha_dash',
                 Rule::unique('departments', 'code')->ignore($department->id),
             ],
-            'description' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

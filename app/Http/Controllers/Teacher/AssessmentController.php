@@ -228,7 +228,7 @@ class AssessmentController extends Controller
 
         $teacher = $user->teacher;
         if ($teacher === null) {
-            abort(403, 'Teacher profile not found.');
+            abort(403, 'Faculty profile not found.');
         }
 
         return Course::with('department')

@@ -36,7 +36,7 @@
             <dd>{{ $course->credits }}</dd>
         </div>
         <div class="detail-item">
-            <dt>Assigned Teacher</dt>
+            <dt>Assigned Faculty</dt>
             <dd>{{ $course->teacher?->user?->name ?? 'Unassigned' }}</dd>
         </div>
         <div class="detail-item">

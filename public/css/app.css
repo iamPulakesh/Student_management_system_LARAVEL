@@ -104,12 +104,14 @@ a:hover {
     flex: 1;
     display: flex;
     align-items: center;
+    justify-content: center;
     overflow-x: auto;
 }
 
 .nav-links ul {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.35rem;
     list-style: none;
     margin: 0;
@@ -328,6 +330,11 @@ a:hover {
     font-size: 0.82rem;
     margin-top: 0.3rem;
     font-weight: 500;
+}
+
+.required {
+    color: var(--danger-text, #dc2626);
+    margin-left: 2px;
 }
 
 .filter-bar {

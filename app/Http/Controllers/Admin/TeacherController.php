@@ -19,26 +19,32 @@ class TeacherController extends Controller
         $search = trim((string) $request->query('search', ''));
         $departmentId = $request->query('department_id');
 
-        $teachers = Teacher::query()
-            ->with(['user', 'department'])
-            ->withCount('courses')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($subQuery) use ($search) {
-                    $subQuery->where('employee_number', 'like', "%{$search}%")
-                        ->orWhereHas('user', function ($userQuery) use ($search) {
-                            $userQuery->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        });
-                });
-            })
-            ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
-            ->orderBy('employee_number')
-            ->paginate(10)
-            ->withQueryString();
+        $hasFilter = $search !== '' || ($departmentId !== null && $departmentId !== '');
+
+        $teachers = null;
+
+        if ($hasFilter) {
+            $teachers = Teacher::query()
+                ->with(['user', 'department'])
+                ->withCount('courses')
+                ->when($search !== '', function ($query) use ($search) {
+                    $query->where(function ($subQuery) use ($search) {
+                        $subQuery->where('employee_number', 'like', "%{$search}%")
+                            ->orWhereHas('user', function ($userQuery) use ($search) {
+                                $userQuery->where('name', 'like', "%{$search}%");
+                            });
+                    });
+                })
+                ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
+                ->orderBy('employee_number')
+                ->paginate(10)
+                ->withQueryString();
+        }
 
         $departments = Department::query()->orderBy('name')->get();
 
         return view('teachers.index', [
+            'hasFilter' => $hasFilter,
             'teachers' => $teachers,
             'departments' => $departments,
             'search' => $search,
@@ -59,21 +65,23 @@ class TeacherController extends Controller
         $request->merge([
             'employee_number' => strtoupper(trim((string) $request->input('employee_number'))),
             'name' => trim((string) $request->input('name')),
+            'email' => strtolower(trim((string) $request->input('email'))),
+            'phone' => trim((string) $request->input('phone')),
         ]);
 
         $validated = $request->validate([
             'employee_number' => ['required', 'string', 'max:4', 'regex:/^[a-zA-Z0-9]+$/', 'unique:teachers,employee_number'],
             'name' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'password' => ['required', 'string', 'max:255'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
         ]);
 
         DB::transaction(function () use ($validated): void {
-            $generatedEmail = strtolower($validated['employee_number']) . '@teacher.system';
-            
             $user = User::createWithRole([
                 'name' => $validated['name'],
-                'email' => $generatedEmail,
+                'email' => $validated['email'],
                 'password' => $validated['password'],
             ], User::ROLE_TEACHER);
 
@@ -81,12 +89,13 @@ class TeacherController extends Controller
                 'user_id' => $user->id,
                 'employee_number' => $validated['employee_number'],
                 'department_id' => $validated['department_id'],
+                'phone' => $validated['phone'] ?? null,
             ]);
         });
 
         return redirect()
             ->route('admin.teachers.index')
-            ->with('success', 'Teacher profile and login account created successfully.');
+            ->with('success', 'Faculty profile and login account created successfully.');
     }
 
     public function show(Teacher $teacher): View
@@ -113,6 +122,8 @@ class TeacherController extends Controller
         $request->merge([
             'employee_number' => strtoupper(trim((string) $request->input('employee_number'))),
             'name' => trim((string) $request->input('name')),
+            'email' => strtolower(trim((string) $request->input('email'))),
+            'phone' => trim((string) $request->input('phone')),
         ]);
 
         $validated = $request->validate([
@@ -124,16 +135,22 @@ class TeacherController extends Controller
                 Rule::unique('teachers', 'employee_number')->ignore($teacher->id),
             ],
             'name' => ['required', 'string', 'max:255'],
-            'password' => ['nullable', 'string', 'min:8', 'max:255'],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($teacher->user_id),
+            ],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'password' => ['nullable', 'string', 'max:255'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
         ]);
 
         DB::transaction(function () use ($validated, $teacher): void {
-            $generatedEmail = strtolower($validated['employee_number']) . '@teacher.system';
-
             $userAttributes = [
                 'name' => $validated['name'],
-                'email' => $generatedEmail,
+                'email' => $validated['email'],
             ];
 
             if (! empty($validated['password'])) {
@@ -145,12 +162,13 @@ class TeacherController extends Controller
             $teacher->update([
                 'employee_number' => $validated['employee_number'],
                 'department_id' => $validated['department_id'],
+                'phone' => $validated['phone'] ?? null,
             ]);
         });
 
         return redirect()
             ->route('admin.teachers.index')
-            ->with('success', 'Teacher profile updated successfully.');
+            ->with('success', 'Faculty profile updated successfully.');
     }
 
     public function destroy(Teacher $teacher): RedirectResponse
@@ -162,7 +180,7 @@ class TeacherController extends Controller
         if ($hasAssignedCourses || $hasRecordedAcademicData) {
             return redirect()
                 ->route('admin.teachers.index')
-                ->with('error', 'Cannot delete this teacher because courses or recorded academic entries depend on them. Unassign their courses first.');
+                ->with('error', 'Cannot delete this faculty member because courses or recorded academic entries depend on them. Unassign their courses first.');
         }
 
         DB::transaction(function () use ($teacher): void {
@@ -173,6 +191,6 @@ class TeacherController extends Controller
 
         return redirect()
             ->route('admin.teachers.index')
-            ->with('success', 'Teacher profile and account deleted successfully.');
+            ->with('success', 'Faculty profile deleted successfully.');
     }
 }

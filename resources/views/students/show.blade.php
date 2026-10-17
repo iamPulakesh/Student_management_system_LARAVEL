@@ -6,10 +6,6 @@
 @section('content')
     <div class="card-header">
         <h3 class="card-title">{{ $student->full_name }} ({{ $student->student_number }})</h3>
-        <div class="actions-group">
-            <a href="{{ route('admin.students.edit', $student) }}" class="btn btn-primary btn-sm">Edit Student</a>
-            <a href="{{ route('admin.students.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
-        </div>
     </div>
 
     <dl class="detail-list" style="margin-bottom: 2rem;">
@@ -38,7 +34,7 @@
             <dd>{{ $student->gender ?: 'Not provided' }}</dd>
         </div>
         <div class="detail-item">
-            <dt>Phone</dt>
+            <dt>Phone No</dt>
             <dd>{{ $student->phone ?: 'Not provided' }}</dd>
         </div>
         <div class="detail-item">
@@ -50,10 +46,10 @@
             <dd>{{ $student->address ?: 'Not provided' }}</dd>
         </div>
         <div class="detail-item">
-            <dt>Attendance Summary</dt>
+            <dt>Attendance %</dt>
             <dd>
                 @if ($attendancePercentage !== null)
-                    {{ number_format($attendancePercentage, 1) }}% ({{ $presentAttendance }} / {{ $totalAttendance }})
+                    {{ number_format($attendancePercentage, 1) }}%
                 @else
                     N/A (0 records)
                 @endif

@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Teacher Dashboard')
-@section('heading', 'Teacher Dashboard')
+@section('title', 'Faculty Dashboard')
+@section('heading', 'Faculty Dashboard')
 
 @section('content')
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-label">Employee Number</div>
+            <div class="stat-label">Employee Code</div>
             <div class="stat-value" style="font-size: 1.4rem;">{{ $teacher->employee_number }}</div>
             <div class="stat-subtext">{{ $teacher->department?->name ?? 'N/A' }} ({{ $teacher->department?->code ?? 'N/A' }})</div>
         </div>

@@ -4,7 +4,7 @@
 
     <div class="form-grid" style="margin-bottom: 1rem;">
         <div class="form-group">
-            <label for="profile_phone" class="form-label">Phone</label>
+            <label for="profile_phone" class="form-label">Phone No</label>
             <input
                 id="profile_phone"
                 type="text"

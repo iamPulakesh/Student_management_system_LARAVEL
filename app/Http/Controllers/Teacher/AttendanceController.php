@@ -30,13 +30,25 @@ class AttendanceController extends Controller
         $attendanceDate = trim((string) $request->input('attendance_date', ''));
         $selectedCourse = null;
 
+        if ($request->user()->isAdmin() && ($request->has('course_id') || $request->has('attendance_date'))) {
+            $request->validate([
+                'course_id' => ['required', 'integer', 'exists:courses,id'],
+                'attendance_date' => ['required', 'date'],
+            ], [], [
+                'course_id' => 'course',
+                'attendance_date' => 'date',
+            ]);
+        }
+
         if ($courseId !== null && $courseId !== '') {
             $selectedCourse = Course::with('department')->findOrFail((int) $courseId);
             $this->authorizeCourseAccess($request, $selectedCourse);
         }
 
         $studentSummaries = collect();
-        if ($selectedCourse !== null) {
+        $canLoadAttendance = $selectedCourse !== null && (! $request->user()->isAdmin() || $attendanceDate !== '');
+
+        if ($canLoadAttendance) {
             $students = Student::with('user')
                 ->where('department_id', $selectedCourse->department_id)
                 ->withCount([
@@ -289,7 +301,7 @@ class AttendanceController extends Controller
 
         $teacher = $user->teacher;
         if ($teacher === null) {
-            abort(403, 'Teacher profile not found.');
+            abort(403, 'Faculty profile not found.');
         }
 
         return Course::with('department')

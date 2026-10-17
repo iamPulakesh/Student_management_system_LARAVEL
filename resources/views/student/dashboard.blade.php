@@ -97,7 +97,7 @@
                             <th>Code</th>
                             <th>Course Name</th>
                             <th>Credits</th>
-                            <th>Assigned Teacher</th>
+                            <th>Assigned Faculty</th>
                         </tr>
                     </thead>
                     <tbody>

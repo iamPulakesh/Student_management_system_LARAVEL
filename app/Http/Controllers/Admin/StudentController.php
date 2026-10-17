@@ -22,28 +22,33 @@ class StudentController extends Controller
         $departmentId = $request->query('department_id');
         $yearOfStudy = $request->query('year_of_study');
 
-        $students = Student::query()
-            ->with(['department', 'user'])
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($subQuery) use ($search) {
-                    $subQuery->where('student_number', 'like', "%{$search}%")
-                        ->orWhere('first_name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhereHas('user', function ($userQuery) use ($search) {
-                            $userQuery->where('email', 'like', "%{$search}%");
-                        });
-                });
-            })
-            ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
-            ->when($yearOfStudy, fn ($query) => $query->where('year_of_study', $yearOfStudy))
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->paginate(10)
-            ->withQueryString();
+        $hasFilter = $search !== ''
+            || ($departmentId !== null && $departmentId !== '')
+            || ($yearOfStudy !== null && $yearOfStudy !== '');
+
+        $students = null;
+
+        if ($hasFilter) {
+            $students = Student::query()
+                ->with(['department', 'user'])
+                ->when($search !== '', function ($query) use ($search) {
+                    $query->where(function ($subQuery) use ($search) {
+                        $subQuery->where('student_number', 'like', "%{$search}%")
+                            ->orWhere('first_name', 'like', "%{$search}%");
+                    });
+                })
+                ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
+                ->when($yearOfStudy, fn ($query) => $query->where('year_of_study', $yearOfStudy))
+                ->orderBy('last_name')
+                ->orderBy('first_name')
+                ->paginate(10)
+                ->withQueryString();
+        }
 
         $departments = Department::query()->orderBy('name')->get();
 
         return view('students.index', [
+            'hasFilter' => $hasFilter,
             'students' => $students,
             'departments' => $departments,
             'search' => $search,
@@ -77,6 +82,7 @@ class StudentController extends Controller
                 'student_number' => $validated['student_number'],
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
+                'phone' => $validated['phone'] ?? null,
                 'date_of_birth' => $validated['date_of_birth'] ?? null,
                 'gender' => $validated['gender'] ?? null,
                 'address' => $validated['address'] ?? null,
@@ -156,6 +162,7 @@ class StudentController extends Controller
                 'student_number' => $validated['student_number'],
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
+                'phone' => $validated['phone'] ?? null,
                 'date_of_birth' => $validated['date_of_birth'] ?? null,
                 'gender' => $validated['gender'] ?? null,
                 'address' => $validated['address'] ?? null,

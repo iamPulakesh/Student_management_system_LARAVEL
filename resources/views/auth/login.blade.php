@@ -15,7 +15,7 @@
             <label for="role" class="form-label">Sign In As</label>
             <select id="role" name="role" class="form-control" required>
                 <option value="student" {{ old('role', 'student') === 'student' ? 'selected' : '' }}>Student</option>
-                <option value="teacher" {{ old('role') === 'teacher' ? 'selected' : '' }}>Teacher</option>
+                <option value="teacher" {{ old('role') === 'teacher' ? 'selected' : '' }}>Faculty</option>
                 <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
             </select>
             <x-form-error field="role" />

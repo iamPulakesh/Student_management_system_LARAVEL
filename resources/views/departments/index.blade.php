@@ -36,7 +36,7 @@
                         <th>Code</th>
                         <th>Name</th>
                         <th>Students</th>
-                        <th>Teachers</th>
+                        <th>Faculty</th>
                         <th>Courses</th>
                         <th>Actions</th>
                     </tr>

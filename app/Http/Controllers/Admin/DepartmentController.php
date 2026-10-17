@@ -85,7 +85,7 @@ class DepartmentController extends Controller
         if ($department->students()->exists() || $department->courses()->exists() || $department->teachers()->exists()) {
             return redirect()
                 ->route('admin.departments.index')
-                ->with('error', 'Cannot delete this department because students, teachers, or courses are still assigned to it. Please reassign or remove those records first.');
+                ->with('error', 'Cannot delete this department because students, faculty, or courses are still assigned to it. Please reassign or remove those records first.');
         }
 
         $department->delete();

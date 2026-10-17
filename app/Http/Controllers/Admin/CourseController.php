@@ -20,22 +20,29 @@ class CourseController extends Controller
         $search = trim((string) $request->query('search', ''));
         $departmentId = $request->query('department_id');
 
-        $courses = Course::query()
-            ->with(['department', 'teacher.user'])
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($subQuery) use ($search) {
-                    $subQuery->where('code', 'like', "%{$search}%")
-                        ->orWhere('name', 'like', "%{$search}%");
-                });
-            })
-            ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
-            ->orderBy('code')
-            ->paginate(10)
-            ->withQueryString();
+        $hasFilter = $search !== '' || ($departmentId !== null && $departmentId !== '');
+
+        $courses = null;
+
+        if ($hasFilter) {
+            $courses = Course::query()
+                ->with(['department', 'teacher.user'])
+                ->when($search !== '', function ($query) use ($search) {
+                    $query->where(function ($subQuery) use ($search) {
+                        $subQuery->where('code', 'like', "%{$search}%")
+                            ->orWhere('name', 'like', "%{$search}%");
+                    });
+                })
+                ->when($departmentId, fn ($query) => $query->where('department_id', $departmentId))
+                ->orderBy('code')
+                ->paginate(10)
+                ->withQueryString();
+        }
 
         $departments = Department::query()->orderBy('name')->get();
 
         return view('courses.index', [
+            'hasFilter' => $hasFilter,
             'courses' => $courses,
             'departments' => $departments,
             'search' => $search,

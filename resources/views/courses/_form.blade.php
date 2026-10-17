@@ -57,7 +57,7 @@
     </div>
 
     <div class="form-group">
-        <label for="teacher_id" class="form-label">Assigned Teacher</label>
+        <label for="teacher_id" class="form-label">Assigned Faculty</label>
         <select id="teacher_id" name="teacher_id" class="form-control">
             <option value="">Unassigned</option>
             @foreach ($teachers as $teacher)

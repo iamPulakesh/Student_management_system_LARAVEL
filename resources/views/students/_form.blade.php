@@ -44,7 +44,7 @@
 
     <div class="form-group">
         <label for="password" class="form-label">
-            Account Password {{ $student->exists ? '(Leave blank to keep current)' : '*' }}
+            {{ $student->exists ? 'Reset Password' : 'Password *' }}
         </label>
         <input
             id="password"
@@ -54,7 +54,6 @@
             {{ $student->exists ? '' : 'required' }}
             autocomplete="new-password"
         >
-        <span class="form-help">Minimum 8 characters.</span>
         <x-form-error field="password" />
     </div>
 
@@ -125,6 +124,19 @@
             <option value="Prefer not to say" @selected(old('gender', $student->gender) === 'Prefer not to say')>Prefer not to say</option>
         </select>
         <x-form-error field="gender" />
+    </div>
+
+    <div class="form-group">
+        <label for="phone" class="form-label">Phone No</label>
+        <input
+            id="phone"
+            type="text"
+            name="phone"
+            value="{{ old('phone', $student->phone) }}"
+            class="form-control"
+            placeholder="e.g. 9876543210"
+        >
+        <x-form-error field="phone" />
     </div>
 </div>
 

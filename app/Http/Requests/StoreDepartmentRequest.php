@@ -34,7 +34,6 @@ class StoreDepartmentRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255', 'unique:departments,name'],
             'code' => ['required', 'string', 'max:20', 'alpha_dash', 'unique:departments,code'],
-            'description' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

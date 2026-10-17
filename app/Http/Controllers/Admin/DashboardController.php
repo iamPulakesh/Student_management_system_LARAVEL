@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Assessment;
 use App\Models\Attendance;
 use App\Models\Course;
 use App\Models\Department;
@@ -29,26 +28,12 @@ class DashboardController extends Controller
             ? round(($presentAttendanceRecords / $totalAttendanceRecords) * 100, 1)
             : null;
 
-        $recentStudents = Student::query()
-            ->with(['department', 'user'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $recentAssessments = Assessment::query()
-            ->with(['student', 'course'])
-            ->latest()
-            ->take(5)
-            ->get();
-
         return view('admin.dashboard', [
             'totalStudents' => $totalStudents,
             'totalTeachers' => $totalTeachers,
             'totalDepartments' => $totalDepartments,
             'totalCourses' => $totalCourses,
             'overallAttendancePercentage' => $overallAttendancePercentage,
-            'recentStudents' => $recentStudents,
-            'recentAssessments' => $recentAssessments,
         ]);
     }
 }

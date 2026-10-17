@@ -16,7 +16,7 @@
                     type="text"
                     name="search"
                     value="{{ $search }}"
-                    placeholder="Reg No, first/last name, or email"
+                    placeholder="Reg No or First name"
                     class="form-control"
                 >
             </div>
@@ -51,48 +51,50 @@
             </div>
         </form>
 
-        @if ($students->isEmpty())
-            <div class="empty-state">No students found matching your criteria.</div>
-        @else
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Reg No</th>
-                            <th>Full Name</th>
-                            <th>Email</th>
-                            <th>Department</th>
-                            <th>Semester</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($students as $student)
+        @if ($hasFilter && $students !== null)
+            @if ($students->isEmpty())
+                <div class="empty-state">No students found matching your criteria.</div>
+            @else
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td><strong>{{ $student->student_number }}</strong></td>
-                                <td>{{ $student->full_name }}</td>
-                                <td>{{ $student->user?->email }}</td>
-                                <td>{{ $student->department?->name }} ({{ $student->department?->code }})</td>
-                                <td>Semester {{ $student->year_of_study }}</td>
-                                <td>
-                                    <div class="actions-group">
-                                        <a href="{{ route('admin.students.show', $student) }}" class="btn btn-secondary btn-sm">View</a>
-                                        <a href="{{ route('admin.students.edit', $student) }}" class="btn btn-secondary btn-sm">Edit</a>
-                                        <form method="POST" action="{{ route('admin.students.destroy', $student) }}" onsubmit="return confirm('Are you sure you want to delete this student profile and account?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
+                                <th>Reg No</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Semester</th>
+                                <th>Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @foreach ($students as $student)
+                                <tr>
+                                    <td><strong>{{ $student->student_number }}</strong></td>
+                                    <td>{{ $student->full_name }}</td>
+                                    <td>{{ $student->user?->email }}</td>
+                                    <td>{{ $student->department?->name }} ({{ $student->department?->code }})</td>
+                                    <td>Semester {{ $student->year_of_study }}</td>
+                                    <td>
+                                        <div class="actions-group">
+                                            <a href="{{ route('admin.students.show', $student) }}" class="btn btn-secondary btn-sm">View</a>
+                                            <a href="{{ route('admin.students.edit', $student) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                            <form method="POST" action="{{ route('admin.students.destroy', $student) }}" onsubmit="return confirm('Are you sure you want to delete this student profile and account?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="pagination-wrapper">
-                {{ $students->links() }}
-            </div>
+                <div class="pagination-wrapper">
+                    {{ $students->links() }}
+                </div>
+            @endif
         @endif
 @endsection

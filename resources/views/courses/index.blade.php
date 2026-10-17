@@ -44,56 +44,58 @@
         </form>
     @endif
 
-    @if ($courses->isEmpty())
-        <div class="empty-state">No courses found.</div>
-    @else
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Department</th>
-                        <th>Credits</th>
-                        <th>Assigned Teacher</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($courses as $course)
+    @if (!empty($isTeacherView) || ($hasFilter && $courses !== null))
+        @if ($courses->isEmpty())
+            <div class="empty-state">No courses found.</div>
+        @else
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td><strong>{{ $course->code }}</strong></td>
-                            <td>{{ $course->name }}</td>
-                            <td>{{ $course->department?->name }} ({{ $course->department?->code }})</td>
-                            <td>{{ $course->credits }}</td>
-                            <td>{{ $course->teacher?->user?->name ?? 'Unassigned' }}</td>
-                            <td>
-                                @if (!empty($isTeacherView))
-                                    <div class="actions-group">
-                                        <a href="{{ route('teacher.courses.show', $course) }}" class="btn btn-secondary btn-sm">Students</a>
-                                        <a href="{{ route('teacher.attendance.create', ['course_id' => $course->id]) }}" class="btn btn-primary btn-sm">Attendance</a>
-                                        <a href="{{ route('teacher.assessments.create', ['course_id' => $course->id]) }}" class="btn btn-secondary btn-sm">Marks</a>
-                                    </div>
-                                @else
-                                    <div class="actions-group">
-                                        <a href="{{ route('admin.courses.show', $course) }}" class="btn btn-secondary btn-sm">View</a>
-                                        <a href="{{ route('admin.courses.edit', $course) }}" class="btn btn-secondary btn-sm">Edit</a>
-                                        <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" onsubmit="return confirm('Are you sure you want to delete this course?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                        </form>
-                                    </div>
-                                @endif
-                            </td>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Credits</th>
+                            <th>Assigned Faculty</th>
+                            <th>Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @foreach ($courses as $course)
+                            <tr>
+                                <td><strong>{{ $course->code }}</strong></td>
+                                <td>{{ $course->name }}</td>
+                                <td>{{ $course->department?->name }} ({{ $course->department?->code }})</td>
+                                <td>{{ $course->credits }}</td>
+                                <td>{{ $course->teacher?->user?->name ?? 'Unassigned' }}</td>
+                                <td>
+                                    @if (!empty($isTeacherView))
+                                        <div class="actions-group">
+                                            <a href="{{ route('teacher.courses.show', $course) }}" class="btn btn-secondary btn-sm">Students</a>
+                                            <a href="{{ route('teacher.attendance.create', ['course_id' => $course->id]) }}" class="btn btn-primary btn-sm">Attendance</a>
+                                            <a href="{{ route('teacher.assessments.create', ['course_id' => $course->id]) }}" class="btn btn-secondary btn-sm">Marks</a>
+                                        </div>
+                                    @else
+                                        <div class="actions-group">
+                                            <a href="{{ route('admin.courses.show', $course) }}" class="btn btn-secondary btn-sm">View</a>
+                                            <a href="{{ route('admin.courses.edit', $course) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                            <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" onsubmit="return confirm('Are you sure you want to delete this course?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="pagination-wrapper">
-            {{ $courses->links() }}
-        </div>
+            <div class="pagination-wrapper">
+                {{ $courses->links() }}
+            </div>
+        @endif
     @endif
 @endsection

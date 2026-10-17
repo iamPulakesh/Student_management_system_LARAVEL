@@ -26,17 +26,6 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label for="description" class="form-label">Description</label>
-    <textarea
-        id="description"
-        name="description"
-        rows="3"
-        class="form-control"
-    >{{ old('description', $department->description) }}</textarea>
-    <x-form-error field="description" />
-</div>
-
 <div class="actions-group">
     <button type="submit" class="btn btn-primary">{{ $submitLabel ?? 'Save Department' }}</button>
     <a href="{{ route('admin.departments.index') }}" class="btn btn-secondary">Cancel</a>

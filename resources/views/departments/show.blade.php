@@ -6,36 +6,20 @@
 @section('content')
     <div class="card-header">
         <h3 class="card-title">{{ $department->name }} ({{ $department->code }})</h3>
-        <div class="actions-group">
-            <a href="{{ route('admin.departments.edit', $department) }}" class="btn btn-primary btn-sm">Edit Department</a>
-            <a href="{{ route('admin.departments.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
-        </div>
     </div>
 
     <dl class="detail-list" style="margin-bottom: 2rem;">
-        <div class="detail-item">
-            <dt>Code</dt>
-            <dd>{{ $department->code }}</dd>
-        </div>
-        <div class="detail-item">
-            <dt>Name</dt>
-            <dd>{{ $department->name }}</dd>
-        </div>
         <div class="detail-item">
             <dt>Students</dt>
             <dd>{{ $department->students_count }}</dd>
         </div>
         <div class="detail-item">
-            <dt>Teachers</dt>
+            <dt>Faculty</dt>
             <dd>{{ $department->teachers_count }}</dd>
         </div>
         <div class="detail-item">
             <dt>Courses</dt>
             <dd>{{ $department->courses_count }}</dd>
-        </div>
-        <div class="detail-item">
-            <dt>Description</dt>
-            <dd>{{ $department->description ?: 'No description provided.' }}</dd>
         </div>
     </dl>
 
@@ -43,7 +27,6 @@
         <section>
             <div class="card-header">
                 <h3 class="card-title">Courses in {{ $department->code }}</h3>
-                <a href="{{ route('admin.courses.create') }}" class="btn btn-primary btn-sm">Add Course</a>
             </div>
 
             @if ($department->courses->isEmpty())
@@ -56,7 +39,7 @@
                                 <th>Code</th>
                                 <th>Name</th>
                                 <th>Credits</th>
-                                <th>Teacher</th>
+                                <th>Faculty</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -77,7 +60,6 @@
         <section>
             <div class="card-header">
                 <h3 class="card-title">Students in {{ $department->code }}</h3>
-                <a href="{{ route('admin.students.create') }}" class="btn btn-primary btn-sm">Add Student</a>
             </div>
 
             @if ($department->students->isEmpty())

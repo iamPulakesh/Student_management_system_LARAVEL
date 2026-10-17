@@ -10,7 +10,6 @@ class Department extends Model
     protected $fillable = [
         'name',
         'code',
-        'description',
     ];
 
     public function students(): HasMany

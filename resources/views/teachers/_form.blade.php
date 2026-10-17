@@ -1,6 +1,6 @@
 <div class="form-grid">
     <div class="form-group">
-        <label for="employee_number" class="form-label">Employee Number *</label>
+        <label for="employee_number" class="form-label">Employee Code *</label>
         <input
             id="employee_number"
             type="text"
@@ -29,8 +29,33 @@
     </div>
 
     <div class="form-group">
+        <label for="email" class="form-label">Email Address *</label>
+        <input
+            id="email"
+            type="email"
+            name="email"
+            value="{{ old('email', $teacher->user?->email) }}"
+            class="form-control"
+            required
+        >
+        <x-form-error field="email" />
+    </div>
+
+    <div class="form-group">
+        <label for="phone" class="form-label">Phone No</label>
+        <input
+            id="phone"
+            type="text"
+            name="phone"
+            value="{{ old('phone', $teacher->phone) }}"
+            class="form-control"
+        >
+        <x-form-error field="phone" />
+    </div>
+
+    <div class="form-group">
         <label for="password" class="form-label">
-            Account Password {{ $teacher->exists ? '(Leave blank to keep current)' : '*' }}
+            {{ $teacher->exists ? 'Reset Password' : 'Password *' }}
         </label>
         <input
             id="password"
@@ -40,7 +65,6 @@
             {{ $teacher->exists ? '' : 'required' }}
             autocomplete="new-password"
         >
-        <span class="form-help">Minimum 8 characters.</span>
         <x-form-error field="password" />
     </div>
 
@@ -62,6 +86,6 @@
 </div>
 
 <div class="actions-group">
-    <button type="submit" class="btn btn-primary">{{ $submitLabel ?? 'Save Teacher' }}</button>
+    <button type="submit" class="btn btn-primary">{{ $submitLabel ?? 'Save Faculty' }}</button>
     <a href="{{ route('admin.teachers.index') }}" class="btn btn-secondary">Cancel</a>
 </div>

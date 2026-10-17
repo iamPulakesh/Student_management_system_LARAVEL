@@ -6,6 +6,6 @@
 @section('content')
     <form method="POST" action="{{ route('admin.departments.store') }}">
         @csrf
-        @include('departments._form', ['submitLabel' => 'Create Department'])
+        @include('departments._form', ['submitLabel' => 'Create'])
     </form>
 @endsection
