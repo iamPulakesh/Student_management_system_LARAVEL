@@ -25,6 +25,14 @@ class CourseController extends Controller
             || ($departmentId !== null && $departmentId !== '')
             || ($semester !== null && $semester !== '');
 
+        if ($request->hasAny(['search', 'department_id', 'semester'])) {
+            $request->validate([
+                'department_id' => ['required', 'integer', 'exists:departments,id'],
+            ], [], [
+                'department_id' => 'department',
+            ]);
+        }
+
         $courses = null;
 
         if ($hasFilter) {

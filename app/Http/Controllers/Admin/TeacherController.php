@@ -21,6 +21,14 @@ class TeacherController extends Controller
 
         $hasFilter = $search !== '' || ($departmentId !== null && $departmentId !== '');
 
+        if ($request->hasAny(['search', 'department_id'])) {
+            $request->validate([
+                'department_id' => ['required', 'integer', 'exists:departments,id'],
+            ], [], [
+                'department_id' => 'department',
+            ]);
+        }
+
         $teachers = null;
 
         if ($hasFilter) {

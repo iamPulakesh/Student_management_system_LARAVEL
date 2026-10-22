@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAttendanceRequest;
 use App\Models\Attendance;
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -23,22 +24,29 @@ class AttendanceController extends Controller
     public function index(Request $request): View
     {
         $routePrefix = $this->routePrefix($request);
-        $courses = $this->allowedCoursesQuery($request)->get();
-        $allowedCourseIds = $courses->pluck('id');
+        $allCourses = $this->allowedCoursesQuery($request)->get();
+        $allowedCourseIds = $allCourses->pluck('id');
 
+        $departmentId = $request->input('department_id');
         $courseId = $request->input('course_id');
         $attendanceDate = trim((string) $request->input('attendance_date', ''));
         $selectedCourse = null;
 
-        if ($request->user()->isAdmin() && ($request->has('course_id') || $request->has('attendance_date'))) {
+        if ($request->user()->isAdmin() && ($request->has('course_id') || $request->has('attendance_date') || $request->has('department_id'))) {
             $request->validate([
+                'department_id' => ['required', 'integer', 'exists:departments,id'],
                 'course_id' => ['required', 'integer', 'exists:courses,id'],
                 'attendance_date' => ['required', 'date', 'before_or_equal:today'],
             ], [], [
+                'department_id' => 'department',
                 'course_id' => 'course',
                 'attendance_date' => 'date',
             ]);
         }
+
+        $courses = $allCourses
+            ->when($departmentId, fn ($c) => $c->where('department_id', (int) $departmentId))
+            ->values();
 
         if ($courseId !== null && $courseId !== '') {
             $selectedCourse = Course::with('department')->findOrFail((int) $courseId);
@@ -94,9 +102,25 @@ class AttendanceController extends Controller
             });
         }
 
+        $departments = $request->user()->isAdmin()
+            ? Department::query()->orderBy('name')->get()
+            : Department::query()->whereIn('id', $allCourses->pluck('department_id')->unique())->orderBy('name')->get();
+
+        $allCoursesData = $allCourses->map(fn (Course $c) => [
+            'id' => $c->id,
+            'code' => $c->code,
+            'name' => $c->name,
+            'department_id' => $c->department_id,
+            'department_code' => $c->department?->code,
+            'semester' => $c->semester,
+        ])->values();
+
         return view('attendance.index', [
             'routePrefix' => $routePrefix,
+            'departments' => $departments,
+            'departmentId' => $departmentId,
             'courses' => $courses,
+            'allCoursesData' => $allCoursesData,
             'selectedCourse' => $selectedCourse,
             'courseId' => $courseId,
             'attendanceDate' => $attendanceDate,

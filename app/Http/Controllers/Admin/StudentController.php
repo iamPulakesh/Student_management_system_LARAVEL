@@ -26,6 +26,14 @@ class StudentController extends Controller
             || ($departmentId !== null && $departmentId !== '')
             || ($yearOfStudy !== null && $yearOfStudy !== '');
 
+        if ($request->hasAny(['search', 'department_id', 'year_of_study'])) {
+            $request->validate([
+                'department_id' => ['required', 'integer', 'exists:departments,id'],
+            ], [], [
+                'department_id' => 'department',
+            ]);
+        }
+
         $students = null;
 
         if ($hasFilter) {

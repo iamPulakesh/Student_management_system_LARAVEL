@@ -22,8 +22,8 @@
             </div>
 
             <div class="form-group">
-                <label for="department_id" class="form-label">Department</label>
-                <select id="department_id" name="department_id" class="form-control">
+                <label for="department_id" class="form-label">Department <span class="required">*</span></label>
+                <select id="department_id" name="department_id" class="form-control" required>
                     <option value="">Select Department...</option>
                     @foreach ($departments as $department)
                         <option value="{{ $department->id }}" @selected((string) $selectedDepartmentId === (string) $department->id)>

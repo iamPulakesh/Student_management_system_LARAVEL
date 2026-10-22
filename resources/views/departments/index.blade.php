@@ -8,24 +8,6 @@
         <a href="{{ route('admin.departments.create') }}" class="btn btn-primary">Add Department</a>
     </div>
 
-    <form method="GET" action="{{ route('admin.departments.index') }}" class="filter-bar">
-        <div class="form-group">
-            <label for="search" class="form-label">Search by Name or Code</label>
-            <input
-                id="search"
-                type="text"
-                name="search"
-                value="{{ $search }}"
-                placeholder="e.g. Computer Science or CSE"
-                class="form-control"
-            >
-        </div>
-        <div class="actions-group">
-            <button type="submit" class="btn btn-primary">Filter</button>
-            <a href="{{ route('admin.departments.index') }}" class="btn btn-secondary">Reset</a>
-        </div>
-    </form>
-
     @if ($departments->isEmpty())
         <div class="empty-state">No departments found.</div>
     @else

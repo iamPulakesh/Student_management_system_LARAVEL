@@ -21,6 +21,19 @@
 
     <form method="GET" action="{{ route($routePrefix . '.attendance.index') }}" class="filter-bar">
         <div class="form-group">
+            <label for="department_id" class="form-label">Department @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
+            <select id="department_id" name="department_id" class="form-control" {{ $routePrefix === 'admin' ? 'required' : '' }}>
+                <option value="">Select Department...</option>
+                @foreach ($departments as $department)
+                    <option value="{{ $department->id }}" @selected((string) old('department_id', $departmentId) === (string) $department->id)>
+                        {{ $department->name }} ({{ $department->code }})
+                    </option>
+                @endforeach
+            </select>
+            <x-form-error field="department_id" />
+        </div>
+
+        <div class="form-group">
             <label for="course_id" class="form-label">Course @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
             <select id="course_id" name="course_id" class="form-control" {{ $routePrefix === 'admin' ? 'required' : '' }}>
                 <option value="">{{ $routePrefix === 'admin' ? 'Select a Course...' : 'All Courses' }}</option>
@@ -49,7 +62,7 @@
 
         <div class="actions-group">
             <button type="submit" class="btn btn-primary">Filter</button>
-            @if ($courseId || $attendanceDate !== '')
+            @if ($departmentId || $courseId || $attendanceDate !== '')
                 <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary">Reset</a>
             @endif
         </div>
@@ -127,4 +140,47 @@
     @elseif ($routePrefix === 'admin')
 
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deptSelect = document.getElementById('department_id');
+            const courseSelect = document.getElementById('course_id');
+
+            if (!deptSelect || !courseSelect) {
+                return;
+            }
+
+            const allCourses = @json($allCoursesData ?? []);
+            const placeholderText = "{{ $routePrefix === 'admin' ? 'Select a Course...' : 'All Courses' }}";
+
+            function updateCourses() {
+                const selectedDept = deptSelect.value;
+                const selectedCourseId = courseSelect.value;
+
+                const filtered = allCourses.filter(function (c) {
+                    return !selectedDept || String(c.department_id) === String(selectedDept);
+                });
+
+                courseSelect.innerHTML = '<option value="">' + placeholderText + '</option>';
+                let courseFound = false;
+
+                filtered.forEach(function (c) {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.code + ' — ' + c.name + (c.department_code ? ' (' + c.department_code + ')' : '');
+                    if (String(c.id) === String(selectedCourseId)) {
+                        opt.selected = true;
+                        courseFound = true;
+                    }
+                    courseSelect.appendChild(opt);
+                });
+
+                if (!courseFound && selectedCourseId) {
+                    courseSelect.value = '';
+                }
+            }
+
+            deptSelect.addEventListener('change', updateCourses);
+        });
+    </script>
 @endsection

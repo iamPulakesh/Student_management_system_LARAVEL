@@ -12,25 +12,15 @@ use Illuminate\View\View;
 
 class DepartmentController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): View
     {
-        $search = trim((string) $request->query('search', ''));
-
         $departments = Department::query()
             ->withCount(['students', 'teachers', 'courses'])
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($subQuery) use ($search) {
-                    $subQuery->where('name', 'like', "%{$search}%")
-                        ->orWhere('code', 'like', "%{$search}%");
-                });
-            })
             ->orderBy('name')
-            ->paginate(10)
-            ->withQueryString();
+            ->paginate(10);
 
         return view('departments.index', [
             'departments' => $departments,
-            'search' => $search,
         ]);
     }
 
