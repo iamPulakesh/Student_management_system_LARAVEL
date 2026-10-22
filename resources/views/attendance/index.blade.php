@@ -21,8 +21,8 @@
 
     <form method="GET" action="{{ route($routePrefix . '.attendance.index') }}" class="filter-bar">
         <div class="form-group">
-            <label for="department_id" class="form-label">Department @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
-            <select id="department_id" name="department_id" class="form-control" {{ $routePrefix === 'admin' ? 'required' : '' }}>
+            <label for="department_id">Department @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
+            <select id="department_id" name="department_id" {{ $routePrefix === 'admin' ? 'required' : '' }}>
                 <option value="">Select Department...</option>
                 @foreach ($departments as $department)
                     <option value="{{ $department->id }}" @selected((string) old('department_id', $departmentId) === (string) $department->id)>
@@ -34,8 +34,8 @@
         </div>
 
         <div class="form-group">
-            <label for="course_id" class="form-label">Course @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
-            <select id="course_id" name="course_id" class="form-control" {{ $routePrefix === 'admin' ? 'required' : '' }}>
+            <label for="course_id">Course @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
+            <select id="course_id" name="course_id" {{ $routePrefix === 'admin' ? 'required' : '' }}>
                 <option value="">{{ $routePrefix === 'admin' ? 'Select a Course...' : 'All Courses' }}</option>
                 @if ($departmentId)
                     @foreach ($courses as $course)
@@ -49,21 +49,20 @@
         </div>
 
         <div class="form-group">
-            <label for="attendance_date" class="form-label">Date @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
+            <label for="attendance_date">Date @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
             <input
                 type="date"
                 id="attendance_date"
                 name="attendance_date"
                 value="{{ old('attendance_date', $attendanceDate) }}"
                 max="{{ now()->toDateString() }}"
-                class="form-control"
                 {{ $routePrefix === 'admin' ? 'required' : '' }}
             >
             <x-form-error field="attendance_date" />
         </div>
 
         <div class="actions-group">
-            <button type="submit" class="btn btn-primary">Filter</button>
+            <button type="submit" class="btn btn-secondary">Filter</button>
             @if ($departmentId || $courseId || $attendanceDate !== '')
                 <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary">Reset</a>
             @endif

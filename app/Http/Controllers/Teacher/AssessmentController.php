@@ -7,10 +7,12 @@ use App\Http\Requests\StoreAssessmentRequest;
 use App\Http\Requests\UpdateAssessmentRequest;
 use App\Models\Assessment;
 use App\Models\Course;
+use App\Models\Department;
 use App\Models\Student;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AssessmentController extends Controller
@@ -21,11 +23,28 @@ class AssessmentController extends Controller
     public function index(Request $request): View
     {
         $routePrefix = $this->routePrefix($request);
-        $courses = $this->allowedCoursesQuery($request)->get();
-        $allowedCourseIds = $courses->pluck('id');
+        $hasAssessmentFilters = $request->hasAny(['department_id', 'course_id', 'search']);
+        $filterRequiredRule = $request->user()->isAdmin() && $hasAssessmentFilters ? 'required' : 'nullable';
+        $courseExistsRule = Rule::exists('courses', 'id');
 
-        $courseId = $request->input('course_id');
-        $search = trim((string) $request->input('search', ''));
+        if ($request->user()->isAdmin() && $hasAssessmentFilters) {
+            $courseExistsRule->where('department_id', $request->input('department_id'));
+        }
+
+        $filters = $request->validate([
+            'department_id' => [$filterRequiredRule, 'integer', 'exists:departments,id'],
+            'course_id' => [$filterRequiredRule, 'integer', $courseExistsRule],
+            'search' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $departmentId = $request->user()->isAdmin() ? ($filters['department_id'] ?? null) : null;
+        $allCourses = $this->allowedCoursesQuery($request)->get();
+        $courses = $allCourses
+            ->when($departmentId, fn ($items) => $items->where('department_id', (int) $departmentId))
+            ->values();
+        $allowedCourseIds = $allCourses->pluck('id');
+        $courseId = $filters['course_id'] ?? null;
+        $search = trim($filters['search'] ?? '');
         $selectedCourse = null;
 
         if ($courseId !== null && $courseId !== '') {
@@ -39,6 +58,10 @@ class AssessmentController extends Controller
             $query->whereIn('course_id', $allowedCourseIds);
         }
 
+        if ($departmentId !== null) {
+            $query->whereHas('course', fn ($courseQuery) => $courseQuery->where('department_id', $departmentId));
+        }
+
         if ($selectedCourse !== null) {
             $query->where('course_id', $selectedCourse->id);
         }
@@ -46,15 +69,15 @@ class AssessmentController extends Controller
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('student', function ($sq) use ($search) {
-                        $sq->where('student_number', 'like', "%{$search}%");
-                    })
+                    $sq->where('student_number', 'like', "%{$search}%");
+                })
                     ->orWhereHas('course', function ($cq) use ($search) {
                         $cq->where('code', 'like', "%{$search}%");
                     });
             });
         }
 
-        $isFiltered = $request->hasAny(['course_id', 'search']);
+        $isFiltered = $departmentId !== null || $courseId !== null || $search !== '';
 
         $assessments = ($routePrefix === 'admin' && ! $isFiltered)
             ? Assessment::whereRaw('1 = 0')->paginate(15)
@@ -62,7 +85,18 @@ class AssessmentController extends Controller
 
         return view('assessments.index', [
             'routePrefix' => $routePrefix,
+            'departments' => $request->user()->isAdmin()
+                ? Department::query()->orderBy('name')->get()
+                : collect(),
+            'departmentId' => $departmentId,
             'courses' => $courses,
+            'allCoursesData' => $allCourses->map(fn (Course $course) => [
+                'id' => $course->id,
+                'code' => $course->code,
+                'name' => $course->name,
+                'department_id' => $course->department_id,
+                'department_code' => $course->department?->code,
+            ])->values(),
             'selectedCourse' => $selectedCourse,
             'courseId' => $courseId,
             'search' => $search,
@@ -125,7 +159,7 @@ class AssessmentController extends Controller
         ]);
 
         return redirect()
-            ->route($this->routePrefix($request) . '.assessments.index', ['course_id' => $course->id])
+            ->route($this->routePrefix($request).'.assessments.index', ['course_id' => $course->id])
             ->with('success', 'Assessment mark recorded successfully.');
     }
 
@@ -183,7 +217,10 @@ class AssessmentController extends Controller
         ]);
 
         return redirect()
-            ->route($this->routePrefix($request) . '.assessments.index', ['course_id' => $newCourse->id])
+            ->route($this->routePrefix($request).'.assessments.index', [
+                'department_id' => $newCourse->department_id,
+                'course_id' => $newCourse->id,
+            ])
             ->with('success', 'Assessment mark updated successfully.');
     }
 
@@ -202,7 +239,7 @@ class AssessmentController extends Controller
         $assessment->delete();
 
         return redirect()
-            ->route($this->routePrefix($request) . '.assessments.index')
+            ->route($this->routePrefix($request).'.assessments.index')
             ->with('success', 'Assessment mark deleted successfully.');
     }
 
@@ -240,6 +277,7 @@ class AssessmentController extends Controller
 
         if ($request->user()->isTeacher()) {
             $departmentIds = $courses->pluck('department_id')->unique()->values();
+
             return $query->whereIn('department_id', $departmentIds);
         }
 
