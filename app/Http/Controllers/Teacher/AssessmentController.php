@@ -45,11 +45,11 @@ class AssessmentController extends Controller
 
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
-                $q->where('assessment_name', 'like', "%{$search}%")
-                    ->orWhereHas('student', function ($sq) use ($search) {
-                        $sq->where('student_number', 'like', "%{$search}%")
-                            ->orWhere('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%");
+                $q->whereHas('student', function ($sq) use ($search) {
+                        $sq->where('student_number', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('course', function ($cq) use ($search) {
+                        $cq->where('code', 'like', "%{$search}%");
                     });
             });
         }

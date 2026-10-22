@@ -37,11 +37,13 @@
             <label for="course_id" class="form-label">Course @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
             <select id="course_id" name="course_id" class="form-control" {{ $routePrefix === 'admin' ? 'required' : '' }}>
                 <option value="">{{ $routePrefix === 'admin' ? 'Select a Course...' : 'All Courses' }}</option>
-                @foreach ($courses as $course)
-                    <option value="{{ $course->id }}" {{ (string) old('course_id', $courseId) === (string) $course->id ? 'selected' : '' }}>
-                        {{ $course->code }} — {{ $course->name }} ({{ $course->department?->code }})
-                    </option>
-                @endforeach
+                @if ($departmentId)
+                    @foreach ($courses as $course)
+                        <option value="{{ $course->id }}" {{ (string) old('course_id', $courseId) === (string) $course->id ? 'selected' : '' }}>
+                            {{ $course->code }} — {{ $course->name }} ({{ $course->department?->code }})
+                        </option>
+                    @endforeach
+                @endif
             </select>
             <x-form-error field="course_id" />
         </div>
@@ -157,11 +159,16 @@
                 const selectedDept = deptSelect.value;
                 const selectedCourseId = courseSelect.value;
 
+                courseSelect.innerHTML = '<option value="">' + placeholderText + '</option>';
+
+                if (!selectedDept) {
+                    return;
+                }
+
                 const filtered = allCourses.filter(function (c) {
-                    return !selectedDept || String(c.department_id) === String(selectedDept);
+                    return String(c.department_id) === String(selectedDept);
                 });
 
-                courseSelect.innerHTML = '<option value="">' + placeholderText + '</option>';
                 let courseFound = false;
 
                 filtered.forEach(function (c) {

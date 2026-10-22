@@ -33,7 +33,7 @@
                 id="search"
                 name="search"
                 value="{{ $search }}"
-                placeholder="Assessment name or student..."
+                placeholder="Reg No or Course Code"
             >
         </div>
 
