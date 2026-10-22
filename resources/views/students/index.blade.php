@@ -10,20 +10,19 @@
 
         <form method="GET" action="{{ route('admin.students.index') }}" class="filter-bar">
             <div class="form-group">
-                <label for="search" class="form-label">Search</label>
+                <label for="search">Search</label>
                 <input
                     id="search"
                     type="text"
                     name="search"
                     value="{{ $search }}"
                     placeholder="Reg No or First name"
-                    class="form-control"
                 >
             </div>
 
             <div class="form-group">
-                <label for="department_id" class="form-label">Department <span class="required">*</span></label>
-                <select id="department_id" name="department_id" class="form-control" required>
+                <label for="department_id">Department <span class="required">*</span></label>
+                <select id="department_id" name="department_id" required>
                     <option value="">Select Department...</option>
                     @foreach ($departments as $department)
                         <option value="{{ $department->id }}" @selected((string) $selectedDepartmentId === (string) $department->id)>
@@ -34,8 +33,8 @@
             </div>
 
             <div class="form-group">
-                <label for="year_of_study" class="form-label">Semester</label>
-                <select id="year_of_study" name="year_of_study" class="form-control">
+                <label for="year_of_study">Semester</label>
+                <select id="year_of_study" name="year_of_study">
                     <option value="">Select Semester...</option>
                     @for ($sem = 1; $sem <= 8; $sem++)
                         <option value="{{ $sem }}" @selected((string) $selectedYear === (string) $sem)>
@@ -46,7 +45,7 @@
             </div>
 
             <div class="actions-group">
-                <button type="submit" class="btn btn-primary">Filter</button>
+                <button type="submit" class="btn btn-secondary">Filter</button>
                 <a href="{{ route('admin.students.index') }}" class="btn btn-secondary">Reset</a>
             </div>
         </form>

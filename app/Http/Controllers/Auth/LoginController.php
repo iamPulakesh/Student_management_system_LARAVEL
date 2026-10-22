@@ -27,6 +27,9 @@ class LoginController extends Controller
             'role' => ['nullable', 'string', Rule::in(User::ROLES)],
             'login_id' => ['required', 'string'],
             'password' => ['required', 'string'],
+        ], [
+            'login_id.required' => 'This field is required.',
+            'password.required' => 'This field is required.',
         ]);
 
         $loginId = trim($credentials['login_id']);
@@ -58,7 +61,7 @@ class LoginController extends Controller
 
         if (! $attemptSuccess) {
             return back()
-                ->withErrors(['login_id' => 'The provided credentials do not match our records.'])
+                ->withErrors(['login_id' => 'Invalid Credentials.'])
                 ->onlyInput('login_id', 'role');
         }
 

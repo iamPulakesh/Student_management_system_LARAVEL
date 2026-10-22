@@ -1,17 +1,9 @@
 @extends('layouts.app')
 
 @section('title', 'Attendance')
-@section('heading', 'Attendance Management')
 
 @section('content')
-    @if ($routePrefix === 'teacher')
-        <div class="alert alert-info">
-            <strong>Prototype Scope:</strong> One attendance record is stored per student, course, and date (single daily session per course).
-        </div>
-    @endif
-
-    <div class="card-header">
-        <h3 class="card-title">Attendance Records</h3>
+    <div class="card-header" style="justify-content: flex-end;">
         @if ($routePrefix === 'teacher')
             <a href="{{ route('teacher.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn btn-primary">
                 Record Attendance

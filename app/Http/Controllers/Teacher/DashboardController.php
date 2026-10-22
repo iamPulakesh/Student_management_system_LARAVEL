@@ -14,55 +14,15 @@ class DashboardController extends Controller
 {
     public function index(Request $request): View
     {
-        $teacher = $request->user()->teacher()->with('department')->firstOrFail();
+        $teacher = $request->user()->teacher()->firstOrFail();
 
-        $assignedCourses = Course::query()
-            ->with('department')
-            ->where('teacher_id', $teacher->id)
-            ->addSelect([
-                'eligible_students_count' => Student::query()
-                    ->selectRaw('count(*)')
-                    ->whereColumn('students.department_id', 'courses.department_id'),
-            ])
-            ->orderBy('code')
-            ->get();
-
-        $courseIds = $assignedCourses->pluck('id');
-
-        $totalAttendanceRecorded = $courseIds->isNotEmpty()
-            ? Attendance::query()->whereIn('course_id', $courseIds)->count()
-            : 0;
-
-        $totalAssessmentsRecorded = $courseIds->isNotEmpty()
-            ? Assessment::query()->whereIn('course_id', $courseIds)->count()
-            : 0;
-
-        $recentAttendances = $courseIds->isNotEmpty()
-            ? Attendance::query()
-                ->with(['student', 'course'])
-                ->whereIn('course_id', $courseIds)
-                ->latest('attendance_date')
-                ->latest('id')
-                ->take(5)
-                ->get()
-            : collect();
-
-        $recentAssessments = $courseIds->isNotEmpty()
-            ? Assessment::query()
-                ->with(['student', 'course'])
-                ->whereIn('course_id', $courseIds)
-                ->latest()
-                ->take(5)
-                ->get()
-            : collect();
+        $courseIds = Course::query()->where('teacher_id', $teacher->id)->pluck('id');
 
         return view('teacher.dashboard', [
             'teacher' => $teacher,
-            'assignedCourses' => $assignedCourses,
-            'totalAttendanceRecorded' => $totalAttendanceRecorded,
-            'totalAssessmentsRecorded' => $totalAssessmentsRecorded,
-            'recentAttendances' => $recentAttendances,
-            'recentAssessments' => $recentAssessments,
+            'assignedCoursesCount' => $courseIds->count(),
+            'totalAttendanceRecorded' => Attendance::query()->whereIn('course_id', $courseIds)->count(),
+            'totalAssessmentsRecorded' => Assessment::query()->whereIn('course_id', $courseIds)->count(),
         ]);
     }
 

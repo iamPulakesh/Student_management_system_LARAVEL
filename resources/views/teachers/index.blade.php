@@ -10,20 +10,19 @@
 
     <form method="GET" action="{{ route('admin.teachers.index') }}" class="filter-bar">
         <div class="form-group">
-            <label for="search" class="form-label">Search</label>
+            <label for="search">Search</label>
             <input
                 id="search"
                 type="text"
                 name="search"
                 value="{{ $search }}"
                 placeholder="Employee Code or First name"
-                class="form-control"
             >
         </div>
 
         <div class="form-group">
-            <label for="department_id" class="form-label">Department <span class="required">*</span></label>
-            <select id="department_id" name="department_id" class="form-control" required>
+            <label for="department_id">Department <span class="required">*</span></label>
+            <select id="department_id" name="department_id" required>
                 <option value="">Select Department...</option>
                 @foreach ($departments as $department)
                     <option value="{{ $department->id }}" @selected((string) $selectedDepartmentId === (string) $department->id)>
@@ -34,7 +33,7 @@
         </div>
 
         <div class="actions-group">
-            <button type="submit" class="btn btn-primary">Filter</button>
+            <button type="submit" class="btn btn-secondary">Filter</button>
             <a href="{{ route('admin.teachers.index') }}" class="btn btn-secondary">Reset</a>
         </div>
     </form>

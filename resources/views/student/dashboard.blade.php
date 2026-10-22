@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Student Portal')
-@section('heading', 'Student Portal')
 
 @section('content')
     <div class="stats-grid">
@@ -176,7 +175,7 @@
                                     <td>{{ $assessment->course?->code }}</td>
                                     <td>{{ $assessment->assessment_name }}</td>
                                     <td>{{ $assessment->assessment_date ? $assessment->assessment_date->format('Y-m-d') : '—' }}</td>
-                                    <td>{{ number_format((float) $assessment->marks_obtained, 2) }} / {{ number_format((float) $assessment->max_marks, 2) }}</td>
+                                    <td>{{ $assessment->marks_obtained }} / {{ $assessment->max_marks }}</td>
                                     <td><strong>{{ number_format($assessment->percentage, 2) }}%</strong></td>
                                 </tr>
                             @endforeach

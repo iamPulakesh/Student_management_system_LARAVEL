@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', $teacher->user?->name ?? 'Faculty Details')
-@section('heading', 'Faculty Details')
 
 @section('content')
     <div class="card-header">

@@ -1,13 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Record Attendance')
-@section('heading', 'Record Class Attendance')
 
 @section('content')
-    <div class="alert alert-info">
-        <strong>Prototype Note:</strong> Only one attendance record per student, course, and date is allowed. Selecting a course loads all students belonging to that course's department.
-    </div>
-
     <div class="card-header">
         <h3 class="card-title">Step 1: Select Course &amp; Date</h3>
         <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary btn-sm">Back to Attendance</a>

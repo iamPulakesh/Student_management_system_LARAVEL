@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Create Student')
-@section('heading', 'Create Student Account & Profile')
 
 @section('content')
 

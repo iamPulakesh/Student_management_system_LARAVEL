@@ -65,8 +65,8 @@ class StoreAssessmentRequest extends FormRequest
                         ->where('course_id', $this->input('course_id'));
                 }),
             ],
-            'marks_obtained' => ['required', 'numeric', 'min:0', 'max:999.99', 'lte:max_marks'],
-            'max_marks' => ['required', 'numeric', 'gt:0', 'max:999.99'],
+            'marks_obtained' => ['required', 'integer', 'min:0', 'max:999', 'lte:max_marks'],
+            'max_marks' => ['required', 'integer', 'gt:0', 'max:999'],
             'assessment_date' => ['nullable', 'date', 'before_or_equal:today'],
         ];
     }

@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Record Assessment Mark')
-@section('heading', 'Record Assessment Mark')
 
 @section('content')
     <div class="card-header">

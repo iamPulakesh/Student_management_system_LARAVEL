@@ -1,15 +1,9 @@
 :root {
     --bg-body: #f4f6f9;
     --bg-surface: #ffffff;
-    --bg-sidebar: #1b2537;
-    --bg-sidebar-hover: #27354d;
-    --bg-sidebar-active: #2563eb;
     --text-main: #1e293b;
     --text-muted: #64748b;
-    --text-light: #f8fafc;
     --primary: #1d4ed8;
-    --primary-hover: #1e40af;
-    --secondary: #475569;
     --success-bg: #dcfce7;
     --success-text: #166534;
     --success-border: #86efac;
@@ -20,26 +14,16 @@
     --warning-text: #92400e;
     --warning-border: #fde68a;
     --border-color: #cbd5e1;
-    --radius: 8px;
-    --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.05);
 }
 
 /* Admin Theme */
 body.role-admin {
-    --bg-sidebar: #2a1015;
-    --bg-sidebar-hover: #3d1a22;
-    --bg-sidebar-active: #dc143c;
     --primary: #dc143c;
-    --primary-hover: #b91030;
 }
 
 /* Teacher Theme */
 body.role-teacher {
-    --bg-sidebar: #2a1d0e;
-    --bg-sidebar-hover: #3d2a14;
-    --bg-sidebar-active: #e67e22;
     --primary: #e67e22;
-    --primary-hover: #c96b1a;
 }
 
 
@@ -92,14 +76,6 @@ a:hover {
     gap: 1.25rem;
 }
 
-.topbar-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-main);
-    white-space: nowrap;
-}
-
 .nav-links {
     flex: 1;
     display: flex;
@@ -147,6 +123,7 @@ a:hover {
     align-items: center;
     gap: 1rem;
     flex-shrink: 0;
+    margin-left: auto;
 }
 
 .user-details {
@@ -180,47 +157,7 @@ a:hover {
     flex: 1;
 }
 
-/* Auth Layout */
-.auth-shell {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, #1b2537 0%, #0f172a 100%);
-}
-
-.auth-card {
-    background-color: var(--bg-surface);
-    border-radius: var(--radius);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-    width: 100%;
-    max-width: 420px;
-    padding: 2.25rem;
-}
-
-.auth-header {
-    text-align: center;
-    margin-bottom: 1.75rem;
-}
-
-.auth-header h1 {
-    margin: 0 0 0.4rem;
-    font-size: 1.4rem;
-    color: var(--text-main);
-}
-
-.auth-header p {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
 /* Content Sections & Grid */
-.card {
-    margin-bottom: 1.5rem;
-}
-
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -262,12 +199,6 @@ a:hover {
     margin-top: 0.35rem;
 }
 
-.stat-subtext {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
-}
-
 .two-col-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
@@ -283,39 +214,6 @@ a:hover {
 
 .form-group {
     margin-bottom: 1.15rem;
-}
-
-.form-label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-    font-size: 0.9rem;
-    color: var(--text-main);
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.55rem 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    background-color: #ffffff;
-    color: var(--text-main);
-}
-
-.form-control:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: 1px;
-    border-color: var(--primary);
-}
-
-.form-control:disabled,
-.form-control[readonly] {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
-    cursor: not-allowed;
-    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .form-help {
@@ -351,60 +249,16 @@ a:hover {
     min-width: 180px;
 }
 
-/* Buttons */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.55rem 1rem;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: 1px solid transparent;
+/* Links that act as buttons mimic the native button look */
+a.btn {
+    display: inline-block;
+    padding: 1px 6px;
+    font: 13.3333px Arial;
+    color: buttontext;
+    background-color: buttonface;
+    border: 1px solid #767676;
+    border-radius: 3px;
     text-decoration: none;
-    transition: background-color 0.15s ease;
-    font-family: inherit;
-}
-
-.btn:hover {
-    text-decoration: none;
-}
-
-.btn-primary {
-    background-color: var(--primary);
-    color: #ffffff;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-}
-
-.btn-secondary {
-    background-color: #e2e8f0;
-    color: var(--text-main);
-}
-
-.btn-secondary:hover {
-    background-color: #cbd5e1;
-}
-
-.btn-danger {
-    background-color: #dc2626;
-    color: #ffffff;
-}
-
-.btn-danger:hover {
-    background-color: #b91c1c;
-}
-
-.btn-sm {
-    padding: 0.35rem 0.65rem;
-    font-size: 0.82rem;
-}
-
-.btn-block {
-    width: 100%;
 }
 
 .actions-group {
@@ -464,11 +318,6 @@ a:hover {
 .badge-danger {
     background-color: var(--danger-bg);
     color: var(--danger-text);
-}
-
-.badge-neutral {
-    background-color: #e2e8f0;
-    color: #334155;
 }
 
 .alert {

@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Create Course')
-@section('heading', 'Create Course')
 
 @section('content')
     <form method="POST" action="{{ route('admin.courses.store') }}">

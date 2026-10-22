@@ -66,7 +66,6 @@
             value="{{ old('email', $student->user?->email) }}"
             class="form-control"
             required
-            placeholder="e.g. student@example.com"
         >
         <x-form-error field="email" />
     </div>
@@ -122,7 +121,6 @@
             <option value="Male" @selected(old('gender', $student->gender) === 'Male')>Male</option>
             <option value="Female" @selected(old('gender', $student->gender) === 'Female')>Female</option>
             <option value="Other" @selected(old('gender', $student->gender) === 'Other')>Other</option>
-            <option value="Prefer not to say" @selected(old('gender', $student->gender) === 'Prefer not to say')>Prefer not to say</option>
         </select>
         <x-form-error field="gender" />
     </div>
@@ -135,7 +133,6 @@
             name="phone"
             value="{{ old('phone', $student->phone) }}"
             class="form-control"
-            placeholder="e.g. 9876543210"
         >
         <x-form-error field="phone" />
     </div>

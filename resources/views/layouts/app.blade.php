@@ -16,10 +16,6 @@
         <div class="app-layout">
             <header class="topbar" aria-label="Primary Navigation">
                 <div class="topbar-inner">
-                    @if (!auth()->user()->isAdmin())
-                        <h2 class="topbar-title">@yield('heading', 'Dashboard')</h2>
-                    @endif
-
                     @if (auth()->user()->isAdmin() || auth()->user()->isTeacher())
                         <nav class="nav-links">
                             <ul>
@@ -101,13 +97,6 @@
             document.addEventListener('DOMContentLoaded', enforceMaxDateOnInputs);
             window.addEventListener('pageshow', enforceMaxDateOnInputs);
         </script>
-    @else
-        <main class="auth-shell">
-            <div class="auth-card">
-                @include('components.flash-message')
-                @yield('content')
-            </div>
-        </main>
     @endauth
 </body>
 </html>

@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', $course->code . ' — ' . $course->name)
-@section('heading', 'Course Details: ' . $course->code)
 
 @section('content')
     <div class="card-header">

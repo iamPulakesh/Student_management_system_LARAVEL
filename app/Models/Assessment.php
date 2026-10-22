@@ -20,8 +20,8 @@ class Assessment extends Model
     protected function casts(): array
     {
         return [
-            'marks_obtained' => 'decimal:2',
-            'max_marks' => 'decimal:2',
+            'marks_obtained' => 'integer',
+            'max_marks' => 'integer',
             'assessment_date' => 'date',
         ];
     }
@@ -48,11 +48,11 @@ class Assessment extends Model
 
     public function getPercentageAttribute(): float
     {
-        $max = (float) $this->max_marks;
-        if ($max <= 0.0) {
+        $max = $this->max_marks;
+        if ($max <= 0) {
             return 0.0;
         }
 
-        return round(((float) $this->marks_obtained / $max) * 100, 2);
+        return round(($this->marks_obtained / $max) * 100, 2);
     }
 }

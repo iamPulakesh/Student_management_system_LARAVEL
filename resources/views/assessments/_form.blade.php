@@ -65,9 +65,9 @@
         <label for="marks_obtained">Marks Obtained <span class="required">*</span></label>
         <input
             type="number"
-            step="0.01"
+            step="1"
             min="0"
-            max="999.99"
+            max="999"
             id="marks_obtained"
             name="marks_obtained"
             value="{{ old('marks_obtained', $assessment->marks_obtained ?? '') }}"
@@ -80,9 +80,9 @@
         <label for="max_marks">Maximum Marks <span class="required">*</span></label>
         <input
             type="number"
-            step="0.01"
-            min="0.01"
-            max="999.99"
+            step="1"
+            min="1"
+            max="999"
             id="max_marks"
             name="max_marks"
             value="{{ old('max_marks', $assessment->max_marks ?? '100') }}"

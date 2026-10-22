@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('title', !empty($isTeacherView) ? 'My Courses' : 'Courses')
-@section('heading', !empty($isTeacherView) ? 'My Assigned Courses' : 'Courses')
 
 @section('content')
     <div class="card-header">
-        <h3 class="card-title">{{ !empty($isTeacherView) ? 'Courses Assigned to Me' : 'All Courses' }}</h3>
+        <h3 class="card-title">{{ !empty($isTeacherView) ? 'Courses Assigned' : 'All Courses' }}</h3>
         @if (empty($isTeacherView))
             <a href="{{ route('admin.courses.create') }}" class="btn btn-primary">Add Course</a>
         @endif
@@ -14,20 +13,19 @@
     @if (empty($isTeacherView))
         <form method="GET" action="{{ route('admin.courses.index') }}" class="filter-bar">
             <div class="form-group">
-                <label for="search" class="form-label">Search by Code or Name</label>
+                <label for="search">Search by Code or Name</label>
                 <input
                     id="search"
                     type="text"
                     name="search"
                     value="{{ $search ?? '' }}"
                     placeholder="e.g. CS101 or Algorithms"
-                    class="form-control"
                 >
             </div>
 
             <div class="form-group">
-                <label for="department_id" class="form-label">Department <span class="required">*</span></label>
-                <select id="department_id" name="department_id" class="form-control" required>
+                <label for="department_id">Department <span class="required">*</span></label>
+                <select id="department_id" name="department_id" required>
                     <option value="">Select Department...</option>
                     @foreach ($departments as $department)
                         <option value="{{ $department->id }}" @selected((string) ($selectedDepartmentId ?? '') === (string) $department->id)>
@@ -38,8 +36,8 @@
             </div>
 
             <div class="form-group">
-                <label for="semester" class="form-label">Semester</label>
-                <select id="semester" name="semester" class="form-control">
+                <label for="semester">Semester</label>
+                <select id="semester" name="semester">
                     <option value="">Select Semester...</option>
                     @for ($sem = 1; $sem <= 8; $sem++)
                         <option value="{{ $sem }}" @selected((string) ($selectedSemester ?? '') === (string) $sem)>
@@ -50,7 +48,7 @@
             </div>
 
             <div class="actions-group">
-                <button type="submit" class="btn btn-primary">Filter</button>
+                <button type="submit" class="btn btn-secondary">Filter</button>
                 <a href="{{ route('admin.courses.index') }}" class="btn btn-secondary">Reset</a>
             </div>
         </form>

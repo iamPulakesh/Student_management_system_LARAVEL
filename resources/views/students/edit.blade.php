@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Edit Student')
-@section('heading', 'Edit Student Profile')
 
 @section('content')
     

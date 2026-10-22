@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Edit Attendance Record')
-@section('heading', 'Edit Attendance Record')
 
 @section('content')
         <form method="POST" action="{{ route('admin.attendance.update', $attendance) }}">

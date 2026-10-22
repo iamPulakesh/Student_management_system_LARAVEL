@@ -36,7 +36,6 @@
                 <option value="Male" @selected(old('gender', $student->gender) === 'Male')>Male</option>
                 <option value="Female" @selected(old('gender', $student->gender) === 'Female')>Female</option>
                 <option value="Other" @selected(old('gender', $student->gender) === 'Other')>Other</option>
-                <option value="Prefer not to say" @selected(old('gender', $student->gender) === 'Prefer not to say')>Prefer not to say</option>
             </select>
             <x-form-error field="gender" />
         </div>

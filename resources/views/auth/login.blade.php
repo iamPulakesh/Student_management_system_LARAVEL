@@ -1,57 +1,72 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign In — {{ config('app.name', 'University SMS') }}</title>
+</head>
+<body style="margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+<div>
+    <h2 align="center">Student Management System</h2>
 
-@section('title', 'Sign In')
+    @if (session('success'))
+        <p role="status">{{ session('success') }}</p>
+    @endif
 
-@section('content')
-    <div class="auth-header">
-        <h1>University SMS</h1>
-        <p>Sign in with your university account credentials</p>
-    </div>
+    @if (session('error'))
+        <p role="alert">{{ session('error') }}</p>
+    @endif
 
     <form method="POST" action="{{ route('login.store') }}" novalidate>
         @csrf
 
-        <div class="form-group">
-            <label for="role" class="form-label">Sign In As</label>
-            <select id="role" name="role" class="form-control" required>
-                <option value="student" {{ old('role', 'student') === 'student' ? 'selected' : '' }}>Student</option>
-                <option value="teacher" {{ old('role') === 'teacher' ? 'selected' : '' }}>Faculty</option>
-                <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
-            </select>
-            <x-form-error field="role" />
-        </div>
-
-        <div class="form-group">
-            <label for="login_id" id="login-id-label" class="form-label">Reg No</label>
-            <input
-                id="login_id"
-                type="text"
-                name="login_id"
-                value="{{ old('login_id') }}"
-                class="form-control"
-                required
-                autofocus
-                autocomplete="username"
-                placeholder="Enter your Reg No"
-            >
-            <x-form-error field="login_id" />
-        </div>
-
-        <div class="form-group">
-            <label for="password" class="form-label">Password</label>
-            <input
-                id="password"
-                type="password"
-                name="password"
-                class="form-control"
-                required
-                autocomplete="current-password"
-                placeholder="Enter your password"
-            >
-            <x-form-error field="password" />
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        <table cellpadding="6">
+            <tr>
+                <td><label for="role">Sign In As</label></td>
+                <td>
+                    <select id="role" name="role" required>
+                        <option value="student" {{ old('role', 'student') === 'student' ? 'selected' : '' }}>Student</option>
+                        <option value="teacher" {{ old('role') === 'teacher' ? 'selected' : '' }}>Faculty</option>
+                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                    </select>
+                    <div style="color: red;"><x-form-error field="role" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="login_id" id="login-id-label">Reg No</label></td>
+                <td>
+                    <input
+                        id="login_id"
+                        type="text"
+                        name="login_id"
+                        value="{{ old('login_id') }}"
+                        required
+                        autofocus
+                        autocomplete="username"
+                        placeholder="Enter your Reg No"
+                    >
+                    <div style="color: red;"><x-form-error field="login_id" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="password">Password</label></td>
+                <td>
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                        placeholder="Enter your password"
+                    >
+                    <div style="color: red;"><x-form-error field="password" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><button type="submit">Sign In</button></td>
+            </tr>
+        </table>
     </form>
 
     <script>
@@ -79,4 +94,6 @@
             updateLoginField();
         })();
     </script>
-@endsection
+</div>
+</body>
+</html>

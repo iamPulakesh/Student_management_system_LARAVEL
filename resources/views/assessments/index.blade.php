@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Assessments & Marks')
-@section('heading', 'Assessments & Marks')
 
 @section('content')
     <div class="card-header">
@@ -136,7 +135,7 @@
                                 <td>{{ $assessment->student?->full_name }}</td>
                                 <td>{{ $assessment->assessment_name }}</td>
                                 <td>{{ $assessment->assessment_date ? $assessment->assessment_date->format('Y-m-d') : 'N/A' }}</td>
-                                <td>{{ number_format((float) $assessment->marks_obtained, 2) }} / {{ number_format((float) $assessment->max_marks, 2) }}</td>
+                                <td>{{ $assessment->marks_obtained }} / {{ $assessment->max_marks }}</td>
                                 <td>
                                     <span class="badge badge-info">
                                         {{ number_format($assessment->percentage, 2) }}%

@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('title', 'Edit Faculty')
-@section('heading', 'Edit Faculty Profile')
 
 @section('content')
     <form method="POST" action="{{ route('admin.teachers.update', $teacher) }}">

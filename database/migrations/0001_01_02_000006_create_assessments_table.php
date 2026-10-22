@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('students')->restrictOnDelete();
             $table->foreignId('course_id')->constrained('courses')->restrictOnDelete();
             $table->string('assessment_name', 150);
-            $table->decimal('marks_obtained', 6, 2);
-            $table->decimal('max_marks', 6, 2);
+            $table->unsignedSmallInteger('marks_obtained');
+            $table->unsignedSmallInteger('max_marks');
             $table->date('assessment_date')->nullable();
             $table->foreignId('recorded_by_user_id')->constrained('users')->restrictOnDelete();
             $table->timestamps();

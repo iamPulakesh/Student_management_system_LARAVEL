@@ -34,24 +34,27 @@ class AttendanceController extends Controller
 
         if ($request->user()->isAdmin() && ($request->has('course_id') || $request->has('attendance_date') || $request->has('department_id'))) {
             $request->validate([
-                'department_id' => ['required', 'integer', 'exists:departments,id'],
+                'department_id' => ['required_without:course_id', 'nullable', 'integer', 'exists:departments,id'],
                 'course_id' => ['required', 'integer', 'exists:courses,id'],
                 'attendance_date' => ['required', 'date', 'before_or_equal:today'],
-            ], [], [
+            ], [
+                'department_id.required_without' => 'The department field is required.',
+            ], [
                 'department_id' => 'department',
                 'course_id' => 'course',
                 'attendance_date' => 'date',
             ]);
         }
 
-        $courses = $allCourses
-            ->when($departmentId, fn ($c) => $c->where('department_id', (int) $departmentId))
-            ->values();
-
         if ($courseId !== null && $courseId !== '') {
             $selectedCourse = Course::with('department')->findOrFail((int) $courseId);
             $this->authorizeCourseAccess($request, $selectedCourse);
+            $departmentId = $selectedCourse->department_id;
         }
+
+        $courses = $allCourses
+            ->when($departmentId, fn ($c) => $c->where('department_id', (int) $departmentId))
+            ->values();
 
         $studentSummaries = collect();
         $canLoadAttendance = $selectedCourse !== null && (! $request->user()->isAdmin() || $attendanceDate !== '');
