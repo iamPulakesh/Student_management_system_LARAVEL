@@ -16,7 +16,7 @@
         <div class="app-layout">
             <header class="topbar" aria-label="Primary Navigation">
                 <div class="topbar-inner">
-                    @if (auth()->user()->isAdmin() || auth()->user()->isTeacher())
+                    @if (auth()->user()->isAdmin() || auth()->user()->isTeacher() || auth()->user()->isStudent())
                         <nav class="nav-links">
                             <ul>
                                 @if (auth()->user()->isAdmin())
@@ -52,7 +52,20 @@
                                         <a href="{{ route('teacher.attendance.index') }}" class="{{ request()->routeIs('teacher.attendance.*') ? 'active' : '' }}">Attendance</a>
                                     </li>
                                     <li>
-                                        <a href="{{ route('teacher.assessments.index') }}" class="{{ request()->routeIs('teacher.assessments.*') ? 'active' : '' }}">Assessments / Marks</a>
+                                        <a href="{{ route('teacher.assessments.index') }}" class="{{ request()->routeIs('teacher.assessments.*') ? 'active' : '' }}">Assessments</a>
+                                    </li>
+                                @elseif (auth()->user()->isStudent())
+                                    <li>
+                                        <a href="{{ route('student.dashboard') }}" class="{{ request()->routeIs('student.dashboard') ? 'active' : '' }}">Dashboard</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('student.courses') }}" class="{{ request()->routeIs('student.courses') ? 'active' : '' }}">Courses</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('student.attendance') }}" class="{{ request()->routeIs('student.attendance') ? 'active' : '' }}">Attendance</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('student.assessments') }}" class="{{ request()->routeIs('student.assessments') ? 'active' : '' }}">Assessments</a>
                                     </li>
                                 @endif
                             </ul>

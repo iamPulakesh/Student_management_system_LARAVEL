@@ -24,7 +24,7 @@
     </div>
 
     <div class="form-group">
-        <label for="student_id">Student (Must match course department) <span class="required">*</span></label>
+        <label for="student_id">Student<span class="required">*</span></label>
         <select id="student_id" name="student_id" required>
             <option value="">-- Select Student --</option>
             @foreach ($students as $student)
@@ -43,20 +43,20 @@
             id="assessment_name"
             name="assessment_name"
             value="{{ old('assessment_name', $assessment->assessment_name ?? '') }}"
-            placeholder="e.g., Midterm Exam, Assignment 1, Final Project"
             required
         >
         <x-form-error field="assessment_name" />
     </div>
 
     <div class="form-group">
-        <label for="assessment_date">Assessment Date</label>
+        <label for="assessment_date">Assessment Date <span class="required">*</span></label>
         <input
             type="date"
             id="assessment_date"
             name="assessment_date"
             value="{{ $assessmentDateValue }}"
             max="{{ now()->toDateString() }}"
+            required
         >
         <x-form-error field="assessment_date" />
     </div>

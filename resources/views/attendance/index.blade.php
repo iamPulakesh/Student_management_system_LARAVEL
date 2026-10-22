@@ -12,24 +12,26 @@
     </div>
 
     <form method="GET" action="{{ route($routePrefix . '.attendance.index') }}" class="filter-bar">
-        <div class="form-group">
-            <label for="department_id">Department @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
-            <select id="department_id" name="department_id" {{ $routePrefix === 'admin' ? 'required' : '' }}>
-                <option value="">Select Department...</option>
-                @foreach ($departments as $department)
-                    <option value="{{ $department->id }}" @selected((string) old('department_id', $departmentId) === (string) $department->id)>
-                        {{ $department->name }} ({{ $department->code }})
-                    </option>
-                @endforeach
-            </select>
-            <x-form-error field="department_id" />
-        </div>
+        @if ($routePrefix === 'admin')
+            <div class="form-group">
+                <label for="department_id">Department <span class="required">*</span></label>
+                <select id="department_id" name="department_id" required>
+                    <option value="">Select Department...</option>
+                    @foreach ($departments as $department)
+                        <option value="{{ $department->id }}" @selected((string) old('department_id', $departmentId) === (string) $department->id)>
+                            {{ $department->name }} ({{ $department->code }})
+                        </option>
+                    @endforeach
+                </select>
+                <x-form-error field="department_id" />
+            </div>
+        @endif
 
         <div class="form-group">
-            <label for="course_id">Course @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
-            <select id="course_id" name="course_id" {{ $routePrefix === 'admin' ? 'required' : '' }}>
-                <option value="">{{ $routePrefix === 'admin' ? 'Select a Course...' : 'All Courses' }}</option>
-                @if ($departmentId)
+            <label for="course_id">Course <span class="required">*</span></label>
+            <select id="course_id" name="course_id" required>
+                <option value="">Select a Course...</option>
+                @if ($routePrefix !== 'admin' || $departmentId)
                     @foreach ($courses as $course)
                         <option value="{{ $course->id }}" {{ (string) old('course_id', $courseId) === (string) $course->id ? 'selected' : '' }}>
                             {{ $course->code }} — {{ $course->name }} ({{ $course->department?->code }})
@@ -41,27 +43,27 @@
         </div>
 
         <div class="form-group">
-            <label for="attendance_date">Date @if ($routePrefix === 'admin')<span class="required">*</span>@endif</label>
+            <label for="attendance_date">Date <span class="required">*</span></label>
             <input
                 type="date"
                 id="attendance_date"
                 name="attendance_date"
                 value="{{ old('attendance_date', $attendanceDate) }}"
                 max="{{ now()->toDateString() }}"
-                {{ $routePrefix === 'admin' ? 'required' : '' }}
+                required
             >
             <x-form-error field="attendance_date" />
         </div>
 
         <div class="actions-group">
             <button type="submit" class="btn btn-secondary">Filter</button>
-            @if ($departmentId || $courseId || $attendanceDate !== '')
+            @if ($courseId || $attendanceDate !== '' || ($routePrefix === 'admin' && $departmentId))
                 <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary">Reset</a>
             @endif
         </div>
     </form>
 
-    @if ($selectedCourse !== null && ($routePrefix !== 'admin' || $attendanceDate !== ''))
+    @if ($selectedCourse !== null && $attendanceDate !== '')
         @if ($studentSummaries->isEmpty())
             <div class="empty-state">No students are currently enrolled in {{ $selectedCourse->department?->name }}.</div>
         @else
@@ -75,7 +77,9 @@
                             <th>Attendance Percentage</th>
                             <th>Status</th>
                             <th>Recorded By</th>
-                            <th>Actions</th>
+                            @if ($routePrefix === 'admin')
+                                <th>Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -98,9 +102,6 @@
                                         <span class="badge {{ $summary['attendance']->status === 'present' ? 'badge-success' : 'badge-danger' }}">
                                             {{ ucfirst($summary['attendance']->status) }}
                                         </span>
-                                        @if ($attendanceDate === '' && $summary['attendance']->attendance_date)
-                                            <div class="text-muted" style="font-size: 0.75rem;">{{ $summary['attendance']->attendance_date->format('Y-m-d') }}</div>
-                                        @endif
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
@@ -108,77 +109,76 @@
                                 <td>
                                     {{ $summary['attendance']?->recordedBy?->name ?? '—' }}
                                 </td>
-                                <td>
-                                    @if ($summary['attendance'])
-                                        <div class="actions-group">
-                                            @if ($routePrefix === 'admin')
+                                @if ($routePrefix === 'admin')
+                                    <td>
+                                        @if ($summary['attendance'])
+                                            <div class="actions-group">
                                                 <a href="{{ route('admin.attendance.edit', $summary['attendance']) }}" class="btn btn-secondary btn-sm">Edit</a>
-                                            @endif
-                                            <form method="POST" action="{{ route($routePrefix . '.attendance.destroy', $summary['attendance']) }}" onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            </form>
-                                        </div>
-                                    @else
-                                        <span class="text-muted">—</span>
-                                    @endif
-                                </td>
+                                                <form method="POST" action="{{ route('admin.attendance.destroy', $summary['attendance']) }}" onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                </form>
+                                            </div>
+                                        @else
+                                            <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         @endif
-    @elseif ($routePrefix === 'admin')
-
     @endif
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const deptSelect = document.getElementById('department_id');
-            const courseSelect = document.getElementById('course_id');
+    @if ($routePrefix === 'admin')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const deptSelect = document.getElementById('department_id');
+                const courseSelect = document.getElementById('course_id');
 
-            if (!deptSelect || !courseSelect) {
-                return;
-            }
-
-            const allCourses = @json($allCoursesData ?? []);
-            const placeholderText = "{{ $routePrefix === 'admin' ? 'Select a Course...' : 'All Courses' }}";
-
-            function updateCourses() {
-                const selectedDept = deptSelect.value;
-                const selectedCourseId = courseSelect.value;
-
-                courseSelect.innerHTML = '<option value="">' + placeholderText + '</option>';
-
-                if (!selectedDept) {
+                if (!deptSelect || !courseSelect) {
                     return;
                 }
 
-                const filtered = allCourses.filter(function (c) {
-                    return String(c.department_id) === String(selectedDept);
-                });
+                const allCourses = @json($allCoursesData);
 
-                let courseFound = false;
+                function updateCourses() {
+                    const selectedDept = deptSelect.value;
+                    const selectedCourseId = courseSelect.value;
 
-                filtered.forEach(function (c) {
-                    const opt = document.createElement('option');
-                    opt.value = c.id;
-                    opt.textContent = c.code + ' — ' + c.name + (c.department_code ? ' (' + c.department_code + ')' : '');
-                    if (String(c.id) === String(selectedCourseId)) {
-                        opt.selected = true;
-                        courseFound = true;
+                    courseSelect.innerHTML = '<option value="">Select a Course...</option>';
+
+                    if (!selectedDept) {
+                        return;
                     }
-                    courseSelect.appendChild(opt);
-                });
 
-                if (!courseFound && selectedCourseId) {
-                    courseSelect.value = '';
+                    const filtered = allCourses.filter(function (c) {
+                        return String(c.department_id) === String(selectedDept);
+                    });
+
+                    let courseFound = false;
+
+                    filtered.forEach(function (c) {
+                        const opt = document.createElement('option');
+                        opt.value = c.id;
+                        opt.textContent = c.code + ' — ' + c.name + (c.department_code ? ' (' + c.department_code + ')' : '');
+                        if (String(c.id) === String(selectedCourseId)) {
+                            opt.selected = true;
+                            courseFound = true;
+                        }
+                        courseSelect.appendChild(opt);
+                    });
+
+                    if (!courseFound && selectedCourseId) {
+                        courseSelect.value = '';
+                    }
                 }
-            }
 
-            deptSelect.addEventListener('change', updateCourses);
-        });
-    </script>
+                deptSelect.addEventListener('change', updateCourses);
+            });
+        </script>
+    @endif
 @endsection

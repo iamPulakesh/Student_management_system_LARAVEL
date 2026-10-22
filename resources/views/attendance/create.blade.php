@@ -4,8 +4,7 @@
 
 @section('content')
     <div class="card-header">
-        <h3 class="card-title">Step 1: Select Course &amp; Date</h3>
-        <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary btn-sm">Back to Attendance</a>
+        <h3 class="card-title">Select Course &amp; Date</h3>
     </div>
 
     <form method="GET" action="{{ route($routePrefix . '.attendance.create') }}" class="filter-bar">
@@ -34,14 +33,14 @@
     @if ($selectedCourse !== null)
         <div class="card-header" style="margin-top: 2rem;">
             <h3 class="card-title">
-                Step 2: Mark Attendance — {{ $selectedCourse->code }} ({{ $selectedCourse->name }})
+            Mark Attendance
             </h3>
-            <span class="badge badge-info">Department: {{ $selectedCourse->department?->name }}</span>
+
         </div>
 
             @if ($existingAttendance->isNotEmpty())
                 <div class="alert alert-warning">
-                    Attendance has already been recorded for {{ $existingAttendance->count() }} student(s) in this course on {{ $attendanceDate }}. Duplicate submissions for the same student, course, and date will be rejected.
+                    Attendance has already been recorded in this course on {{ $attendanceDate }}. Please contact admin for rectification.
                 </div>
             @endif
 
@@ -50,23 +49,20 @@
                     No students found in the {{ $selectedCourse->department?->name }} department. Add students to this department before recording attendance.
                 </div>
             @else
+                @php
+                    $unmarkedStudents = $students->filter(fn($s) => !$existingAttendance->has($s->id));
+                @endphp
+
+                @if ($unmarkedStudents->isEmpty())
+                    {{-- All students already marked, nothing to do --}}
+                @else
                 <form method="POST" action="{{ route($routePrefix . '.attendance.store') }}">
                     @csrf
                     <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
-
-                    <div class="form-group" style="max-width: 280px;">
-                        <label for="post_attendance_date">Confirm Attendance Date <span class="required">*</span></label>
-                        <input
-                            type="date"
-                            id="post_attendance_date"
-                            name="attendance_date"
-                            value="{{ old('attendance_date', $attendanceDate) }}"
-                            required
-                        >
-                        <x-form-error field="attendance_date" />
-                        <x-form-error field="course_id" />
-                        <x-form-error field="statuses" />
-                    </div>
+                    <input type="hidden" name="attendance_date" value="{{ old('attendance_date', $attendanceDate) }}">
+                    <x-form-error field="attendance_date" />
+                    <x-form-error field="course_id" />
+                    <x-form-error field="statuses" />
 
                     <div class="table-responsive">
                         <table class="data-table">
@@ -75,32 +71,19 @@
                                     <th>Registration Number</th>
                                     <th>Student Name</th>
                                     <th>Semester</th>
-                                    <th>Existing Status ({{ $attendanceDate }})</th>
-                                    <th>Mark Status</th>
+                                    <th>Mark</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($students as $student)
+                                @foreach ($unmarkedStudents as $student)
                                     @php
-                                        $currentStatus = old("statuses.{$student->id}", $existingAttendance->get($student->id, 'present'));
+                                        $currentStatus = old("statuses.{$student->id}", 'present');
                                     @endphp
                                     <tr>
                                         <td><strong>{{ $student->student_number }}</strong></td>
                                         <td>{{ $student->full_name }}</td>
                                         <td>Semester {{ $student->year_of_study }}</td>
                                         <td>
-                                            @if ($existingAttendance->has($student->id))
-                                                <span class="badge {{ $existingAttendance->get($student->id) === 'present' ? 'badge-success' : 'badge-danger' }}">
-                                                    Already Marked: {{ ucfirst($existingAttendance->get($student->id)) }}
-                                                </span>
-                                            @else
-                                                <span class="text-muted">Not recorded</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <label for="status_{{ $student->id }}" class="sr-only">
-                                                Attendance status for {{ $student->full_name }}
-                                            </label>
                                             <select id="status_{{ $student->id }}" name="statuses[{{ $student->id }}]" required>
                                                 <option value="present" {{ $currentStatus === 'present' ? 'selected' : '' }}>Present</option>
                                                 <option value="absent" {{ $currentStatus === 'absent' ? 'selected' : '' }}>Absent</option>
@@ -118,6 +101,7 @@
                         <a href="{{ route($routePrefix . '.attendance.index', ['course_id' => $selectedCourse->id]) }}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
+                @endif
             @endif
     @endif
 @endsection

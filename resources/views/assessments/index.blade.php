@@ -101,7 +101,7 @@
         </script>
     @endif
 
-    @if ($routePrefix !== 'admin' || ($isFiltered ?? false))
+    @if ($isFiltered ?? false)
         <div class="card-header">
                 <h3 class="card-title">Recorded Assessments ({{ $assessments->total() }})</h3>
             </div>

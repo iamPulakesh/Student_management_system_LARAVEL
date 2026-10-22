@@ -79,7 +79,7 @@ class AssessmentController extends Controller
 
         $isFiltered = $departmentId !== null || $courseId !== null || $search !== '';
 
-        $assessments = ($routePrefix === 'admin' && ! $isFiltered)
+        $assessments = ! $isFiltered
             ? Assessment::whereRaw('1 = 0')->paginate(15)
             : $query->orderByDesc('assessment_date')->orderByDesc('id')->paginate(15)->withQueryString();
 

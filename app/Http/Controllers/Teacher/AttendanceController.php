@@ -27,17 +27,23 @@ class AttendanceController extends Controller
         $allCourses = $this->allowedCoursesQuery($request)->get();
         $allowedCourseIds = $allCourses->pluck('id');
 
-        $departmentId = $request->input('department_id');
+        $isAdmin = $request->user()->isAdmin();
+        $departmentId = $isAdmin ? $request->input('department_id') : null;
         $courseId = $request->input('course_id');
         $attendanceDate = trim((string) $request->input('attendance_date', ''));
         $selectedCourse = null;
 
-        if ($request->user()->isAdmin() && ($request->has('course_id') || $request->has('attendance_date') || $request->has('department_id'))) {
-            $request->validate([
-                'department_id' => ['required_without:course_id', 'nullable', 'integer', 'exists:departments,id'],
+        if ($request->hasAny(['course_id', 'attendance_date', 'department_id'])) {
+            $rules = [
                 'course_id' => ['required', 'integer', 'exists:courses,id'],
                 'attendance_date' => ['required', 'date', 'before_or_equal:today'],
-            ], [
+            ];
+
+            if ($isAdmin) {
+                $rules['department_id'] = ['required_without:course_id', 'nullable', 'integer', 'exists:departments,id'];
+            }
+
+            $request->validate($rules, [
                 'department_id.required_without' => 'The department field is required.',
             ], [
                 'department_id' => 'department',
@@ -49,7 +55,10 @@ class AttendanceController extends Controller
         if ($courseId !== null && $courseId !== '') {
             $selectedCourse = Course::with('department')->findOrFail((int) $courseId);
             $this->authorizeCourseAccess($request, $selectedCourse);
-            $departmentId = $selectedCourse->department_id;
+
+            if ($isAdmin) {
+                $departmentId = $selectedCourse->department_id;
+            }
         }
 
         $courses = $allCourses
@@ -57,9 +66,8 @@ class AttendanceController extends Controller
             ->values();
 
         $studentSummaries = collect();
-        $canLoadAttendance = $selectedCourse !== null && (! $request->user()->isAdmin() || $attendanceDate !== '');
 
-        if ($canLoadAttendance) {
+        if ($selectedCourse !== null && $attendanceDate !== '') {
             $students = Student::with('user')
                 ->where('department_id', $selectedCourse->department_id)
                 ->withCount([
@@ -74,21 +82,11 @@ class AttendanceController extends Controller
                 ->orderBy('student_number')
                 ->get();
 
-            if ($attendanceDate !== '') {
-                $attendancesByStudent = Attendance::with('recordedBy')
-                    ->where('course_id', $selectedCourse->id)
-                    ->whereDate('attendance_date', $attendanceDate)
-                    ->get()
-                    ->keyBy('student_id');
-            } else {
-                $attendancesByStudent = Attendance::with('recordedBy')
-                    ->where('course_id', $selectedCourse->id)
-                    ->orderByDesc('attendance_date')
-                    ->orderByDesc('id')
-                    ->get()
-                    ->unique('student_id')
-                    ->keyBy('student_id');
-            }
+            $attendancesByStudent = Attendance::with('recordedBy')
+                ->where('course_id', $selectedCourse->id)
+                ->whereDate('attendance_date', $attendanceDate)
+                ->get()
+                ->keyBy('student_id');
 
             $studentSummaries = $students->map(function (Student $student) use ($attendancesByStudent) {
                 $total = (int) $student->total_attendance_count;
@@ -105,22 +103,19 @@ class AttendanceController extends Controller
             });
         }
 
-        $departments = $request->user()->isAdmin()
-            ? Department::query()->orderBy('name')->get()
-            : Department::query()->whereIn('id', $allCourses->pluck('department_id')->unique())->orderBy('name')->get();
-
-        $allCoursesData = $allCourses->map(fn (Course $c) => [
-            'id' => $c->id,
-            'code' => $c->code,
-            'name' => $c->name,
-            'department_id' => $c->department_id,
-            'department_code' => $c->department?->code,
-            'semester' => $c->semester,
-        ])->values();
+        $allCoursesData = $isAdmin
+            ? $allCourses->map(fn (Course $c) => [
+                'id' => $c->id,
+                'code' => $c->code,
+                'name' => $c->name,
+                'department_id' => $c->department_id,
+                'department_code' => $c->department?->code,
+            ])->values()
+            : collect();
 
         return view('attendance.index', [
             'routePrefix' => $routePrefix,
-            'departments' => $departments,
+            'departments' => $isAdmin ? Department::query()->orderBy('name')->get() : collect(),
             'departmentId' => $departmentId,
             'courses' => $courses,
             'allCoursesData' => $allCoursesData,
@@ -294,22 +289,15 @@ class AttendanceController extends Controller
     /**
      * Delete an attendance record.
      */
-    public function destroy(Request $request, Attendance $attendance): RedirectResponse
+    public function destroy(Attendance $attendance): RedirectResponse
     {
-        $course = $attendance->course;
-        if ($course === null) {
-            abort(404);
-        }
-
-        $this->authorizeCourseAccess($request, $course);
-
         $courseId = $attendance->course_id;
         $attendanceDate = $attendance->attendance_date?->format('Y-m-d');
 
         $attendance->delete();
 
         return redirect()
-            ->route($this->routePrefix($request) . '.attendance.index', array_filter([
+            ->route('admin.attendance.index', array_filter([
                 'course_id' => $courseId,
                 'attendance_date' => $attendanceDate,
             ]))

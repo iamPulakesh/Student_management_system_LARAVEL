@@ -53,12 +53,14 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/create', [AttendanceController::class, 'create'])->name('attendance.create');
     Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
-    Route::delete('/attendance/{attendance}', [AttendanceController::class, 'destroy'])->name('attendance.destroy');
 
     Route::resource('assessments', AssessmentController::class)->except(['show']);
 });
 
 Route::middleware(['auth', 'student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/courses', [StudentDashboardController::class, 'courses'])->name('courses');
+    Route::get('/attendance', [StudentDashboardController::class, 'attendance'])->name('attendance');
+    Route::get('/assessments', [StudentDashboardController::class, 'assessments'])->name('assessments');
     Route::put('/profile', [StudentProfileController::class, 'update'])->name('profile.update');
 });

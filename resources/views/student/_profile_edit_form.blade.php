@@ -11,7 +11,6 @@
                 name="phone"
                 value="{{ old('phone', $student->phone) }}"
                 class="form-control"
-                placeholder="e.g. 9876543210"
             >
             <x-form-error field="phone" />
         </div>
@@ -41,14 +40,12 @@
         </div>
 
         <div class="form-group">
-            <label for="profile_password" class="form-label">New Password (optional)</label>
+            <label for="profile_password" class="form-label">New Password</label>
             <input
                 id="profile_password"
                 type="password"
                 name="password"
                 class="form-control"
-                placeholder="Leave blank to keep current"
-                autocomplete="new-password"
             >
             <x-form-error field="password" />
         </div>
@@ -60,8 +57,7 @@
                 type="password"
                 name="password_confirmation"
                 class="form-control"
-                placeholder="Confirm new password"
-                autocomplete="new-password"
+            
             >
         </div>
     </div>
@@ -73,7 +69,6 @@
             name="address"
             rows="2"
             class="form-control"
-            placeholder="Enter your address"
         >{{ old('address', $student->address) }}</textarea>
         <x-form-error field="address" />
     </div>

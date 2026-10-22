@@ -33,11 +33,6 @@ class DashboardController extends Controller
         $courses = Course::query()
             ->with(['department', 'teacher.user'])
             ->where('teacher_id', $teacher->id)
-            ->addSelect([
-                'eligible_students_count' => Student::query()
-                    ->selectRaw('count(*)')
-                    ->whereColumn('students.department_id', 'courses.department_id'),
-            ])
             ->orderBy('code')
             ->paginate(10);
 
@@ -55,7 +50,7 @@ class DashboardController extends Controller
             abort(403, 'You are not authorized to view this course.');
         }
 
-        $course->load(['department', 'teacher.user']);
+        $course->load('department');
 
         $students = Student::query()
             ->with('user')
@@ -67,7 +62,6 @@ class DashboardController extends Controller
         return view('courses.show', [
             'course' => $course,
             'students' => $students,
-            'isTeacherView' => true,
         ]);
     }
 }

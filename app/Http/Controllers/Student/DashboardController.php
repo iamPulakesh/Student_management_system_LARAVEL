@@ -17,10 +17,8 @@ class DashboardController extends Controller
         $student = $this->resolveAuthorizedStudent($request);
 
         $courses = Course::query()
-            ->with(['teacher.user', 'department'])
             ->where('department_id', $student->department_id)
-            ->orderBy('code')
-            ->get();
+            ->count();
 
         $totalAttendance = Attendance::query()
             ->where('student_id', $student->id)
@@ -31,38 +29,56 @@ class DashboardController extends Controller
             ->where('status', Attendance::STATUS_PRESENT)
             ->count();
 
-        $absentAttendance = $totalAttendance - $presentAttendance;
-
         $attendancePercentage = $totalAttendance > 0
             ? round(($presentAttendance / $totalAttendance) * 100, 1)
             : null;
 
-        $recentAttendances = Attendance::query()
+        return view('student.dashboard', [
+            'student' => $student,
+            'courses' => $courses,
+            'attendancePercentage' => $attendancePercentage,
+        ]);
+    }
+
+    public function courses(Request $request): View
+    {
+        $student = $this->resolveAuthorizedStudent($request);
+
+        $courses = Course::query()
+            ->with(['teacher.user', 'department'])
+            ->where('department_id', $student->department_id)
+            ->orderBy('code')
+            ->get();
+
+        return view('student.courses', compact('student', 'courses'));
+    }
+
+    public function attendance(Request $request): View
+    {
+        $student = $this->resolveAuthorizedStudent($request);
+
+        $attendances = Attendance::query()
             ->with('course')
             ->where('student_id', $student->id)
             ->latest('attendance_date')
             ->latest('id')
-            ->take(10)
-            ->get();
+            ->paginate(20);
+
+        return view('student.attendance', compact('student', 'attendances'));
+    }
+
+    public function assessments(Request $request): View
+    {
+        $student = $this->resolveAuthorizedStudent($request);
 
         $assessments = Assessment::query()
             ->with('course')
             ->where('student_id', $student->id)
             ->latest('assessment_date')
             ->latest('id')
-            ->take(10)
-            ->get();
+            ->paginate(20);
 
-        return view('student.dashboard', [
-            'student' => $student,
-            'courses' => $courses,
-            'totalAttendance' => $totalAttendance,
-            'presentAttendance' => $presentAttendance,
-            'absentAttendance' => $absentAttendance,
-            'attendancePercentage' => $attendancePercentage,
-            'recentAttendances' => $recentAttendances,
-            'assessments' => $assessments,
-        ]);
+        return view('student.assessments', compact('student', 'assessments'));
     }
 
     private function resolveAuthorizedStudent(Request $request): Student

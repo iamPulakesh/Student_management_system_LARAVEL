@@ -4,8 +4,7 @@
 
 @section('content')
     <div class="card-header">
-        <h3 class="card-title">New Assessment Result</h3>
-        <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn btn-secondary btn-sm">Back to Assessments</a>
+        <h3 class="card-title">New Assessment</h3>
     </div>
 
     <form method="POST" action="{{ route($routePrefix . '.assessments.store') }}">

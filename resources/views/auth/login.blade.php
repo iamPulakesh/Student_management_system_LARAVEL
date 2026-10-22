@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sign In — {{ config('app.name', 'University SMS') }}</title>
 </head>
-<body style="margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+<body style="margin: 0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding-top: 3rem;">
 <div>
     <h2 align="center">Student Management System</h2>
 
     @if (session('success'))
-        <p role="status">{{ session('success') }}</p>
+        <p role="status" style="color: red;">{{ session('success') }}</p>
     @endif
 
     @if (session('error'))
