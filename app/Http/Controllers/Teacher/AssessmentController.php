@@ -90,14 +90,15 @@ class AssessmentController extends Controller
                 : collect(),
             'departmentId' => $departmentId,
             'courses' => $courses,
-            'allCoursesData' => $allCourses->map(fn (Course $course) => [
-                'id' => $course->id,
-                'code' => $course->code,
-                'name' => $course->name,
-                'department_id' => $course->department_id,
-                'department_code' => $course->department?->code,
-            ])->values(),
-            'selectedCourse' => $selectedCourse,
+            'allCoursesData' => $request->user()->isAdmin()
+                ? $allCourses->map(fn (Course $course) => [
+                    'id' => $course->id,
+                    'code' => $course->code,
+                    'name' => $course->name,
+                    'department_id' => $course->department_id,
+                    'department_code' => $course->department?->code,
+                ])->values()
+                : collect(),
             'courseId' => $courseId,
             'search' => $search,
             'assessments' => $assessments,
@@ -180,6 +181,10 @@ class AssessmentController extends Controller
         $routePrefix = $this->routePrefix($request);
         $courses = $this->allowedCoursesQuery($request)->get();
         $students = $this->eligibleStudentsQuery($request, $courses, null)->get();
+
+        if ($assessment->student !== null && ! $students->contains('id', $assessment->student_id)) {
+            $students = $students->push($assessment->student)->sortBy('student_number')->values();
+        }
 
         return view('assessments.edit', [
             'routePrefix' => $routePrefix,
@@ -272,13 +277,19 @@ class AssessmentController extends Controller
         $query = Student::with('department')->orderBy('student_number');
 
         if ($selectedCourse !== null) {
-            return $query->where('department_id', $selectedCourse->department_id);
+            return $query->enrolledIn($selectedCourse);
         }
 
         if ($request->user()->isTeacher()) {
-            $departmentIds = $courses->pluck('department_id')->unique()->values();
+            if ($courses->isEmpty()) {
+                return $query->whereRaw('1 = 0');
+            }
 
-            return $query->whereIn('department_id', $departmentIds);
+            return $query->where(function (Builder $students) use ($courses) {
+                foreach ($courses as $course) {
+                    $students->orWhere(fn (Builder $enrolled) => $enrolled->enrolledIn($course));
+                }
+            });
         }
 
         return $query;

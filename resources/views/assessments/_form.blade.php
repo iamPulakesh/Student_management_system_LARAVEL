@@ -93,6 +93,6 @@
 </div>
 
 <div class="actions-group" style="margin-top: 1.25rem;">
-    <button type="submit" class="btn btn-primary">{{ $submitLabel ?? 'Save Assessment' }}</button>
-    <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn">{{ $submitLabel ?? 'Save Assessment' }}</button>
+    <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn">Cancel</a>
 </div>

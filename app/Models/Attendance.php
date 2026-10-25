@@ -10,11 +10,6 @@ class Attendance extends Model
     public const STATUS_PRESENT = 'present';
     public const STATUS_ABSENT = 'absent';
 
-    public const STATUSES = [
-        self::STATUS_PRESENT,
-        self::STATUS_ABSENT,
-    ];
-
     protected $fillable = [
         'student_id',
         'course_id',
@@ -41,11 +36,6 @@ class Attendance extends Model
     }
 
     public function recordedBy(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'recorded_by_user_id');
-    }
-
-    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'recorded_by_user_id');
     }

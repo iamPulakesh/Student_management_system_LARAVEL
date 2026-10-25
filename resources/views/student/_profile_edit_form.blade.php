@@ -4,33 +4,31 @@
 
     <div class="form-grid" style="margin-bottom: 1rem;">
         <div class="form-group">
-            <label for="profile_phone" class="form-label">Phone No</label>
+            <label for="profile_phone">Phone No</label>
             <input
                 id="profile_phone"
                 type="text"
                 name="phone"
                 value="{{ old('phone', $student->phone) }}"
-                class="form-control"
             >
             <x-form-error field="phone" />
         </div>
 
         <div class="form-group">
-            <label for="profile_dob" class="form-label">Date of Birth</label>
+            <label for="profile_dob">Date of Birth</label>
             <input
                 id="profile_dob"
                 type="date"
                 name="date_of_birth"
                 value="{{ old('date_of_birth', $student->date_of_birth?->format('Y-m-d')) }}"
                 max="{{ now()->toDateString() }}"
-                class="form-control"
             >
             <x-form-error field="date_of_birth" />
         </div>
 
         <div class="form-group">
-            <label for="profile_gender" class="form-label">Gender</label>
-            <select id="profile_gender" name="gender" class="form-control">
+            <label for="profile_gender">Gender</label>
+            <select id="profile_gender" name="gender">
                 <option value="">Select Gender...</option>
                 <option value="Male" @selected(old('gender', $student->gender) === 'Male')>Male</option>
                 <option value="Female" @selected(old('gender', $student->gender) === 'Female')>Female</option>
@@ -40,42 +38,39 @@
         </div>
 
         <div class="form-group">
-            <label for="profile_password" class="form-label">New Password</label>
+            <label for="profile_password">New Password</label>
             <input
                 id="profile_password"
                 type="password"
                 name="password"
-                class="form-control"
             >
             <x-form-error field="password" />
         </div>
 
         <div class="form-group">
-            <label for="profile_password_confirmation" class="form-label">Confirm New Password</label>
+            <label for="profile_password_confirmation">Confirm New Password</label>
             <input
                 id="profile_password_confirmation"
                 type="password"
                 name="password_confirmation"
-                class="form-control"
             
             >
         </div>
     </div>
 
     <div class="form-group" style="margin-bottom: 1.25rem;">
-        <label for="profile_address" class="form-label">Address</label>
+        <label for="profile_address">Address</label>
         <textarea
             id="profile_address"
             name="address"
             rows="2"
-            class="form-control"
         >{{ old('address', $student->address) }}</textarea>
         <x-form-error field="address" />
     </div>
 
     <div class="actions-group">
-        <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
-        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleProfileEdit(false)">Cancel</button>
+        <button type="submit" class="btn">Save Changes</button>
+        <button type="button" class="btn" onclick="toggleProfileEdit(false)">Cancel</button>
     </div>
 </form>
 

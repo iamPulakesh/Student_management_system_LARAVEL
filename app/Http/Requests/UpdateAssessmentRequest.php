@@ -87,7 +87,7 @@ class UpdateAssessmentRequest extends FormRequest
     }
 
     /**
-     * Configure the validator instance to check department compatibility.
+     * Configure the validator instance to check the student is enrolled in the course.
      */
     public function after(): array
     {
@@ -103,10 +103,15 @@ class UpdateAssessmentRequest extends FormRequest
                 $course = Course::find((int) $courseId);
                 $student = Student::find((int) $studentId);
 
-                if ($course !== null && $student !== null && (int) $course->department_id !== (int) $student->department_id) {
+                /** @var Assessment $assessment */
+                $assessment = $this->route('assessment');
+                $isUnchangedPairing = (int) $assessment->course_id === (int) $courseId
+                    && (int) $assessment->student_id === (int) $studentId;
+
+                if (! $isUnchangedPairing && $course !== null && $student !== null && ! $student->isEnrolledIn($course)) {
                     $validator->errors()->add(
                         'student_id',
-                        'The selected student must belong to the same department as the selected course.'
+                        'The selected student must be in the same department and semester as the selected course.'
                     );
                 }
             },

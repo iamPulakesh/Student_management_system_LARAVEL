@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sign In — {{ config('app.name', 'University SMS') }}</title>
+    <title>Sign In - SMS</title>
 </head>
 <body style="margin: 0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding-top: 3rem;">
 <div>

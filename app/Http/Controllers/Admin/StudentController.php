@@ -122,8 +122,6 @@ class StudentController extends Controller
 
         return view('students.show', [
             'student' => $student,
-            'totalAttendance' => $totalAttendance,
-            'presentAttendance' => $presentAttendance,
             'attendancePercentage' => $attendancePercentage,
         ]);
     }

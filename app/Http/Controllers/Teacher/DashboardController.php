@@ -54,7 +54,7 @@ class DashboardController extends Controller
 
         $students = Student::query()
             ->with('user')
-            ->where('department_id', $course->department_id)
+            ->enrolledIn($course)
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->paginate(15);

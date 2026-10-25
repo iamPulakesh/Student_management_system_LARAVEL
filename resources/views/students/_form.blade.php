@@ -1,12 +1,11 @@
 <div class="form-grid">
     <div class="form-group">
-        <label for="student_number" class="form-label">Registration Number *</label>
+        <label for="student_number">Registration Number *</label>
         <input
             id="student_number"
             type="text"
             name="student_number"
             value="{{ old('student_number', $student->student_number) }}"
-            class="form-control"
             maxlength="8"
             pattern="[A-Za-z0-9]+"
             title="Maximum 8 alphanumeric characters"
@@ -17,40 +16,37 @@
     </div>
 
     <div class="form-group">
-        <label for="first_name" class="form-label">First Name *</label>
+        <label for="first_name">First Name *</label>
         <input
             id="first_name"
             type="text"
             name="first_name"
             value="{{ old('first_name', $student->first_name) }}"
-            class="form-control"
             required
         >
         <x-form-error field="first_name" />
     </div>
 
     <div class="form-group">
-        <label for="last_name" class="form-label">Last Name *</label>
+        <label for="last_name">Last Name *</label>
         <input
             id="last_name"
             type="text"
             name="last_name"
             value="{{ old('last_name', $student->last_name) }}"
-            class="form-control"
             required
         >
         <x-form-error field="last_name" />
     </div>
 
     <div class="form-group">
-        <label for="password" class="form-label">
+        <label for="password">
             {{ $student->exists ? 'Reset Password' : 'Password *' }}
         </label>
         <input
             id="password"
             type="password"
             name="password"
-            class="form-control"
             {{ $student->exists ? '' : 'required' }}
             autocomplete="new-password"
         >
@@ -58,21 +54,20 @@
     </div>
 
     <div class="form-group">
-        <label for="email" class="form-label">Email Address *</label>
+        <label for="email">Email Address *</label>
         <input
             id="email"
             type="email"
             name="email"
             value="{{ old('email', $student->user?->email) }}"
-            class="form-control"
             required
         >
         <x-form-error field="email" />
     </div>
 
     <div class="form-group">
-        <label for="department_id" class="form-label">Department *</label>
-        <select id="department_id" name="department_id" class="form-control" required>
+        <label for="department_id">Department *</label>
+        <select id="department_id" name="department_id" required>
             <option value="">Select Department...</option>
             @foreach ($departments as $department)
                 <option
@@ -87,8 +82,8 @@
     </div>
 
     <div class="form-group">
-        <label for="year_of_study" class="form-label">Semester *</label>
-        <select id="year_of_study" name="year_of_study" class="form-control" required>
+        <label for="year_of_study">Semester *</label>
+        <select id="year_of_study" name="year_of_study" required>
             @for ($sem = 1; $sem <= 8; $sem++)
                 <option
                     value="{{ $sem }}"
@@ -102,21 +97,20 @@
     </div>
 
     <div class="form-group">
-        <label for="date_of_birth" class="form-label">Date of Birth</label>
+        <label for="date_of_birth">Date of Birth</label>
         <input
             id="date_of_birth"
             type="date"
             name="date_of_birth"
             value="{{ old('date_of_birth', $student->date_of_birth?->format('Y-m-d')) }}"
             max="{{ now()->toDateString() }}"
-            class="form-control"
         >
         <x-form-error field="date_of_birth" />
     </div>
 
     <div class="form-group">
-        <label for="gender" class="form-label">Gender</label>
-        <select id="gender" name="gender" class="form-control">
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender">
             <option value="">Select Gender...</option>
             <option value="Male" @selected(old('gender', $student->gender) === 'Male')>Male</option>
             <option value="Female" @selected(old('gender', $student->gender) === 'Female')>Female</option>
@@ -126,30 +120,28 @@
     </div>
 
     <div class="form-group">
-        <label for="phone" class="form-label">Phone No</label>
+        <label for="phone">Phone No</label>
         <input
             id="phone"
             type="text"
             name="phone"
             value="{{ old('phone', $student->phone) }}"
-            class="form-control"
         >
         <x-form-error field="phone" />
     </div>
 </div>
 
 <div class="form-group">
-    <label for="address" class="form-label">Address</label>
+    <label for="address">Address</label>
     <textarea
         id="address"
         name="address"
         rows="2"
-        class="form-control"
     >{{ old('address', $student->address) }}</textarea>
     <x-form-error field="address" />
 </div>
 
 <div class="actions-group">
-    <button type="submit" class="btn btn-primary">{{ $submitLabel ?? 'Save Student' }}</button>
-    <a href="{{ route('admin.students.index') }}" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn">{{ $submitLabel ?? 'Save Student' }}</button>
+    <a href="{{ route('admin.students.index') }}" class="btn">Cancel</a>
 </div>

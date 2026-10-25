@@ -5,7 +5,7 @@
 @section('content')
     <div class="card-header">
         <h3 class="card-title">Departments</h3>
-        <a href="{{ route('admin.departments.create') }}" class="btn btn-primary">Add Department</a>
+        <a href="{{ route('admin.departments.create') }}" class="btn">Add Department</a>
     </div>
 
     @if ($departments->isEmpty())
@@ -33,11 +33,11 @@
                             <td>{{ $department->courses_count }}</td>
                             <td>
                                 <div class="actions-group">
-                                    <a href="{{ route('admin.departments.edit', $department) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                    <a href="{{ route('admin.departments.edit', $department) }}" class="btn">Edit</a>
                                     <form method="POST" action="{{ route('admin.departments.destroy', $department) }}" onsubmit="return confirm('Are you sure you want to delete this department?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        <button type="submit" class="btn">Delete</button>
                                     </form>
                                 </div>
                             </td>

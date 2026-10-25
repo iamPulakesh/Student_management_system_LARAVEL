@@ -24,7 +24,7 @@
                 <tbody>
                     @foreach ($assessments as $assessment)
                         <tr>
-                            <td><strong>{{ $assessment->course?->code }}</strong><div class="text-muted">{{ $assessment->course?->name }}</div></td>
+                            <td><strong>{{ $assessment->course?->code }}</strong><div>{{ $assessment->course?->name }}</div></td>
                             <td>{{ $assessment->assessment_name }}</td>
                             <td>{{ $assessment->assessment_date ? $assessment->assessment_date->format('Y-m-d') : '—' }}</td>
                             <td>{{ $assessment->marks_obtained }} / {{ $assessment->max_marks }}</td>

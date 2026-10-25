@@ -5,7 +5,7 @@
 @section('content')
 
     @if ($students->isEmpty())
-        <div class="empty-state">No students are currently enrolled in this course's department.</div>
+        <div class="empty-state">No students are currently enrolled in this course.</div>
     @else
         <div class="table-responsive">
             <table class="data-table">

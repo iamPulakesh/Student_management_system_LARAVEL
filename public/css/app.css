@@ -72,7 +72,6 @@ a:hover {
     padding: 0.85rem 1.75rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 1.25rem;
 }
 
@@ -102,7 +101,6 @@ a:hover {
     border-radius: 6px;
     font-weight: 500;
     font-size: 0.88rem;
-    text-decoration: none;
     white-space: nowrap;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
@@ -231,7 +229,7 @@ a:hover {
 }
 
 .required {
-    color: var(--danger-text, #dc2626);
+    color: var(--danger-text);
     margin-left: 2px;
 }
 
@@ -371,8 +369,6 @@ a.btn {
     margin: 0.25rem 0 0;
     font-size: 0.98rem;
     font-weight: 500;
-    text-decoration: none;
-    border-bottom: none;
 }
 
 /* Pagination */

@@ -15,7 +15,7 @@
         </div>
 
         <div class="stat-card">
-            <div class="stat-label">Department Courses</div>
+            <div class="stat-label">Courses</div>
             <div class="stat-value">{{ $courses }}</div>
         </div>
 
@@ -34,7 +34,7 @@
     <section id="profile" style="margin-bottom: 2rem;">
         <div class="card-header">
             <h3 class="card-title">Profile </h3>
-            <button type="button" id="edit-profile-btn" class="btn btn-primary btn-sm" onclick="toggleProfileEdit(true)">Update Profile</button>
+            <button type="button" id="edit-profile-btn" class="btn" onclick="toggleProfileEdit(true)">Update Profile</button>
         </div>
 
         <div id="profile-view-mode">

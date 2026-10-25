@@ -1,32 +1,30 @@
 <div class="form-grid">
     <div class="form-group">
-        <label for="code" class="form-label">Course Code (e.g. CS101) *</label>
+        <label for="code">Course Code (e.g. CS101) *</label>
         <input
             id="code"
             type="text"
             name="code"
             value="{{ old('code', $course->code) }}"
-            class="form-control"
             required
         >
         <x-form-error field="code" />
     </div>
 
     <div class="form-group">
-        <label for="name" class="form-label">Course Name *</label>
+        <label for="name">Course Name *</label>
         <input
             id="name"
             type="text"
             name="name"
             value="{{ old('name', $course->name) }}"
-            class="form-control"
             required
         >
         <x-form-error field="name" />
     </div>
 
     <div class="form-group">
-        <label for="credits" class="form-label">Credits (1–10) *</label>
+        <label for="credits">Credits (1–10) *</label>
         <input
             id="credits"
             type="number"
@@ -34,15 +32,14 @@
             min="1"
             max="10"
             value="{{ old('credits', $course->credits ?? 3) }}"
-            class="form-control"
             required
         >
         <x-form-error field="credits" />
     </div>
 
     <div class="form-group">
-        <label for="semester" class="form-label">Semester *</label>
-        <select id="semester" name="semester" class="form-control" required>
+        <label for="semester">Semester *</label>
+        <select id="semester" name="semester" required>
             @for ($sem = 1; $sem <= 8; $sem++)
                 <option
                     value="{{ $sem }}"
@@ -56,8 +53,8 @@
     </div>
 
     <div class="form-group">
-        <label for="department_id" class="form-label">Department *</label>
-        <select id="department_id" name="department_id" class="form-control" required>
+        <label for="department_id">Department *</label>
+        <select id="department_id" name="department_id" required>
             <option value="">Select Department...</option>
             @foreach ($departments as $department)
                 <option
@@ -72,8 +69,8 @@
     </div>
 
     <div class="form-group">
-        <label for="teacher_id" class="form-label">Assigned Faculty</label>
-        <select id="teacher_id" name="teacher_id" class="form-control">
+        <label for="teacher_id">Assigned Faculty</label>
+        <select id="teacher_id" name="teacher_id">
             <option value="">Unassigned</option>
             @foreach ($teachers as $teacher)
                 <option
@@ -89,6 +86,6 @@
 </div>
 
 <div class="actions-group">
-    <button type="submit" class="btn btn-primary">{{ $submitLabel ?? 'Save Course' }}</button>
-    <a href="{{ route('admin.courses.index') }}" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn">{{ $submitLabel ?? 'Save Course' }}</button>
+    <a href="{{ route('admin.courses.index') }}" class="btn">Cancel</a>
 </div>

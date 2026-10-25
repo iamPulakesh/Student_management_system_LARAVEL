@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $student = $this->resolveAuthorizedStudent($request);
 
         $courses = Course::query()
-            ->where('department_id', $student->department_id)
+            ->forStudent($student)
             ->count();
 
         $totalAttendance = Attendance::query()
@@ -46,7 +46,7 @@ class DashboardController extends Controller
 
         $courses = Course::query()
             ->with(['teacher.user', 'department'])
-            ->where('department_id', $student->department_id)
+            ->forStudent($student)
             ->orderBy('code')
             ->get();
 
@@ -64,7 +64,7 @@ class DashboardController extends Controller
             ->latest('id')
             ->paginate(20);
 
-        return view('student.attendance', compact('student', 'attendances'));
+        return view('student.attendance', compact('attendances'));
     }
 
     public function assessments(Request $request): View
@@ -78,7 +78,7 @@ class DashboardController extends Controller
             ->latest('id')
             ->paginate(20);
 
-        return view('student.assessments', compact('student', 'assessments'));
+        return view('student.assessments', compact('assessments'));
     }
 
     private function resolveAuthorizedStudent(Request $request): Student

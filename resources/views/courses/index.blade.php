@@ -6,7 +6,7 @@
     <div class="card-header">
         <h3 class="card-title">{{ !empty($isTeacherView) ? 'Courses Assigned' : 'All Courses' }}</h3>
         @if (empty($isTeacherView))
-            <a href="{{ route('admin.courses.create') }}" class="btn btn-primary">Add Course</a>
+            <a href="{{ route('admin.courses.create') }}" class="btn">Add Course</a>
         @endif
     </div>
 
@@ -48,8 +48,8 @@
             </div>
 
             <div class="actions-group">
-                <button type="submit" class="btn btn-secondary">Filter</button>
-                <a href="{{ route('admin.courses.index') }}" class="btn btn-secondary">Reset</a>
+                <button type="submit" class="btn">Filter</button>
+                <a href="{{ route('admin.courses.index') }}" class="btn">Reset</a>
             </div>
         </form>
     @endif
@@ -83,17 +83,17 @@
                                 <td>
                                     @if (!empty($isTeacherView))
                                         <div class="actions-group">
-                                            <a href="{{ route('teacher.courses.show', $course) }}" class="btn btn-secondary btn-sm">Students</a>
-                                            <a href="{{ route('teacher.attendance.create', ['course_id' => $course->id]) }}" class="btn btn-primary btn-sm">Attendance</a>
-                                            <a href="{{ route('teacher.assessments.create', ['course_id' => $course->id]) }}" class="btn btn-secondary btn-sm">Marks</a>
+                                            <a href="{{ route('teacher.courses.show', $course) }}" class="btn">Students</a>
+                                            <a href="{{ route('teacher.attendance.create', ['course_id' => $course->id]) }}" class="btn">Attendance</a>
+                                            <a href="{{ route('teacher.assessments.create', ['course_id' => $course->id]) }}" class="btn">Marks</a>
                                         </div>
                                     @else
                                         <div class="actions-group">
-                                            <a href="{{ route('admin.courses.edit', $course) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                            <a href="{{ route('admin.courses.edit', $course) }}" class="btn">Edit</a>
                                             <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" onsubmit="return confirm('Are you sure you want to delete this course?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                <button type="submit" class="btn">Delete</button>
                                             </form>
                                         </div>
                                     @endif

@@ -26,7 +26,7 @@
         </div>
 
         <div class="actions-group">
-            <button type="submit" class="btn btn-primary">Load Students</button>
+            <button type="submit" class="btn">Load Students</button>
         </div>
     </form>
 
@@ -46,16 +46,14 @@
 
             @if ($students->isEmpty())
                 <div class="empty-state">
-                    No students found in the {{ $selectedCourse->department?->name }} department. Add students to this department before recording attendance.
+                    No students found in the {{ $selectedCourse->department?->name }} department for Semester {{ $selectedCourse->semester }}.
                 </div>
             @else
                 @php
                     $unmarkedStudents = $students->filter(fn($s) => !$existingAttendance->has($s->id));
                 @endphp
 
-                @if ($unmarkedStudents->isEmpty())
-                    {{-- All students already marked, nothing to do --}}
-                @else
+                @if ($unmarkedStudents->isNotEmpty())
                 <form method="POST" action="{{ route($routePrefix . '.attendance.store') }}">
                     @csrf
                     <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
@@ -97,8 +95,8 @@
                     </div>
 
                     <div class="actions-group" style="margin-top: 1.25rem;">
-                        <button type="submit" class="btn btn-primary">Save Attendance Batch</button>
-                        <a href="{{ route($routePrefix . '.attendance.index', ['course_id' => $selectedCourse->id]) }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn">Save Attendance Batch</button>
+                        <a href="{{ route($routePrefix . '.attendance.index', ['course_id' => $selectedCourse->id]) }}" class="btn">Cancel</a>
                     </div>
                 </form>
                 @endif

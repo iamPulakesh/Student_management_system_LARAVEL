@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') — {{ config('app.name', 'University SMS') }}</title>
+    <title>@yield('title', 'Dashboard')</title>
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @else
@@ -79,7 +79,7 @@
                         </div>
                         <form method="POST" action="{{ route('logout') }}" class="logout-form">
                             @csrf
-                            <button type="submit" class="btn btn-secondary btn-sm">Sign Out</button>
+                            <button type="submit" class="btn">Sign Out</button>
                         </form>
                     </div>
                 </div>

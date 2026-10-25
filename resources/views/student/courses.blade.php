@@ -4,11 +4,11 @@
 
 @section('content')
     <div class="card-header">
-        <h3 class="card-title">Courses for {{ $student->department?->name }}</h3>
+        <h3 class="card-title">Courses for {{ $student->department?->name }}, Semester {{ $student->year_of_study }}</h3>
     </div>
 
     @if ($courses->isEmpty())
-        <div class="empty-state">No courses are currently listed for your department.</div>
+        <div class="empty-state">No courses are currently listed for your department and semester.</div>
     @else
         <div class="table-responsive">
             <table class="data-table">

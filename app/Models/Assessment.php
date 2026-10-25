@@ -41,11 +41,6 @@ class Assessment extends Model
         return $this->belongsTo(User::class, 'recorded_by_user_id');
     }
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'recorded_by_user_id');
-    }
-
     public function getPercentageAttribute(): float
     {
         $max = $this->max_marks;

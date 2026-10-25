@@ -5,7 +5,7 @@
 @section('content')
     <div class="card-header" style="justify-content: flex-end;">
         @if ($routePrefix === 'teacher')
-            <a href="{{ route('teacher.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn btn-primary">
+            <a href="{{ route('teacher.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn">
                 Record Attendance
             </a>
         @endif
@@ -56,16 +56,16 @@
         </div>
 
         <div class="actions-group">
-            <button type="submit" class="btn btn-secondary">Filter</button>
+            <button type="submit" class="btn">Filter</button>
             @if ($courseId || $attendanceDate !== '' || ($routePrefix === 'admin' && $departmentId))
-                <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn btn-secondary">Reset</a>
+                <a href="{{ route($routePrefix . '.attendance.index') }}" class="btn">Reset</a>
             @endif
         </div>
     </form>
 
     @if ($selectedCourse !== null && $attendanceDate !== '')
         @if ($studentSummaries->isEmpty())
-            <div class="empty-state">No students are currently enrolled in {{ $selectedCourse->department?->name }}.</div>
+            <div class="empty-state">No students are currently enrolled in {{ $selectedCourse->department?->name }}, Semester {{ $selectedCourse->semester }}.</div>
         @else
             <div class="table-responsive">
                 <table class="data-table">
@@ -90,11 +90,11 @@
                                 <td>{{ $summary['present'] }} / {{ $summary['total'] }}</td>
                                 <td>
                                     @if ($summary['percentage'] !== null)
-                                        <span class="badge {{ $summary['percentage'] >= 75 ? 'badge-success' : 'badge-warning' }}">
+                                        <span class="badge {{ $summary['percentage'] >= 75 ? 'badge-success' : '' }}">
                                             {{ number_format($summary['percentage'], 1) }}%
                                         </span>
                                     @else
-                                        <span class="text-muted">N/A (0 records)</span>
+                                        <span>N/A (0 records)</span>
                                     @endif
                                 </td>
                                 <td>
@@ -103,7 +103,7 @@
                                             {{ ucfirst($summary['attendance']->status) }}
                                         </span>
                                     @else
-                                        <span class="text-muted">—</span>
+                                        <span>—</span>
                                     @endif
                                 </td>
                                 <td>
@@ -113,15 +113,15 @@
                                     <td>
                                         @if ($summary['attendance'])
                                             <div class="actions-group">
-                                                <a href="{{ route('admin.attendance.edit', $summary['attendance']) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                                <a href="{{ route('admin.attendance.edit', $summary['attendance']) }}" class="btn">Edit</a>
                                                 <form method="POST" action="{{ route('admin.attendance.destroy', $summary['attendance']) }}" onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                    <button type="submit" class="btn">Delete</button>
                                                 </form>
                                             </div>
                                         @else
-                                            <span class="text-muted">—</span>
+                                            <span>—</span>
                                         @endif
                                     </td>
                                 @endif

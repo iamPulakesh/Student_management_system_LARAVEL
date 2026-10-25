@@ -25,7 +25,6 @@ class AttendanceController extends Controller
     {
         $routePrefix = $this->routePrefix($request);
         $allCourses = $this->allowedCoursesQuery($request)->get();
-        $allowedCourseIds = $allCourses->pluck('id');
 
         $isAdmin = $request->user()->isAdmin();
         $departmentId = $isAdmin ? $request->input('department_id') : null;
@@ -69,7 +68,7 @@ class AttendanceController extends Controller
 
         if ($selectedCourse !== null && $attendanceDate !== '') {
             $students = Student::with('user')
-                ->where('department_id', $selectedCourse->department_id)
+                ->enrolledIn($selectedCourse)
                 ->withCount([
                     'attendances as total_attendance_count' => function ($q) use ($selectedCourse) {
                         $q->where('course_id', $selectedCourse->id);
@@ -153,7 +152,7 @@ class AttendanceController extends Controller
             $this->authorizeCourseAccess($request, $selectedCourse);
 
             $students = Student::with('user')
-                ->where('department_id', $selectedCourse->department_id)
+                ->enrolledIn($selectedCourse)
                 ->orderBy('student_number')
                 ->get();
 
@@ -195,9 +194,9 @@ class AttendanceController extends Controller
                     ]);
                 }
 
-                if ((int) $student->department_id !== (int) $course->department_id) {
+                if (! $student->isEnrolledIn($course)) {
                     throw ValidationException::withMessages([
-                        'statuses' => "Student {$student->student_number} does not belong to the selected course's department.",
+                        'statuses' => "Student {$student->student_number} is not in the selected course's department and semester.",
                     ]);
                 }
 
@@ -245,7 +244,6 @@ class AttendanceController extends Controller
 
         return view('attendance.edit', [
             'attendance' => $attendance,
-            'routePrefix' => 'admin',
         ]);
     }
 

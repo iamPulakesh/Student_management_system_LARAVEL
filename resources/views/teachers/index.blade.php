@@ -5,7 +5,7 @@
 @section('content')
     <div class="card-header">
         <h3 class="card-title">All Faculty</h3>
-        <a href="{{ route('admin.teachers.create') }}" class="btn btn-primary">Add Faculty</a>
+        <a href="{{ route('admin.teachers.create') }}" class="btn">Add Faculty</a>
     </div>
 
     <form method="GET" action="{{ route('admin.teachers.index') }}" class="filter-bar">
@@ -33,8 +33,8 @@
         </div>
 
         <div class="actions-group">
-            <button type="submit" class="btn btn-secondary">Filter</button>
-            <a href="{{ route('admin.teachers.index') }}" class="btn btn-secondary">Reset</a>
+            <button type="submit" class="btn">Filter</button>
+            <a href="{{ route('admin.teachers.index') }}" class="btn">Reset</a>
         </div>
     </form>
 
@@ -64,12 +64,12 @@
                                 <td>{{ $teacher->courses_count }}</td>
                                 <td>
                                     <div class="actions-group">
-                                        <a href="{{ route('admin.teachers.show', $teacher) }}" class="btn btn-secondary btn-sm">View</a>
-                                        <a href="{{ route('admin.teachers.edit', $teacher) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                        <a href="{{ route('admin.teachers.show', $teacher) }}" class="btn">View</a>
+                                        <a href="{{ route('admin.teachers.edit', $teacher) }}" class="btn">Edit</a>
                                         <form method="POST" action="{{ route('admin.teachers.destroy', $teacher) }}" onsubmit="return confirm('Are you sure you want to delete this faculty profile and account?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            <button type="submit" class="btn">Delete</button>
                                         </form>
                                     </div>
                                 </td>

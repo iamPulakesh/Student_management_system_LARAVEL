@@ -6,7 +6,7 @@
     <div class="card-header">
         <h3 class="card-title">Assessments Records</h3>
         @if ($routePrefix === 'teacher')
-            <a href="{{ route('teacher.assessments.create', array_filter(['course_id' => $courseId])) }}" class="btn btn-primary">
+            <a href="{{ route('teacher.assessments.create', array_filter(['course_id' => $courseId])) }}" class="btn">
                 Record Assessment Mark
             </a>
         @endif
@@ -56,9 +56,9 @@
         </div>
 
         <div class="actions-group">
-            <button type="submit" class="btn btn-secondary">Filter</button>
+            <button type="submit" class="btn">Filter</button>
             @if ($departmentId || $courseId || $search !== '')
-                <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn btn-secondary">Reset</a>
+                <a href="{{ route($routePrefix . '.assessments.index') }}" class="btn">Reset</a>
             @endif
         </div>
     </form>
@@ -129,7 +129,7 @@
                             <tr>
                                 <td>
                                     <strong>{{ $assessment->course?->code }}</strong>
-                                    <div class="text-muted">{{ $assessment->course?->name }}</div>
+                                    <div>{{ $assessment->course?->name }}</div>
                                 </td>
                                 <td>{{ $assessment->student?->student_number }}</td>
                                 <td>{{ $assessment->student?->full_name }}</td>
@@ -137,18 +137,18 @@
                                 <td>{{ $assessment->assessment_date ? $assessment->assessment_date->format('Y-m-d') : 'N/A' }}</td>
                                 <td>{{ $assessment->marks_obtained }} / {{ $assessment->max_marks }}</td>
                                 <td>
-                                    <span class="badge badge-info">
+                                    <span class="badge">
                                         {{ number_format($assessment->percentage, 2) }}%
                                     </span>
                                 </td>
                                 <td>{{ $assessment->recordedBy?->name ?? 'N/A' }}</td>
                                 <td>
                                     <div class="actions-group">
-                                        <a href="{{ route($routePrefix . '.assessments.edit', $assessment) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                        <a href="{{ route($routePrefix . '.assessments.edit', $assessment) }}" class="btn">Edit</a>
                                         <form method="POST" action="{{ route($routePrefix . '.assessments.destroy', $assessment) }}" onsubmit="return confirm('Are you sure you want to delete this assessment record?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            <button type="submit" class="btn">Delete</button>
                                         </form>
                                     </div>
                                 </td>

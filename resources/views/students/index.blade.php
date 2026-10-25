@@ -5,7 +5,7 @@
 @section('content')
     <div class="card-header">
             <h3 class="card-title">All Students</h3>
-            <a href="{{ route('admin.students.create') }}" class="btn btn-primary">Add Student</a>
+            <a href="{{ route('admin.students.create') }}" class="btn">Add Student</a>
         </div>
 
         <form method="GET" action="{{ route('admin.students.index') }}" class="filter-bar">
@@ -45,8 +45,8 @@
             </div>
 
             <div class="actions-group">
-                <button type="submit" class="btn btn-secondary">Filter</button>
-                <a href="{{ route('admin.students.index') }}" class="btn btn-secondary">Reset</a>
+                <button type="submit" class="btn">Filter</button>
+                <a href="{{ route('admin.students.index') }}" class="btn">Reset</a>
             </div>
         </form>
 
@@ -76,12 +76,12 @@
                                     <td>Semester {{ $student->year_of_study }}</td>
                                     <td>
                                         <div class="actions-group">
-                                            <a href="{{ route('admin.students.show', $student) }}" class="btn btn-secondary btn-sm">View</a>
-                                            <a href="{{ route('admin.students.edit', $student) }}" class="btn btn-secondary btn-sm">Edit</a>
+                                            <a href="{{ route('admin.students.show', $student) }}" class="btn">View</a>
+                                            <a href="{{ route('admin.students.edit', $student) }}" class="btn">Edit</a>
                                             <form method="POST" action="{{ route('admin.students.destroy', $student) }}" onsubmit="return confirm('Are you sure you want to delete this student profile and account?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                <button type="submit" class="btn">Delete</button>
                                             </form>
                                         </div>
                                     </td>
