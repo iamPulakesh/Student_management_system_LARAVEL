@@ -262,75 +262,75 @@ erDiagram
         bigint id PK
         string name
         string email UK
-        string password "hashed"
-        string role "admin | teacher | student"
-        timestamp email_verified_at "nullable"
-        string remember_token "nullable"
-        timestamps created_at
+        string password
+        string role
+        timestamp email_verified_at
+        string remember_token
+        timestamp created_at
     }
 
     departments {
         bigint id PK
         string name UK
-        string code UK "max 20 chars"
-        timestamps created_at
+        string code UK
+        timestamp created_at
     }
 
     teachers {
         bigint id PK
-        bigint user_id FK_UK "references users.id"
-        string employee_number UK "max 50 chars"
-        bigint department_id FK "references departments.id"
-        string phone "nullable, max 30 chars"
-        timestamps created_at
+        bigint user_id FK
+        string employee_number UK
+        bigint department_id FK
+        string phone
+        timestamp created_at
     }
 
     students {
         bigint id PK
-        bigint user_id FK_UK "references users.id"
-        string student_number UK "max 50 chars"
-        string first_name "max 100 chars"
-        string last_name "max 100 chars"
-        bigint department_id FK "references departments.id"
-        smallint year_of_study "unsigned"
-        date date_of_birth "nullable"
-        string gender "nullable, max 30 chars"
-        string phone "nullable, max 30 chars"
-        text address "nullable"
-        timestamps created_at
+        bigint user_id FK
+        string student_number UK
+        string first_name
+        string last_name
+        bigint department_id FK
+        smallint year_of_study
+        date date_of_birth
+        string gender
+        string phone
+        text address
+        timestamp created_at
     }
 
     courses {
         bigint id PK
-        string code UK "max 30 chars"
+        string code UK
         string name
-        smallint credits "unsigned"
-        tinyint semester "unsigned, default 1"
-        bigint department_id FK "references departments.id"
-        bigint teacher_id FK "nullable, references teachers.id"
-        timestamps created_at
+        smallint credits
+        tinyint semester
+        bigint department_id FK
+        bigint teacher_id FK
+        timestamp created_at
     }
 
     attendances {
         bigint id PK
-        bigint student_id FK "references students.id"
-        bigint course_id FK "references courses.id"
-        date attendance_date "indexed"
-        string status "present | absent"
-        bigint recorded_by_user_id FK "references users.id"
-        timestamps created_at
+        bigint student_id FK
+        bigint course_id FK
+        date attendance_date
+        string status
+        bigint recorded_by_user_id FK
+        timestamp created_at
     }
 
     assessments {
         bigint id PK
-        bigint student_id FK "references students.id"
-        bigint course_id FK "references courses.id"
-        string assessment_name "max 150 chars"
-        smallint marks_obtained "unsigned"
-        smallint max_marks "unsigned"
-        date assessment_date "nullable"
-        bigint recorded_by_user_id FK "references users.id"
-        timestamps created_at
+        bigint student_id FK
+        bigint course_id FK
+        string assessment_name
+        smallint marks_obtained
+        smallint max_marks
+        date assessment_date
+        bigint recorded_by_user_id FK
+        timestamp created_at
     }
 ```
 
@@ -380,14 +380,13 @@ erDiagram
   - **Admin:** Dashboard, Students, Teachers, Departments, Courses, Attendance, Assessments
   - **Teacher:** Dashboard, Courses, Attendance, Assessments
   - **Student:** Dashboard, Courses, Attendance, Assessments
-- Role-based CSS theming: Admin pages use a crimson accent (`#dc143c`), teacher pages use orange (`#e67e22`), and student pages use the default blue (`#1d4ed8`).
 
 ---
 
 ## 8. Installation and Setup Guide
 
 ### Prerequisites
-- PHP `^8.3` with PDO, OpenSSL, Mbstring, and Tokenizer extensions
+- PHP `^8.3` 
 - Composer `^2.0`
 - MySQL `^8.0`
 
@@ -395,8 +394,8 @@ erDiagram
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
-   cd student_management_sys
+   git clone https://github.com/iamPulakesh/Student_management_system_LARAVEL.git
+   cd Student_management_system_LARAVEL
    ```
 
 2. **Install PHP dependencies:**
@@ -404,12 +403,7 @@ erDiagram
    composer install
    ```
 
-3. **Create the environment file:**
-   ```bash
-   cp .env.example .env
-   ```
-
-4. **Configure the database** in `.env`:
+3. **Configure the database** in `.env`:
    ```ini
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -419,24 +413,24 @@ erDiagram
    DB_PASSWORD=
    ```
 
-5. **Generate the application key:**
+4. **Generate the application key:**
    ```bash
    php artisan key:generate
    ```
 
-6. **Run database migrations:**
+5. **Run database migrations:**
    ```bash
    php artisan migrate
    ```
 
-7. **Create the initial admin account:**
+6. **Create the initial admin account:**
    ```bash
    php artisan app:create-admin
    ```
    This interactive command prompts for name, email, and password. It prevents creating a duplicate admin unless the `--force` flag is used.
 
-8. **Start the development server:**
+7. **Start the development server:**
    ```bash
    php artisan serve
    ```
-   The application will be available at `http://127.0.0.1:8000`.
+   The application will be available at `http://127.0.0.1:8000` unless we set different port.
