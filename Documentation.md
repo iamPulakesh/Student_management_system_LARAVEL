@@ -19,19 +19,12 @@ The **Student Management System (SMS)** is a web-based application for universit
 
 | ID | Requirement |
 | :--- | :--- |
-| FR-01 | The system shall support three user roles: Admin, Teacher, and Student. |
-| FR-02 | Admin can create, view, edit, and delete departments, teachers, students, and courses. |
-| FR-03 | Teachers can mark attendance (present/absent) for students in their assigned courses. |
-| FR-04 | Teachers can create, edit, and delete assessment records (with marks obtained, max marks, and date) for their courses. |
-| FR-05 | Admin can view, edit, and delete attendance and assessment records across all courses. |
-| FR-06 | Students can view their enrolled courses, attendance history, and assessment scores (read-only). |
-| FR-07 | Students can update their phone, date of birth, gender, address, and password from their profile. |
-| FR-08 | The system shall prevent duplicate attendance entries for the same student, course, and date. |
-| FR-09 | The system shall prevent future dates from being selected for attendance. |
-| FR-10 | Login shall support role-based identifiers: email (Admin), employee number (Teacher), and student number (Student). |
-| FR-11 | The admin dashboard shall display total counts of students, teachers, departments, and courses. |
-| FR-12 | The teacher dashboard shall display assigned courses count, total attendance recorded, and total assessments recorded. |
-| FR-13 | The student dashboard shall display total courses in their department and overall attendance percentage. |
+| FR-01 | **Multi-Role Authentication & Access Control**: Provide secure login and role-based access for Admin, Teacher, and Student roles using dedicated identifiers (Email, Employee ID, Student ID). |
+| FR-02 | **Academic Structure & Records Management**: Allow Admins to manage (create, view, edit, delete) departments, courses, teachers, and student registrations. |
+| FR-03 | **Course Attendance Tracking**: Enable Teachers to record attendance with validation against future dates and duplicate entries, while allowing Students to view attendance history and percentage. |
+| FR-04 | **Assessment & Marks Management**: Allow Teachers to create, update, and manage assessment records (marks obtained, maximum marks, date) with transparent view access for Students. |
+| FR-05 | **Student Self-Service Portal**: Provide Students self-service access to view enrolled courses, academic performance, and manage personal contact details and password. |
+| FR-06 | **Role-Specific Dashboard Analytics**: Display tailored summary metrics and analytics for Admin (institutional counts), Teacher (course & record counts), and Student (enrolled courses & attendance). |
 
 ### Non-Functional Requirements
 
@@ -43,7 +36,6 @@ The **Student Management System (SMS)** is a web-based application for universit
 | NFR-04 | The `role` field on users shall not be mass-assignable; roles are assigned server-side only via `User::createWithRole()`. |
 | NFR-05 | All foreign key constraints shall use `restrictOnDelete()` to prevent orphaned records. |
 | NFR-06 | Sessions shall be stored in the database. |
-| NFR-07 | The UI shall apply role-based color theming via CSS custom properties (Admin: Crimson, Teacher: Orange, Student: Blue). |
 
 ---
 
