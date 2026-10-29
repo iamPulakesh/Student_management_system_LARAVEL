@@ -47,9 +47,6 @@ a {
     text-decoration: none;
 }
 
-a:hover {
-    text-decoration: underline;
-}
 
 /* Layout - Single Top Navigation Bar */
 .app-layout {
@@ -102,12 +99,10 @@ a:hover {
     font-weight: 500;
     font-size: 0.88rem;
     white-space: nowrap;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    text-decoration: none;
 }
 
 .nav-links a:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--text-main);
     text-decoration: none;
 }
 
@@ -326,11 +321,6 @@ a.btn {
     font-size: 0.92rem;
 }
 
-.alert-success {
-    background-color: var(--success-bg);
-    color: var(--success-text);
-    border-color: var(--success-border);
-}
 
 .alert-danger {
     background-color: var(--danger-bg);
