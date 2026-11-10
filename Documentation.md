@@ -105,16 +105,25 @@ student_management_sys/
 ├── bootstrap/
 │   └── app.php                               # Middleware alias registration
 ├── database/
-│   └── migrations/
-│       ├── create_users_table.php
-│       ├── create_cache_table.php
-│       ├── create_jobs_table.php
-│       ├── create_departments_table.php
-│       ├── create_teachers_table.php
-│       ├── create_students_table.php
-│       ├── create_courses_table.php
-│       ├── create_attendances_table.php
-│       └── create_assessments_table.php
+│   ├── migrations/
+│   │   ├── create_users_table.php
+│   │   ├── create_cache_table.php
+│   │   ├── create_jobs_table.php
+│   │   ├── create_departments_table.php
+│   │   ├── create_teachers_table.php
+│   │   ├── create_students_table.php
+│   │   ├── create_courses_table.php
+│   │   ├── create_attendances_table.php
+│   │   └── create_assessments_table.php
+│   └── seeders/
+│       ├── DatabaseSeeder.php                # Runs all seeders below in order
+│       ├── AdminSeeder.php                   # Admin account (only if none exists)
+│       ├── DepartmentSeeder.php
+│       ├── TeacherSeeder.php
+│       ├── CourseSeeder.php
+│       ├── StudentSeeder.php
+│       ├── AttendanceSeeder.php
+│       └── AssessmentSeeder.php
 ├── resources/
 │   ├── css/
 │   │   └── app.css                           # Design system (CSS variables, role themes, layout)
@@ -417,7 +426,13 @@ erDiagram
    ```
    This interactive command prompts for name, email, and password. It prevents creating a duplicate admin unless the `--force` flag is used.
 
-7. **Start the development server:**
+7. **Seed the demo data (optional):**
+   ```bash
+   php artisan db:seed
+   ```
+   This fills the database with sample records so the application can be tested right away.
+
+8. **Start the development server:**
    ```bash
    php artisan serve
    ```
