@@ -11,16 +11,17 @@ use Illuminate\Database\Seeder;
 class AttendanceSeeder extends Seeder
 {
     /**
-     * Absent days per student, keyed by student number. Each number is an
-     * index into the class dates (0 = oldest). This gives roughly 100%,
-     * 67% and 33% attendance so the 75% badge shows on some rows only.
+     * Absent days for the 1st, 2nd and 3rd student of each course (ordered by
+     * student number). Each number is an index into the class dates (0 = oldest).
+     * This gives roughly 100%, 67% and 33% attendance so the 75% badge shows
+     * on some rows only.
      *
-     * @var array<string, list<int>>
+     * @var list<list<int>>
      */
-    private const ABSENT_DAYS = [
-        'CSE23001' => [],
-        'CSE23002' => [1],
-        'CSE23003' => [0, 2],
+    private const ABSENT_DAYS_BY_POSITION = [
+        [],
+        [1],
+        [0, 2],
     ];
 
     /**
@@ -32,11 +33,11 @@ class AttendanceSeeder extends Seeder
         $classDates = $this->previousWeekdays(3);
 
         foreach (Course::query()->with('teacher')->get() as $course) {
-            $students = Student::query()->enrolledIn($course)->get();
+            $students = Student::query()->enrolledIn($course)->orderBy('student_number')->get();
 
             foreach ($classDates as $dayIndex => $classDate) {
-                foreach ($students as $student) {
-                    $isAbsent = in_array($dayIndex, self::ABSENT_DAYS[$student->student_number] ?? [], true);
+                foreach ($students as $position => $student) {
+                    $isAbsent = in_array($dayIndex, self::ABSENT_DAYS_BY_POSITION[$position] ?? [], true);
 
                     Attendance::query()->firstOrCreate(
                         [
