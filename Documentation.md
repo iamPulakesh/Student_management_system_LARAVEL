@@ -41,18 +41,14 @@ The **Student Management System (SMS)** is a web-based application for universit
 
 ## 3. Technology Stack
 
-| Layer | Technology | Version / Details |
-| :--- | :--- | :--- |
-| Backend Language | PHP | `^8.3` |
-| Web Framework | Laravel | `^13.17` |
-| Database | MySQL | `8.x` (database name: `university_sms`) |
-| Session Storage | Database Driver | Configured via `SESSION_DRIVER=database` |
-| Templating Engine | Laravel Blade | Server-side rendering with reusable components |
-| Styling | Vanilla CSS | Custom design system with CSS variables, no CSS framework |
-| Authentication | Laravel Session Auth | Multi-identifier login (email / employee number / student number) |
-| Password Hashing | Bcrypt | 12 rounds (`BCRYPT_ROUNDS=12`) |
-| CLI Tooling | Artisan | Custom command `app:create-admin` for initial admin setup |
-| Package Manager | Composer | PHP dependency management |
+| Layer | Technology Used |
+| :--- | :--- |
+| Backend | PHP |
+| Framework | Laravel |
+| Database | MySQL |
+| Frontend | Blade Templates, Vanilla CSS |
+| Authentication | Laravel Session Auth |
+| Package Manager | Composer |
 
 ---
 
