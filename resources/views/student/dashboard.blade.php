@@ -3,6 +3,10 @@
 @section('title', 'Student Portal')
 
 @section('content')
+    <div class="card-header">
+        <h3 class="card-title">Student Portal</h3>
+    </div>
+
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-label">Registration Number</div>

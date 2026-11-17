@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="card-header">
-        <h3 class="card-title">Assigned Courses</h3>
+        <h3 class="card-title">{{ $teacher->user?->name ?? 'Faculty' }} — Assigned Courses</h3>
     </div>
 
     @if ($teacher->courses->isEmpty())

@@ -1,6 +1,6 @@
 <div class="form-grid">
     <div class="form-group">
-        <label for="code">Course Code (e.g. CS101) *</label>
+        <label for="code">Course Code (e.g. CS101) <span class="required">*</span></label>
         <input
             id="code"
             type="text"
@@ -12,7 +12,7 @@
     </div>
 
     <div class="form-group">
-        <label for="name">Course Name *</label>
+        <label for="name">Course Name <span class="required">*</span></label>
         <input
             id="name"
             type="text"
@@ -24,7 +24,7 @@
     </div>
 
     <div class="form-group">
-        <label for="credits">Credits (1–10) *</label>
+        <label for="credits">Credits (1–10) <span class="required">*</span></label>
         <input
             id="credits"
             type="number"
@@ -38,7 +38,7 @@
     </div>
 
     <div class="form-group">
-        <label for="semester">Semester *</label>
+        <label for="semester">Semester <span class="required">*</span></label>
         <select id="semester" name="semester" required>
             @for ($sem = 1; $sem <= 8; $sem++)
                 <option
@@ -53,7 +53,7 @@
     </div>
 
     <div class="form-group">
-        <label for="department_id">Department *</label>
+        <label for="department_id">Department <span class="required">*</span></label>
         <select id="department_id" name="department_id" required>
             <option value="">Select Department...</option>
             @foreach ($departments as $department)

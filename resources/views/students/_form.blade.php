@@ -1,6 +1,6 @@
 <div class="form-grid">
     <div class="form-group">
-        <label for="student_number">Registration Number *</label>
+        <label for="student_number">Registration Number <span class="required">*</span></label>
         <input
             id="student_number"
             type="text"
@@ -16,7 +16,7 @@
     </div>
 
     <div class="form-group">
-        <label for="first_name">First Name *</label>
+        <label for="first_name">First Name <span class="required">*</span></label>
         <input
             id="first_name"
             type="text"
@@ -28,7 +28,7 @@
     </div>
 
     <div class="form-group">
-        <label for="last_name">Last Name *</label>
+        <label for="last_name">Last Name <span class="required">*</span></label>
         <input
             id="last_name"
             type="text"
@@ -41,7 +41,8 @@
 
     <div class="form-group">
         <label for="password">
-            {{ $student->exists ? 'Reset Password' : 'Password *' }}
+            {{ $student->exists ? 'Reset Password' : 'Password' }}
+            @unless ($student->exists)<span class="required">*</span>@endunless
         </label>
         <input
             id="password"
@@ -54,7 +55,7 @@
     </div>
 
     <div class="form-group">
-        <label for="email">Email Address *</label>
+        <label for="email">Email Address <span class="required">*</span></label>
         <input
             id="email"
             type="email"
@@ -66,7 +67,7 @@
     </div>
 
     <div class="form-group">
-        <label for="department_id">Department *</label>
+        <label for="department_id">Department <span class="required">*</span></label>
         <select id="department_id" name="department_id" required>
             <option value="">Select Department...</option>
             @foreach ($departments as $department)
@@ -82,7 +83,7 @@
     </div>
 
     <div class="form-group">
-        <label for="year_of_study">Semester *</label>
+        <label for="year_of_study">Semester <span class="required">*</span></label>
         <select id="year_of_study" name="year_of_study" required>
             @for ($sem = 1; $sem <= 8; $sem++)
                 <option

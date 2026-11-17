@@ -3,7 +3,8 @@
 @section('title', 'Attendance')
 
 @section('content')
-    <div class="card-header" style="justify-content: flex-end;">
+    <div class="card-header">
+        <h3 class="card-title">Attendance</h3>
         @if ($routePrefix === 'teacher')
             <a href="{{ route('teacher.attendance.create', array_filter(['course_id' => $courseId, 'attendance_date' => $attendanceDate])) }}" class="btn">
                 Record Attendance

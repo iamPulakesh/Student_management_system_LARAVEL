@@ -149,15 +149,43 @@ student_management_sys/
 ## 4. Data Flow
 
 ```mermaid
-flowchart LR
-    Admin((Admin)) -->|Manage departments, teachers,<br>students, courses, attendance,<br>assessments| SMS[Student Management<br>System]
-    Teacher((Teacher)) -->|Mark attendance,<br>record assessments,<br>view assigned courses| SMS
-    Student((Student)) -->|View courses, attendance,<br>assessments, update profile| SMS
-    SMS -->|Dashboard stats,<br>CRUD responses,<br>filtered records| Admin
-    SMS -->|Dashboard stats,<br>course rosters,<br>attendance/assessment views| Teacher
-    SMS -->|Dashboard stats,<br>read-only course/attendance/<br>assessment data| Student
-    SMS <-->|Read/Write| DB[(MySQL Database)]
+flowchart TB
+    Admin[Admin]
+    Faculty[Faculty]
+    Student[Student]
+
+    subgraph SMS ["SMS"]
+        P2(Manage<br>master data)
+        P3(Record attendance<br>& marks)
+        P4(Student<br>portal)
+        D1[(users, departments,<br>courses, teachers, students)]
+        D2[(attendances,<br>assessments)]
+    end
+
+    Admin -->|departments, courses,<br>students, faculty| P2
+    P2 -->|lists, dashboard counts| Admin
+    Admin -->|corrections<br>edit / delete| P3
+
+    Faculty -->|attendance statuses,<br>assessment marks| P3
+    P3 -->|class lists,<br>attendance %| Faculty
+
+    Student -->|profile changes,<br>new password| P4
+    P4 -->|courses, attendance %,<br>marks| Student
+
+    P2 -->|records +<br>login accounts| D1
+    D1 -->|assigned courses,<br>enrolled students| P3
+    P3 <-->|save / read<br>records| D2
+    D1 -->|courses, profile| P4
+    P4 -->|updated profile<br>& password| D1
+    D2 -->|own attendance<br>& marks| P4
 ```
+
+**How to read it:** rectangles are users, rounded boxes are processes, and cylinders are database tables. Each arrow is labelled with the data that moves. Faculty are stored with the `teacher` role in the code.
+
+- **Admin → master data:** the admin creates departments, courses, students and faculty. Creating a student or faculty member also creates their login account in `users`.
+- **Faculty → attendance & marks:** faculty see only their assigned courses and the students enrolled in them (same department and semester), then record attendance and marks. The admin can only correct (edit or delete) these records, not create them.
+- **Student → portal:** students read their own courses, attendance and marks, and can update their own profile and password.
+- **Not drawn:** every request first goes through login and role middleware (`auth` plus `admin`, `teacher` or `student`), which reads `users` to identify the account and its role.
 
 ---
 

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="card-header">
-        <h3 class="card-title">Select Course &amp; Date</h3>
+        <h3 class="card-title">Record Attendance</h3>
     </div>
 
     <form method="GET" action="{{ route($routePrefix . '.attendance.create') }}" class="filter-bar">

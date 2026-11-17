@@ -1,6 +1,6 @@
 <div class="form-grid">
     <div class="form-group">
-        <label for="employee_number">Employee Code *</label>
+        <label for="employee_number">Employee Code <span class="required">*</span></label>
         <input
             id="employee_number"
             type="text"
@@ -15,7 +15,7 @@
     </div>
 
     <div class="form-group">
-        <label for="name">Full Name *</label>
+        <label for="name">Full Name <span class="required">*</span></label>
         <input
             id="name"
             type="text"
@@ -27,7 +27,7 @@
     </div>
 
     <div class="form-group">
-        <label for="email">Email Address *</label>
+        <label for="email">Email Address <span class="required">*</span></label>
         <input
             id="email"
             type="email"
@@ -51,7 +51,8 @@
 
     <div class="form-group">
         <label for="password">
-            {{ $teacher->exists ? 'Reset Password' : 'Password *' }}
+            {{ $teacher->exists ? 'Reset Password' : 'Password' }}
+            @unless ($teacher->exists)<span class="required">*</span>@endunless
         </label>
         <input
             id="password"
@@ -64,7 +65,7 @@
     </div>
 
     <div class="form-group">
-        <label for="department_id">Department *</label>
+        <label for="department_id">Department <span class="required">*</span></label>
         <select id="department_id" name="department_id" required>
             <option value="">Select Department...</option>
             @foreach ($departments as $department)

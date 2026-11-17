@@ -3,6 +3,9 @@
 @section('title', $course->code . ' — ' . $course->name)
 
 @section('content')
+    <div class="card-header">
+        <h3 class="card-title">{{ $course->code }} — {{ $course->name }}</h3>
+    </div>
 
     @if ($students->isEmpty())
         <div class="empty-state">No students are currently enrolled in this course.</div>

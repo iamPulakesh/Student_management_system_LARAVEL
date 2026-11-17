@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard')</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body class="{{ auth()->check() ? 'role-' . auth()->user()->role : '' }}">
@@ -12,6 +15,16 @@
         <div class="app-layout">
             <header class="topbar" aria-label="Primary Navigation">
                 <div class="topbar-inner">
+                    <a href="{{ route('home') }}" class="brand" aria-label="SMS home">
+                        <svg class="brand-mark" viewBox="0 0 18 18" aria-hidden="true">
+                            <rect x="1" y="1" width="7" height="7" rx="1.5" fill="#e9ecf2"/>
+                            <rect x="10" y="1" width="7" height="7" rx="1.5" fill="#7aa5f5"/>
+                            <rect x="1" y="10" width="7" height="7" rx="1.5" fill="#4fcf7a"/>
+                            <rect x="10" y="10" width="7" height="7" rx="1.5" fill="#e9ecf2"/>
+                        </svg>
+                        SMS
+                    </a>
+
                     @if (auth()->user()->isAdmin() || auth()->user()->isTeacher() || auth()->user()->isStudent())
                         <nav class="nav-links">
                             <ul>

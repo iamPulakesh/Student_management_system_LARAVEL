@@ -24,7 +24,7 @@
     </div>
 
     <div class="form-group">
-        <label for="student_id">Student<span class="required">*</span></label>
+        <label for="student_id">Student <span class="required">*</span></label>
         <select id="student_id" name="student_id" required>
             <option value="">-- Select Student --</option>
             @foreach ($students as $student)
