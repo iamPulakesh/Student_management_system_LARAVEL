@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Student portal pages: dashboard, courses, attendance and marks.
+ */
+
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;

@@ -1,3 +1,7 @@
+{{--
+    Admin page to edit a student.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Edit Student')

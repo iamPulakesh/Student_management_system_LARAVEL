@@ -1,3 +1,7 @@
+{{--
+    Shared assessment-mark form fields.
+--}}
+
 @php
     $selectedCourseId = old('course_id', $assessment->course_id ?? ($selectedCourse->id ?? ''));
     $selectedStudentId = old('student_id', $assessment->student_id ?? '');
@@ -7,6 +11,10 @@
             ? $assessment->assessment_date->format('Y-m-d')
             : now()->toDateString()
     );
+    $existingAssessmentDate = isset($assessment) ? $assessment->assessment_date?->format('Y-m-d') : null;
+    $earliestAssessmentDate = $existingAssessmentDate !== null
+        ? min(\App\Models\Assessment::earliestRecordableDate(), $existingAssessmentDate)
+        : \App\Models\Assessment::earliestRecordableDate();
 @endphp
 
 <div class="form-grid">
@@ -55,6 +63,7 @@
             id="assessment_date"
             name="assessment_date"
             value="{{ $assessmentDateValue }}"
+            min="{{ $earliestAssessmentDate }}"
             max="{{ now()->toDateString() }}"
             required
         >

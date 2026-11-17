@@ -1,3 +1,7 @@
+{{--
+    Admin view of a faculty member's courses.
+--}}
+
 @extends('layouts.app')
 
 @section('title', $teacher->user?->name ?? 'Faculty Details')

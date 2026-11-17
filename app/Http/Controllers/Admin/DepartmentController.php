@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin pages for managing departments.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -26,7 +30,7 @@ class DepartmentController extends Controller
     public function create(): View
     {
         return view('departments.create', [
-            'department' => new Department(),
+            'department' => new Department,
         ]);
     }
 

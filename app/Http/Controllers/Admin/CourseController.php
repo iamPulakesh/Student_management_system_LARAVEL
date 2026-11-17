@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin pages for managing courses.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -66,7 +70,7 @@ class CourseController extends Controller
     public function create(): View
     {
         return view('courses.create', [
-            'course' => new Course(),
+            'course' => new Course,
             'departments' => Department::query()->orderBy('name')->get(),
             'teachers' => Teacher::query()->with(['user', 'department'])->orderBy('employee_number')->get(),
         ]);
@@ -92,19 +96,7 @@ class CourseController extends Controller
 
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {
-        $validated = $request->validated();
-
-        if ((int) $validated['department_id'] !== (int) $course->department_id
-            && ($course->attendances()->exists() || $course->assessments()->exists())
-        ) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'department_id' => 'Cannot change the department of a course that already has attendance or assessment records.',
-                ]);
-        }
-
-        $course->update($validated);
+        $course->update($request->validated());
 
         return redirect()
             ->route('admin.courses.index')
@@ -113,7 +105,7 @@ class CourseController extends Controller
 
     public function destroy(Course $course): RedirectResponse
     {
-        if ($course->attendances()->exists() || $course->assessments()->exists()) {
+        if ($course->hasAcademicRecords()) {
             return redirect()
                 ->route('admin.courses.index')
                 ->with('error', 'Cannot delete this course because attendance or assessment records refer to it.');

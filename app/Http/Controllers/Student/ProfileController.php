@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Lets a student update their own profile.
+ */
+
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;

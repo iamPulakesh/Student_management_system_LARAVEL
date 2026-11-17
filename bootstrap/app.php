@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Bootstraps the app: routes, middleware aliases and exception handling.
+ */
+
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsStudent;
 use App\Http\Middleware\EnsureUserIsTeacher;

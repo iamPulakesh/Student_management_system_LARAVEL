@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model for a student's assessment mark in a course.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,6 +11,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Assessment extends Model
 {
+    /**
+     * How many months back an assessment can be dated.
+     */
+    public const RECORDING_WINDOW_MONTHS = 6;
+
     protected $fillable = [
         'student_id',
         'course_id',
@@ -24,6 +33,29 @@ class Assessment extends Model
             'max_marks' => 'integer',
             'assessment_date' => 'date',
         ];
+    }
+
+    /**
+     * The earliest date (Y-m-d) an assessment can be dated.
+     */
+    public static function earliestRecordableDate(): string
+    {
+        return now()->subMonths(self::RECORDING_WINDOW_MONTHS)->toDateString();
+    }
+
+    /**
+     * The maximum marks already used for this assessment in the course,
+     * or null if no mark has been recorded for it yet.
+     */
+    public static function maxMarksInUse(int $courseId, string $assessmentName, ?int $ignoreAssessmentId = null): ?int
+    {
+        $maxMarks = self::query()
+            ->where('course_id', $courseId)
+            ->where('assessment_name', $assessmentName)
+            ->when($ignoreAssessmentId, fn ($query) => $query->whereKeyNot($ignoreAssessmentId))
+            ->value('max_marks');
+
+        return $maxMarks === null ? null : (int) $maxMarks;
     }
 
     public function student(): BelongsTo

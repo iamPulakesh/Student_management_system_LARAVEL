@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Runs all demo-data seeders in order.
+ */
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;

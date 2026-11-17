@@ -1,3 +1,7 @@
+{{--
+    Admin view of one student profile.
+--}}
+
 @extends('layouts.app')
 
 @section('title', $student->full_name)

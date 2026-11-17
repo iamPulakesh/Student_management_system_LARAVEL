@@ -1,3 +1,7 @@
+{{--
+    Shared course form fields.
+--}}
+
 <div class="form-grid">
     <div class="form-group">
         <label for="code">Course Code (e.g. CS101) <span class="required">*</span></label>
@@ -75,12 +79,14 @@
             @foreach ($teachers as $teacher)
                 <option
                     value="{{ $teacher->id }}"
+                    data-department-id="{{ $teacher->department_id }}"
                     @selected((string) old('teacher_id', $course->teacher_id) === (string) $teacher->id)
                 >
                     {{ $teacher->user?->name }} ({{ $teacher->employee_number }} — {{ $teacher->department?->code }})
                 </option>
             @endforeach
         </select>
+        <span class="form-help">Only faculty from the selected department can be assigned.</span>
         <x-form-error field="teacher_id" />
     </div>
 </div>
@@ -89,3 +95,26 @@
     <button type="submit" class="btn">{{ $submitLabel ?? 'Save Course' }}</button>
     <a href="{{ route('admin.courses.index') }}" class="btn">Cancel</a>
 </div>
+
+<script>
+    // Show only faculty from the selected department, matching the server-side rule.
+    document.addEventListener('DOMContentLoaded', function () {
+        const departmentSelect = document.getElementById('department_id');
+        const teacherSelect = document.getElementById('teacher_id');
+
+        function showDepartmentFaculty() {
+            Array.from(teacherSelect.options).forEach(function (option) {
+                const isAllowed = !option.dataset.departmentId || option.dataset.departmentId === departmentSelect.value;
+                option.hidden = !isAllowed;
+                option.disabled = !isAllowed;
+            });
+
+            if (teacherSelect.selectedOptions[0]?.disabled) {
+                teacherSelect.value = '';
+            }
+        }
+
+        departmentSelect.addEventListener('change', showDepartmentFaculty);
+        showDepartmentFaculty();
+    });
+</script>

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model for a student's attendance in a course on a date.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +12,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Attendance extends Model
 {
     public const STATUS_PRESENT = 'present';
+
     public const STATUS_ABSENT = 'absent';
+
+    /**
+     * How many months back attendance can be recorded or moved to.
+     */
+    public const RECORDING_WINDOW_MONTHS = 6;
 
     protected $fillable = [
         'student_id',
@@ -23,6 +33,14 @@ class Attendance extends Model
         return [
             'attendance_date' => 'date',
         ];
+    }
+
+    /**
+     * The earliest date (Y-m-d) attendance can be recorded for.
+     */
+    public static function earliestRecordableDate(): string
+    {
+        return now()->subMonths(self::RECORDING_WINDOW_MONTHS)->toDateString();
     }
 
     public function student(): BelongsTo

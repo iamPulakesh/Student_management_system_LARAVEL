@@ -1,11 +1,19 @@
 <?php
 
+/**
+ * Validates the new-student form.
+ */
+
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\ValidatesPersonalDetails;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class StoreStudentRequest extends FormRequest
 {
+    use ValidatesPersonalDetails;
+
     public function authorize(): bool
     {
         return $this->user()?->isAdmin() ?? false;
@@ -18,6 +26,12 @@ class StoreStudentRequest extends FormRequest
                 'student_number' => strtoupper(trim((string) $this->input('student_number'))),
             ]);
         }
+
+        if ($this->has('email')) {
+            $this->merge([
+                'email' => strtolower(trim((string) $this->input('email'))),
+            ]);
+        }
     }
 
     /**
@@ -27,16 +41,24 @@ class StoreStudentRequest extends FormRequest
     {
         return [
             'student_number' => ['required', 'string', 'max:8', 'regex:/^[a-zA-Z0-9]+$/', 'unique:students,student_number'],
-            'first_name' => ['required', 'string', 'max:100'],
-            'last_name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'max:255'],
-            'date_of_birth' => ['nullable', 'date', 'before:today'],
-            'gender' => ['nullable', 'string', 'max:30'],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'first_name' => $this->personNameRules(100),
+            'last_name' => $this->personNameRules(100),
+            'email' => ['required', 'string', 'email:rfc,filter', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', Password::min(8), 'max:255'],
+            'date_of_birth' => $this->dateOfBirthRules(),
+            'gender' => $this->genderRules(),
+            'phone' => $this->phoneRules(),
             'address' => ['nullable', 'string', 'max:1000'],
             'department_id' => ['required', 'integer', 'exists:departments,id'],
             'year_of_study' => ['required', 'integer', 'min:1', 'max:8'],
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return $this->personalDetailMessages();
     }
 }

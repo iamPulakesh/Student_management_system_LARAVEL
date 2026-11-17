@@ -1,3 +1,7 @@
+{{--
+    Shared student form fields.
+--}}
+
 <div class="form-grid">
     <div class="form-group">
         <label for="student_number">Registration Number <span class="required">*</span></label>
@@ -51,6 +55,9 @@
             {{ $student->exists ? '' : 'required' }}
             autocomplete="new-password"
         >
+        <span class="form-help">
+            At least 8 characters.{{ $student->exists ? ' Leave blank to keep the current password.' : '' }}
+        </span>
         <x-form-error field="password" />
     </div>
 
@@ -104,7 +111,8 @@
             type="date"
             name="date_of_birth"
             value="{{ old('date_of_birth', $student->date_of_birth?->format('Y-m-d')) }}"
-            max="{{ now()->toDateString() }}"
+            min="{{ now()->subYears(\App\Models\Student::MAX_AGE)->toDateString() }}"
+            max="{{ now()->subYears(\App\Models\Student::MIN_AGE)->toDateString() }}"
         >
         <x-form-error field="date_of_birth" />
     </div>
@@ -113,9 +121,9 @@
         <label for="gender">Gender</label>
         <select id="gender" name="gender">
             <option value="">Select Gender...</option>
-            <option value="Male" @selected(old('gender', $student->gender) === 'Male')>Male</option>
-            <option value="Female" @selected(old('gender', $student->gender) === 'Female')>Female</option>
-            <option value="Other" @selected(old('gender', $student->gender) === 'Other')>Other</option>
+            @foreach (\App\Models\Student::GENDERS as $gender)
+                <option value="{{ $gender }}" @selected(old('gender', $student->gender) === $gender)>{{ $gender }}</option>
+            @endforeach
         </select>
         <x-form-error field="gender" />
     </div>
@@ -124,9 +132,10 @@
         <label for="phone">Phone No</label>
         <input
             id="phone"
-            type="text"
+            type="tel"
             name="phone"
             value="{{ old('phone', $student->phone) }}"
+            placeholder="e.g. 9876543210"
         >
         <x-form-error field="phone" />
     </div>

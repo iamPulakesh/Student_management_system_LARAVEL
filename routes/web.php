@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Web routes for login and the admin, faculty and student portals.
+ */
+
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\DepartmentController;

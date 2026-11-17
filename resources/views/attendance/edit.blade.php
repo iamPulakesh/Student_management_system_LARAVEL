@@ -1,3 +1,7 @@
+{{--
+    Admin page to correct an attendance record.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Edit Attendance Record')
@@ -19,6 +23,7 @@
                     type="date"
                     name="attendance_date"
                     value="{{ old('attendance_date', $attendance->attendance_date->format('Y-m-d')) }}"
+                    min="{{ min(\App\Models\Attendance::earliestRecordableDate(), $attendance->attendance_date->format('Y-m-d')) }}"
                     max="{{ now()->toDateString() }}"
                     required
                 >

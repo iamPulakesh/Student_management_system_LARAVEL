@@ -1,3 +1,7 @@
+{{--
+    Admin page to create a department.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Create Department')

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Seeds the demo faculty and their login accounts.
+ */
+
 namespace Database\Seeders;
 
 use App\Models\Department;
@@ -12,13 +16,17 @@ class TeacherSeeder extends Seeder
     /**
      * Faculty members grouped by department code.
      *
-     * @var array<string, list<array{employee_number: string, name: string, email: string, phone: string}>>
+     * F104 is assigned no courses (see CourseSeeder), so deleting a faculty
+     * member can be demonstrated successfully.
+     *
+     * @var array<string, list<array{employee_number: string, name: string, email: string, phone: string|null}>>
      */
     private const TEACHERS_BY_DEPARTMENT = [
         'CSE' => [
             ['employee_number' => 'F101', 'name' => 'Dr. Ananya Sen', 'email' => 'ananya.sen@sms.test', 'phone' => '9830000101'],
             ['employee_number' => 'F102', 'name' => 'Prof. Rajib Ghosh', 'email' => 'rajib.ghosh@sms.test', 'phone' => '9830000102'],
             ['employee_number' => 'F103', 'name' => 'Dr. Meera Iyer', 'email' => 'meera.iyer@sms.test', 'phone' => '9830000103'],
+            ['employee_number' => 'F104', 'name' => 'Dr. Sneha Chakraborty', 'email' => 'sneha.chakraborty@sms.test', 'phone' => null],
         ],
         'ECE' => [
             ['employee_number' => 'F201', 'name' => 'Dr. Subhajit Roy', 'email' => 'subhajit.roy@sms.test', 'phone' => '9830000201'],
@@ -33,7 +41,7 @@ class TeacherSeeder extends Seeder
     ];
 
     /**
-     * Seed three faculty members per department, each with a linked login account.
+     * Seed the faculty members, each with a linked login account.
      */
     public function run(): void
     {

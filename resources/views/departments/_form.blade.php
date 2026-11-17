@@ -1,3 +1,7 @@
+{{--
+    Shared department form fields.
+--}}
+
 <div class="form-grid">
     <div class="form-group">
         <label for="name">Department Name <span class="required">*</span></label>

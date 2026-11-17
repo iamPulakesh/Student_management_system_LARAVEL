@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Session settings.
+ */
+
 use Illuminate\Support\Str;
 
 return [

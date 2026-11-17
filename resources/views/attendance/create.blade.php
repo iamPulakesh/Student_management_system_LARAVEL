@@ -1,3 +1,7 @@
+{{--
+    Page to record attendance for a class.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Record Attendance')
@@ -22,7 +26,7 @@
 
         <div class="form-group">
             <label for="attendance_date">Attendance Date <span class="required">*</span></label>
-            <input type="date" id="attendance_date" name="attendance_date" value="{{ $attendanceDate }}" max="{{ now()->toDateString() }}" required>
+            <input type="date" id="attendance_date" name="attendance_date" value="{{ $attendanceDate }}" min="{{ \App\Models\Attendance::earliestRecordableDate() }}" max="{{ now()->toDateString() }}" required>
         </div>
 
         <div class="actions-group">

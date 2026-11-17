@@ -1,3 +1,7 @@
+{{--
+    Shows success, error and validation messages.
+--}}
+
 @if (session('success'))
     <div class="alert alert-success" role="status">
         {{ session('success') }}

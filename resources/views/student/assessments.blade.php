@@ -1,3 +1,7 @@
+{{--
+    Student's own assessment marks.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'My Assessments')

@@ -1,3 +1,7 @@
+{{--
+    Admin list of departments.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Departments')

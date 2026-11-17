@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model for a course in a department and semester.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -44,6 +48,14 @@ class Course extends Model
     public function assessments(): HasMany
     {
         return $this->hasMany(Assessment::class);
+    }
+
+    /**
+     * Whether attendance or marks have been recorded for this course.
+     */
+    public function hasAcademicRecords(): bool
+    {
+        return $this->attendances()->exists() || $this->assessments()->exists();
     }
 
     /**

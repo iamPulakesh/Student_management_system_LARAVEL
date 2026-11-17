@@ -1,3 +1,7 @@
+{{--
+    Attendance list for a course and date.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Attendance')

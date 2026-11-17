@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Mail settings.
+ */
+
 return [
 
     /*

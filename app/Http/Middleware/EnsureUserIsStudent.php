@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Allows only students to access a route.
+ */
+
 namespace App\Http\Middleware;
 
 use Closure;

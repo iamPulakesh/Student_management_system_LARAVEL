@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Authentication settings.
+ */
+
 use App\Models\User;
 
 return [

@@ -1,3 +1,7 @@
+{{--
+    Main layout with the top navigation.
+--}}
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>

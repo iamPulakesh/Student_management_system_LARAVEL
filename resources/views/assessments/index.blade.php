@@ -1,3 +1,7 @@
+{{--
+    List of assessment marks with filters.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Assessments & Marks')

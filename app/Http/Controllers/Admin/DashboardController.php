@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin dashboard with overall totals.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

@@ -1,15 +1,20 @@
 <?php
 
+/**
+ * Admin pages for managing faculty and their login accounts.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTeacherRequest;
+use App\Http\Requests\UpdateTeacherRequest;
 use App\Models\Department;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class TeacherController extends Controller
@@ -63,28 +68,14 @@ class TeacherController extends Controller
     public function create(): View
     {
         return view('teachers.create', [
-            'teacher' => new Teacher(),
+            'teacher' => new Teacher,
             'departments' => Department::query()->orderBy('name')->get(),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreTeacherRequest $request): RedirectResponse
     {
-        $request->merge([
-            'employee_number' => strtoupper(trim((string) $request->input('employee_number'))),
-            'name' => trim((string) $request->input('name')),
-            'email' => strtolower(trim((string) $request->input('email'))),
-            'phone' => trim((string) $request->input('phone')),
-        ]);
-
-        $validated = $request->validate([
-            'employee_number' => ['required', 'string', 'max:4', 'regex:/^[a-zA-Z0-9]+$/', 'unique:teachers,employee_number'],
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'password' => ['required', 'string', 'max:255'],
-            'department_id' => ['required', 'integer', 'exists:departments,id'],
-        ]);
+        $validated = $request->validated();
 
         DB::transaction(function () use ($validated): void {
             $user = User::createWithRole([
@@ -125,35 +116,9 @@ class TeacherController extends Controller
         ]);
     }
 
-    public function update(Request $request, Teacher $teacher): RedirectResponse
+    public function update(UpdateTeacherRequest $request, Teacher $teacher): RedirectResponse
     {
-        $request->merge([
-            'employee_number' => strtoupper(trim((string) $request->input('employee_number'))),
-            'name' => trim((string) $request->input('name')),
-            'email' => strtolower(trim((string) $request->input('email'))),
-            'phone' => trim((string) $request->input('phone')),
-        ]);
-
-        $validated = $request->validate([
-            'employee_number' => [
-                'required',
-                'string',
-                'max:4',
-                'regex:/^[a-zA-Z0-9]+$/',
-                Rule::unique('teachers', 'employee_number')->ignore($teacher->id),
-            ],
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($teacher->user_id),
-            ],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'password' => ['nullable', 'string', 'max:255'],
-            'department_id' => ['required', 'integer', 'exists:departments,id'],
-        ]);
+        $validated = $request->validated();
 
         DB::transaction(function () use ($validated, $teacher): void {
             $userAttributes = [

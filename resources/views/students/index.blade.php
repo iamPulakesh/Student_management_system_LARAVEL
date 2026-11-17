@@ -1,3 +1,7 @@
+{{--
+    Admin list of students.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Students')

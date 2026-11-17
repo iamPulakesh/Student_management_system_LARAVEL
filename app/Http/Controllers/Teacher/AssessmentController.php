@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Manages assessment marks for faculty and admin.
+ */
+
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
@@ -155,7 +159,7 @@ class AssessmentController extends Controller
             'assessment_name' => $validated['assessment_name'],
             'marks_obtained' => $validated['marks_obtained'],
             'max_marks' => $validated['max_marks'],
-            'assessment_date' => $validated['assessment_date'] ?? null,
+            'assessment_date' => $validated['assessment_date'],
             'recorded_by_user_id' => $request->user()->id,
         ]);
 
@@ -217,7 +221,7 @@ class AssessmentController extends Controller
             'assessment_name' => $validated['assessment_name'],
             'marks_obtained' => $validated['marks_obtained'],
             'max_marks' => $validated['max_marks'],
-            'assessment_date' => $validated['assessment_date'] ?? null,
+            'assessment_date' => $validated['assessment_date'],
             'recorded_by_user_id' => $request->user()->id,
         ]);
 

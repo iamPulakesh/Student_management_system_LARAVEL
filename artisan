@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+/**
+ * Command-line entry point for Artisan commands.
+ */
+
 use Illuminate\Foundation\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 

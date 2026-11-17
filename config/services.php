@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Third-party service credentials.
+ */
+
 return [
 
     /*

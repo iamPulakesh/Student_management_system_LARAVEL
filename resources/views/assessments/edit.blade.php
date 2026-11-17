@@ -1,3 +1,7 @@
+{{--
+    Page to edit an assessment mark.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Edit Assessment Mark')

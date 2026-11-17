@@ -1,3 +1,7 @@
+{{--
+    Admin dashboard.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Admin Dashboard')

@@ -1,3 +1,7 @@
+{{--
+    Students enrolled in a course (faculty view).
+--}}
+
 @extends('layouts.app')
 
 @section('title', $course->code . ' — ' . $course->name)

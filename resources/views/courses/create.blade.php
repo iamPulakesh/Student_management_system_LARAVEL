@@ -1,3 +1,7 @@
+{{--
+    Admin page to create a course.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Create Course')

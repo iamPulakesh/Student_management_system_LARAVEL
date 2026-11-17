@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model for an academic department.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

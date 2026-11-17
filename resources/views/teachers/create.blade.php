@@ -1,3 +1,7 @@
+{{--
+    Admin page to create a faculty member.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Create Faculty')

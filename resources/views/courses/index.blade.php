@@ -1,3 +1,7 @@
+{{--
+    Course list for admin and faculty.
+--}}
+
 @extends('layouts.app')
 
 @section('title', !empty($isTeacherView) ? 'My Courses' : 'Courses')

@@ -1,3 +1,7 @@
+{{--
+    Student's own attendance history.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'My Attendance')

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Seeds the demo admin account (admin@sms.test / password).
+ */
+
 namespace Database\Seeders;
 
 use App\Models\User;

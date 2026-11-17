@@ -1,3 +1,7 @@
+{{--
+    Faculty dashboard.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Faculty Dashboard')

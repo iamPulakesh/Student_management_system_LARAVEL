@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * File storage settings.
+ */
+
 return [
 
     /*

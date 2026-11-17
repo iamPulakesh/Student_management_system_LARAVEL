@@ -1,3 +1,5 @@
+// Vite build config (not used by the current pages).
+
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';

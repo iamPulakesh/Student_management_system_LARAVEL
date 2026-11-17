@@ -1,3 +1,7 @@
+{{--
+    Student portal home.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Student Portal')

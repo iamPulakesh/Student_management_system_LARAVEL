@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Manages attendance for faculty and admin.
+ */
+
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
@@ -224,7 +228,7 @@ class AttendanceController extends Controller
         $routePrefix = $this->routePrefix($request);
 
         return redirect()
-            ->route($routePrefix . '.attendance.index', [
+            ->route($routePrefix.'.attendance.index', [
                 'course_id' => $course->id,
                 'attendance_date' => $validated['attendance_date'],
             ])
@@ -262,12 +266,14 @@ class AttendanceController extends Controller
                 'required',
                 'date',
                 'before_or_equal:today',
+                'after_or_equal:'.min(Attendance::earliestRecordableDate(), $attendance->attendance_date->toDateString()),
                 Rule::unique('attendances', 'attendance_date')
                     ->where(fn ($query) => $query->where('student_id', $attendance->student_id)->where('course_id', $attendance->course_id))
                     ->ignore($attendance->id),
             ],
         ], [
             'attendance_date.unique' => 'An attendance record already exists for this student on the specified date.',
+            'attendance_date.after_or_equal' => 'Attendance can only be moved to a date within the last '.Attendance::RECORDING_WINDOW_MONTHS.' months.',
             'status.in' => 'Attendance status must be either present or absent.',
         ]);
 

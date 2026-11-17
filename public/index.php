@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Web entry point that handles every HTTP request.
+ */
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 

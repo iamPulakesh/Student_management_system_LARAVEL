@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model for a login account and its role.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +16,9 @@ class User extends Authenticatable
     use Notifiable;
 
     public const ROLE_ADMIN = 'admin';
+
     public const ROLE_TEACHER = 'teacher';
+
     public const ROLE_STUDENT = 'student';
 
     public const ROLES = [

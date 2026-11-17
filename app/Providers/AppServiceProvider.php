@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Registers app-wide services (currently empty).
+ */
+
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;

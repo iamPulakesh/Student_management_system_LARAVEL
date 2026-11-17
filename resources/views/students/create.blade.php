@@ -1,3 +1,7 @@
+{{--
+    Admin page to create a student.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Create Student')

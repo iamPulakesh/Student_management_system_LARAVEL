@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Validates department edits.
+ */
+
 namespace App\Http\Requests;
 
 use App\Models\Department;

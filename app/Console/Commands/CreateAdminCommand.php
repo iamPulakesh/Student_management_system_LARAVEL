@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Artisan command that creates the administrator account.
+ */
+
 namespace App\Console\Commands;
 
 use App\Models\User;

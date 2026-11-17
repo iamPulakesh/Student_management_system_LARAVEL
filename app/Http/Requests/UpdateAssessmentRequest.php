@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Validates edits to an assessment mark.
+ */
+
 namespace App\Http\Requests;
 
 use App\Models\Assessment;
@@ -71,7 +75,7 @@ class UpdateAssessmentRequest extends FormRequest
             'assessment_name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:150',
                 Rule::unique('assessments', 'assessment_name')
                     ->where(function ($query) {
                         return $query
@@ -82,16 +86,53 @@ class UpdateAssessmentRequest extends FormRequest
             ],
             'marks_obtained' => ['required', 'integer', 'min:0', 'max:999', 'lte:max_marks'],
             'max_marks' => ['required', 'integer', 'gt:0', 'max:999'],
-            'assessment_date' => ['nullable', 'date', 'before_or_equal:today'],
+            'assessment_date' => ['required', 'date', 'before_or_equal:today', 'after_or_equal:'.$this->earliestAllowedDate($assessment)],
         ];
     }
 
     /**
-     * Configure the validator instance to check the student is enrolled in the course.
+     * The earliest date allowed: the recording window, or the assessment's
+     * current date if it is older, so existing records stay editable.
+     */
+    private function earliestAllowedDate(Assessment $assessment): string
+    {
+        $currentDate = $assessment->assessment_date?->toDateString();
+        $windowStart = Assessment::earliestRecordableDate();
+
+        return $currentDate !== null && $currentDate < $windowStart ? $currentDate : $windowStart;
+    }
+
+    /**
+     * Configure the validator instance to check the student is enrolled in the
+     * course and that a mark moved to another assessment uses its maximum marks.
      */
     public function after(): array
     {
         return [
+            function (Validator $validator) {
+                if ($validator->errors()->hasAny(['course_id', 'assessment_name', 'max_marks'])) {
+                    return;
+                }
+
+                /** @var Assessment $assessment */
+                $assessment = $this->route('assessment');
+
+                $movesToAnotherAssessment = $this->integer('course_id') !== (int) $assessment->course_id
+                    || strcasecmp($this->input('assessment_name'), $assessment->assessment_name) !== 0;
+
+                if (! $movesToAnotherAssessment) {
+                    return;
+                }
+
+                $maxMarksInUse = Assessment::maxMarksInUse($this->integer('course_id'), $this->input('assessment_name'), $assessment->id);
+
+                if ($maxMarksInUse !== null && $maxMarksInUse !== $this->integer('max_marks')) {
+                    $validator->errors()->add(
+                        'max_marks',
+                        "{$this->input('assessment_name')} in this course is marked out of {$maxMarksInUse}. Use the same maximum marks.",
+                    );
+                }
+            },
             function (Validator $validator) {
                 $courseId = $this->input('course_id');
                 $studentId = $this->input('student_id');
@@ -130,6 +171,8 @@ class UpdateAssessmentRequest extends FormRequest
             'marks_obtained.lte' => 'Marks obtained cannot exceed maximum marks.',
             'marks_obtained.min' => 'Marks obtained cannot be negative.',
             'max_marks.gt' => 'Maximum marks must be greater than zero.',
+            'assessment_date.required' => 'Please enter the assessment date.',
+            'assessment_date.after_or_equal' => 'The assessment date cannot be more than '.Assessment::RECORDING_WINDOW_MONTHS.' months ago.',
         ];
     }
 }

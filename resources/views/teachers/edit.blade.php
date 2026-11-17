@@ -1,3 +1,7 @@
+{{--
+    Admin page to edit a faculty member.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Edit Faculty')

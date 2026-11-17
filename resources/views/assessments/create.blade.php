@@ -1,3 +1,7 @@
+{{--
+    Page to record a new assessment mark.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'Record Assessment Mark')

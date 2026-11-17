@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Database connection settings.
+ */
+
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 

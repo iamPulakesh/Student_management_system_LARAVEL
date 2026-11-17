@@ -1,3 +1,7 @@
+{{--
+    Student's profile edit form.
+--}}
+
 <form method="POST" action="{{ route('student.profile.update') }}" id="profile-edit-mode" style="display: none;">
     @csrf
     @method('PUT')
@@ -7,9 +11,10 @@
             <label for="profile_phone">Phone No</label>
             <input
                 id="profile_phone"
-                type="text"
+                type="tel"
                 name="phone"
                 value="{{ old('phone', $student->phone) }}"
+                placeholder="e.g. 9876543210"
             >
             <x-form-error field="phone" />
         </div>
@@ -21,7 +26,8 @@
                 type="date"
                 name="date_of_birth"
                 value="{{ old('date_of_birth', $student->date_of_birth?->format('Y-m-d')) }}"
-                max="{{ now()->toDateString() }}"
+                min="{{ now()->subYears(\App\Models\Student::MAX_AGE)->toDateString() }}"
+                max="{{ now()->subYears(\App\Models\Student::MIN_AGE)->toDateString() }}"
             >
             <x-form-error field="date_of_birth" />
         </div>
@@ -30,11 +36,23 @@
             <label for="profile_gender">Gender</label>
             <select id="profile_gender" name="gender">
                 <option value="">Select Gender...</option>
-                <option value="Male" @selected(old('gender', $student->gender) === 'Male')>Male</option>
-                <option value="Female" @selected(old('gender', $student->gender) === 'Female')>Female</option>
-                <option value="Other" @selected(old('gender', $student->gender) === 'Other')>Other</option>
+                @foreach (\App\Models\Student::GENDERS as $gender)
+                    <option value="{{ $gender }}" @selected(old('gender', $student->gender) === $gender)>{{ $gender }}</option>
+                @endforeach
             </select>
             <x-form-error field="gender" />
+        </div>
+
+        <div class="form-group">
+            <label for="profile_current_password">Current Password</label>
+            <input
+                id="profile_current_password"
+                type="password"
+                name="current_password"
+                autocomplete="current-password"
+            >
+            <span class="form-help">Needed only when setting a new password.</span>
+            <x-form-error field="current_password" />
         </div>
 
         <div class="form-group">
@@ -43,7 +61,9 @@
                 id="profile_password"
                 type="password"
                 name="password"
+                autocomplete="new-password"
             >
+            <span class="form-help">At least 8 characters.</span>
             <x-form-error field="password" />
         </div>
 
@@ -53,7 +73,7 @@
                 id="profile_password_confirmation"
                 type="password"
                 name="password_confirmation"
-            
+                autocomplete="new-password"
             >
         </div>
     </div>

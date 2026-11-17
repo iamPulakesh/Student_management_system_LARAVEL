@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model for a faculty member.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

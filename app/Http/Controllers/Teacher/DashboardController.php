@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Faculty dashboard and course pages.
+ */
+
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;

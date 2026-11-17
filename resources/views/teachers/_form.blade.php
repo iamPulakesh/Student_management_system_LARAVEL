@@ -1,3 +1,7 @@
+{{--
+    Shared faculty form fields.
+--}}
+
 <div class="form-grid">
     <div class="form-group">
         <label for="employee_number">Employee Code <span class="required">*</span></label>
@@ -42,9 +46,10 @@
         <label for="phone">Phone No</label>
         <input
             id="phone"
-            type="text"
+            type="tel"
             name="phone"
             value="{{ old('phone', $teacher->phone) }}"
+            placeholder="e.g. 9876543210"
         >
         <x-form-error field="phone" />
     </div>
@@ -61,6 +66,9 @@
             {{ $teacher->exists ? '' : 'required' }}
             autocomplete="new-password"
         >
+        <span class="form-help">
+            At least 8 characters.{{ $teacher->exists ? ' Leave blank to keep the current password.' : '' }}
+        </span>
         <x-form-error field="password" />
     </div>
 

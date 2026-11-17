@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model for a student, enrolled in every course of their department and semester.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -9,6 +13,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
+    /**
+     * Gender options offered on every student form.
+     *
+     * @var list<string>
+     */
+    public const GENDERS = ['Male', 'Female', 'Other'];
+
+    /**
+     * Youngest and oldest age accepted for a date of birth.
+     */
+    public const MIN_AGE = 15;
+
+    public const MAX_AGE = 60;
+
     protected $fillable = [
         'student_number',
         'first_name',
@@ -48,6 +66,14 @@ class Student extends Model
     public function assessments(): HasMany
     {
         return $this->hasMany(Assessment::class);
+    }
+
+    /**
+     * Whether attendance or marks have been recorded for this student.
+     */
+    public function hasAcademicRecords(): bool
+    {
+        return $this->attendances()->exists() || $this->assessments()->exists();
     }
 
     public function getFullNameAttribute(): string

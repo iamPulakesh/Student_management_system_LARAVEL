@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Admin pages for managing students and their login accounts.
+ */
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -68,7 +72,7 @@ class StudentController extends Controller
     public function create(): View
     {
         return view('students.create', [
-            'student' => new Student(),
+            'student' => new Student,
             'departments' => Department::query()->orderBy('name')->get(),
         ]);
     }
@@ -140,16 +144,6 @@ class StudentController extends Controller
     {
         $validated = $request->validated();
 
-        if ((int) $validated['department_id'] !== (int) $student->department_id
-            && ($student->attendances()->exists() || $student->assessments()->exists())
-        ) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'department_id' => 'Cannot change the department of a student who already has attendance or assessment records.',
-                ]);
-        }
-
         DB::transaction(function () use ($validated, $student): void {
             $fullName = trim("{$validated['first_name']} {$validated['last_name']}");
 
@@ -184,7 +178,7 @@ class StudentController extends Controller
 
     public function destroy(Student $student): RedirectResponse
     {
-        if ($student->attendances()->exists() || $student->assessments()->exists()) {
+        if ($student->hasAcademicRecords()) {
             return redirect()
                 ->route('admin.students.index')
                 ->with('error', 'Cannot delete this student because attendance or assessment records exist for them.');

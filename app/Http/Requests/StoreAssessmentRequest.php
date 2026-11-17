@@ -1,7 +1,12 @@
 <?php
 
+/**
+ * Validates a new assessment mark.
+ */
+
 namespace App\Http\Requests;
 
+use App\Models\Assessment;
 use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Foundation\Http\FormRequest;
@@ -58,7 +63,7 @@ class StoreAssessmentRequest extends FormRequest
             'assessment_name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:150',
                 Rule::unique('assessments', 'assessment_name')->where(function ($query) {
                     return $query
                         ->where('student_id', $this->input('student_id'))
@@ -67,16 +72,31 @@ class StoreAssessmentRequest extends FormRequest
             ],
             'marks_obtained' => ['required', 'integer', 'min:0', 'max:999', 'lte:max_marks'],
             'max_marks' => ['required', 'integer', 'gt:0', 'max:999'],
-            'assessment_date' => ['nullable', 'date', 'before_or_equal:today'],
+            'assessment_date' => ['required', 'date', 'before_or_equal:today', 'after_or_equal:'.Assessment::earliestRecordableDate()],
         ];
     }
 
     /**
-     * Configure the validator instance to check the student is enrolled in the course.
+     * Configure the validator instance to check the student is enrolled in the
+     * course and that the assessment keeps one maximum mark for the whole class.
      */
     public function after(): array
     {
         return [
+            function (Validator $validator) {
+                if ($validator->errors()->hasAny(['course_id', 'assessment_name', 'max_marks'])) {
+                    return;
+                }
+
+                $maxMarksInUse = Assessment::maxMarksInUse($this->integer('course_id'), $this->input('assessment_name'));
+
+                if ($maxMarksInUse !== null && $maxMarksInUse !== $this->integer('max_marks')) {
+                    $validator->errors()->add(
+                        'max_marks',
+                        "{$this->input('assessment_name')} in this course is marked out of {$maxMarksInUse}. Use the same maximum marks.",
+                    );
+                }
+            },
             function (Validator $validator) {
                 $courseId = $this->input('course_id');
                 $studentId = $this->input('student_id');
@@ -110,6 +130,8 @@ class StoreAssessmentRequest extends FormRequest
             'marks_obtained.lte' => 'Marks obtained cannot exceed maximum marks.',
             'marks_obtained.min' => 'Marks obtained cannot be negative.',
             'max_marks.gt' => 'Maximum marks must be greater than zero.',
+            'assessment_date.required' => 'Please enter the assessment date.',
+            'assessment_date.after_or_equal' => 'The assessment date cannot be more than '.Assessment::RECORDING_WINDOW_MONTHS.' months ago.',
         ];
     }
 }

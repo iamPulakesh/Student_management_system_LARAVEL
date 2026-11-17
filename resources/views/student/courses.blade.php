@@ -1,3 +1,7 @@
+{{--
+    Student's courses.
+--}}
+
 @extends('layouts.app')
 
 @section('title', 'My Courses')

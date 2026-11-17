@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Validates the new-department form.
+ */
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;

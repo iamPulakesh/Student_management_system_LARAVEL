@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Core app settings (name, environment, timezone, locale).
+ */
+
 return [
 
     /*
@@ -65,7 +69,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Kolkata',
 
     /*
     |--------------------------------------------------------------------------
