@@ -278,15 +278,15 @@ select option { background: var(--bg-surface); color: var(--text-primary); }
 .filter-bar .actions-group { flex: 0 0 auto; }
 
 /* ==========================================================
-   Buttons (36px default, 44px beside inputs, 30px in tables)
+   Buttons (32px default, 28px in tables)
    ========================================================== */
 .btn, button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    height: 36px;
-    padding: 0 16px;
+    height: 32px;
+    padding: 0 14px;
     font: inherit;
     font-size: var(--text-sm);
     font-weight: 500;
@@ -314,12 +314,11 @@ select option { background: var(--bg-surface); color: var(--text-primary); }
 .card-header > .btn:hover,
 .actions-group > button[type="submit"]:hover { background: #ffffff; border-color: #ffffff; }
 
-/* Large buttons where they sit next to 44px inputs */
-.filter-bar .actions-group .btn,
-.filter-bar .actions-group button { height: 44px; padding: 0 20px; font-size: var(--text-md); }
+/* Filter buttons stay slim but sit centred on the 44px input row */
+.filter-bar .actions-group { height: 44px; }
 
 /* Small row-level buttons in tables; Delete stays secondary */
-.data-table .btn, .data-table button { height: 30px; padding: 0 12px; }
+.data-table .btn, .data-table button { height: 28px; padding: 0 10px; }
 .data-table .actions-group button[type="submit"] {
     color: var(--text-primary);
     background: transparent;
@@ -478,11 +477,9 @@ select option { background: var(--bg-surface); color: var(--text-primary); }
 .auth-card td { display: block; padding: 0 0 4px; }
 .auth-card tr { display: block; margin-bottom: 16px; }
 .auth-card button[type="submit"] {
-    width: 100%;
-    height: 44px;
-    margin-top: 4px;
-    padding: 0 20px;
-    font-size: var(--text-md);
+    display: flex;
+    min-width: 120px;
+    margin: 4px auto 0;
     color: var(--bg-base);
     background: var(--accent);
     border-color: var(--accent);
