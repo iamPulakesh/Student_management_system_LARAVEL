@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMS Codebase Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #fbfbfc; --surface: #ffffff; --surface-2: #f3f4f6; --border: #e3e5e8; --border-strong: #cfd3d8;
+  --text: #15171a; --text-2: #4b5058; --text-3: #6b7078;
+  --accent: #2c58b8; --accent-soft: #e8eefb;
+  --green: #1b6e3a; --green-soft: #e6f4ea; --amber: #8f4f0a; --amber-soft: #fdf1e2; --red: #b01b1b; --red-soft: #fbe9e9;
+  --code-bg: #0f1115; --code-text: #e6e8ec; --code-comment: #8b919a;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0d0f; --surface: #121315; --surface-2: #1a1b1d; --border: #1f2022; --border-strong: #2d2e30;
+    --text: #e9ecf2; --text-2: #b1b4b9; --text-3: #919499;
+    --accent: #7aa5f5; --accent-soft: #16203a;
+    --green: #4fcf7a; --green-soft: #10261a; --amber: #f2b03d; --amber-soft: #2a1d0c; --red: #f58aa7; --red-soft: #2c1218;
+    --code-bg: #08090a; --code-text: #e6e8ec; --code-comment: #7b8089;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c0d0f; --surface: #121315; --surface-2: #1a1b1d; --border: #1f2022; --border-strong: #2d2e30;
+  --text: #e9ecf2; --text-2: #b1b4b9; --text-3: #919499;
+  --accent: #7aa5f5; --accent-soft: #16203a;
+  --green: #4fcf7a; --green-soft: #10261a; --amber: #f2b03d; --amber-soft: #2a1d0c; --red: #f58aa7; --red-soft: #2c1218;
+  --code-bg: #08090a; --code-text: #e6e8ec; --code-comment: #7b8089;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: var(--font-mono); font-size: 0.86em; background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+pre { margin: 14px 0 18px; padding: 16px 18px; background: var(--code-bg); color: var(--code-text); border: 1px solid var(--border-strong); border-radius: 10px; overflow-x: auto; font-family: var(--font-mono); font-size: 13.2px; line-height: 1.6; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; }
+pre .c { color: var(--code-comment); }
+
+.shell { display: grid; grid-template-columns: 260px minmax(0, 1fr); max-width: 1240px; margin: 0 auto; }
+nav.toc { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 28px 20px 40px 24px; border-right: 1px solid var(--border); font-size: 14px; }
+nav.toc .brand { font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
+nav.toc .sub { color: var(--text-3); font-size: 13px; margin-bottom: 18px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+nav.toc li { counter-increment: toc; }
+nav.toc li a { display: flex; gap: 8px; padding: 5px 8px; border-radius: 6px; color: var(--text-2); }
+nav.toc li a::before { content: counter(toc, decimal-leading-zero); font-family: var(--font-mono); font-size: 12px; color: var(--text-3); padding-top: 2px; }
+nav.toc li a:hover { background: var(--surface-2); text-decoration: none; color: var(--text); }
+nav.toc li a.active { background: var(--accent-soft); color: var(--accent); }
+.theme-toggle { margin-top: 18px; font: inherit; font-size: 13px; color: var(--text-2); background: var(--surface); border: 1px solid var(--border-strong); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+
+main { padding: 44px 56px 120px; min-width: 0; }
+.hero { padding-bottom: 28px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); }
+h1 { font-size: clamp(2rem, 1.4rem + 2.2vw, 2.8rem); line-height: 1.1; letter-spacing: -0.035em; margin: 10px 0 14px; }
+.lede { font-size: 1.12rem; color: var(--text-2); max-width: 68ch; margin: 0; }
+section { padding-top: 44px; max-width: 900px; }
+h2 { font-size: 1.6rem; letter-spacing: -0.025em; line-height: 1.2; margin: 0 0 6px; display: flex; gap: 12px; align-items: baseline; }
+h2 .num { font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-3); font-weight: 500; }
+h3 { font-size: 1.12rem; letter-spacing: -0.01em; margin: 30px 0 8px; }
+p { margin: 10px 0; }
+.oneliner { font-size: 1.05rem; color: var(--text-2); margin: 4px 0 18px; }
+ul, ol { padding-left: 22px; }
+li { margin: 4px 0; }
+
+.callout { border: 1px solid var(--border); border-left: 4px solid var(--accent); background: var(--surface); border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
+.callout.say { border-left-color: var(--green); background: var(--green-soft); }
+.callout.warn { border-left-color: var(--amber); background: var(--amber-soft); }
+.callout strong.label { display: block; font-size: 12px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; color: var(--text-3); }
+.callout.say strong.label { color: var(--green); }
+.callout.warn strong.label { color: var(--amber); }
+
+table { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: 14.5px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--border); }
+th { font-size: 13px; font-weight: 600; color: var(--text-3); background: var(--surface-2); }
+tr:last-child td { border-bottom: 0; }
+td code { white-space: nowrap; }
+.table-wrap { overflow-x: auto; }
+.yes { color: var(--green); font-weight: 600; } .no { color: var(--red); font-weight: 600; } .own { color: var(--amber); font-weight: 600; }
+
+/* flow diagrams */
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 18px 0 22px; }
+.flow .step { flex: 1 1 140px; min-width: 130px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 10px; padding: 12px 12px 10px; position: relative; margin: 0 22px 12px 0; }
+.flow .step:not(:last-child)::after { content: "→"; position: absolute; right: -19px; top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 15px; }
+.flow .step b { display: block; font-size: 14px; margin-bottom: 2px; }
+.flow .step span { display: block; font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.flow .step small { display: block; margin-top: 6px; font-family: var(--font-mono); font-size: 11px; color: var(--text-3); overflow-wrap: anywhere; }
+.flow .step.m { border-color: var(--green); } .flow .step.v { border-color: var(--accent); } .flow .step.c { border-color: var(--amber); }
+
+.timeline { list-style: none; padding: 0; margin: 18px 0; counter-reset: tl; }
+.timeline > li { counter-increment: tl; position: relative; padding: 0 0 16px 46px; margin: 0; }
+.timeline > li::before { content: counter(tl); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+.timeline > li::after { content: ""; position: absolute; left: 14.5px; top: 32px; bottom: 2px; width: 1px; background: var(--border-strong); }
+.timeline > li:last-child::after { display: none; }
+.timeline .where { display: inline-block; margin-top: 2px; font-family: var(--font-mono); font-size: 12px; color: var(--text-3); }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 14px 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.card h4 { margin: 0 0 4px; font-size: 15px; }
+.card p { margin: 0; font-size: 14.5px; color: var(--text-2); }
+
+/* schema diagram */
+.schema { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0; }
+.tbl { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 10px; overflow: hidden; font-size: 13px; }
+.tbl .t { font-family: var(--font-mono); font-weight: 600; padding: 8px 12px; background: var(--surface-2); border-bottom: 1px solid var(--border); }
+.tbl .r { padding: 3px 12px; font-family: var(--font-mono); color: var(--text-2); }
+.tbl .r.fk { color: var(--accent); }
+.tbl .r.uq { color: var(--green); }
+.tbl .r:last-child { padding-bottom: 8px; }
+
+details.qa { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin: 8px 0; }
+details.qa summary { cursor: pointer; padding: 11px 14px; font-weight: 500; list-style: none; }
+details.qa summary::-webkit-details-marker { display: none; }
+details.qa summary::before { content: "+"; display: inline-block; width: 18px; color: var(--text-3); font-family: var(--font-mono); }
+details.qa[open] summary::before { content: "–"; }
+details.qa .a { padding: 0 16px 12px 32px; color: var(--text-2); }
+
+footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-3); font-size: 13px; }
+
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; }
+  nav.toc { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); padding: 20px 16px; }
+  main { padding: 28px 16px 80px; }
+}
+@media print {
+  nav.toc { display: none; } .shell { display: block; } main { padding: 0; }
+  details.qa { break-inside: avoid; } details.qa .a { display: block; }
+  pre { white-space: pre-wrap; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<nav class="toc" aria-label="Contents">
+  <div class="brand">SMS Codebase Guide</div>
+  <div class="sub">Student Management System · Laravel 13</div>
+  <ol>
+    <li><a href="#overview">The app in 30 seconds</a></li>
+    <li><a href="#folders">Where things live</a></li>
+    <li><a href="#mvc">MVC in plain English</a></li>
+    <li><a href="#lifecycle">Life of a request</a></li>
+    <li><a href="#database">The database</a></li>
+    <li><a href="#accounts">How accounts are created</a></li>
+    <li><a href="#login">How login works</a></li>
+    <li><a href="#rbac">How RBAC works</a></li>
+    <li><a href="#features">How the features work</a></li>
+    <li><a href="#validation">Validation &amp; data safety</a></li>
+    <li><a href="#security">Security checklist</a></li>
+    <li><a href="#views">Views &amp; the UI</a></li>
+    <li><a href="#demo">Demo data &amp; running it</a></li>
+    <li><a href="#questions">Questions developers may ask</a></li>
+    <li><a href="#limits">Honest limitations</a></li>
+    <li><a href="#cheatsheet">“Where is…?” cheat sheet</a></li>
+  </ol>
+  <button class="theme-toggle" type="button" id="theme-toggle">Toggle light / dark</button>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">Presenter's guide</div>
+  <h1>How the Student Management System works</h1>
+  <p class="lede">A plain-English walk through the codebase: what each part does, which file does it, and what happens under the hood when someone signs in, takes attendance or records marks. Each section starts with a one-line summary, then the details, then the real code.</p>
+</header>
+
+<!-- 1 ------------------------------------------------------------------ -->
+<section id="overview">
+  <h2><span class="num">01</span>The app in 30 seconds</h2>
+  <p class="oneliner">A web app where a college manages departments, courses, students, faculty, attendance and marks, with a separate portal for each kind of user.</p>
+  <div class="grid-2">
+    <div class="card"><h4>Admin</h4><p>Manages the master data: departments, courses, students and faculty (and their logins). Can review and correct attendance and marks.</p></div>
+    <div class="card"><h4>Faculty</h4><p>Sees only the courses they teach. Takes attendance for a whole class and records assessment marks.</p></div>
+    <div class="card"><h4>Student</h4><p>Sees their own courses, attendance history and marks. Can update their own contact details and password.</p></div>
+  </div>
+  <table>
+    <tr><th>Layer</th><th>Technology</th><th>In one line</th></tr>
+    <tr><td>Language</td><td>PHP 8.5</td><td>Runs on the server.</td></tr>
+    <tr><td>Framework</td><td>Laravel 13</td><td>Gives us routing, MVC, sessions, validation, security out of the box.</td></tr>
+    <tr><td>Database</td><td>MySQL</td><td>Stores everything. We talk to it through <b>Eloquent</b> (Laravel's ORM), so we write PHP, not SQL.</td></tr>
+    <tr><td>Pages</td><td>Blade templates + one CSS file</td><td>HTML is built on the server; no JavaScript framework.</td></tr>
+    <tr><td>Sessions &amp; cache</td><td>Stored in MySQL</td><td>Login sessions live in the <code>sessions</code> table.</td></tr>
+  </table>
+</section>
+
+<!-- 2 ------------------------------------------------------------------ -->
+<section id="folders">
+  <h2><span class="num">02</span>Where things live</h2>
+  <p class="oneliner">Every file starts with a one-line comment saying what it does. This table is the map.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Folder / file</th><th>What's in it</th><th>MVC role</th></tr>
+    <tr><td><code>routes/web.php</code></td><td>Every URL in the app and which controller method handles it (56 routes).</td><td>Entry map</td></tr>
+    <tr><td><code>app/Http/Controllers/</code></td><td>Controllers, grouped by portal: <code>Admin/</code>, <code>Teacher/</code>, <code>Student/</code>, <code>Auth/</code>.</td><td><b>Controller</b></td></tr>
+    <tr><td><code>app/Models/</code></td><td>7 models: <code>User</code>, <code>Department</code>, <code>Teacher</code>, <code>Student</code>, <code>Course</code>, <code>Attendance</code>, <code>Assessment</code>.</td><td><b>Model</b></td></tr>
+    <tr><td><code>resources/views/</code></td><td>Blade templates, one folder per area, plus the shared <code>layouts/app.blade.php</code>.</td><td><b>View</b></td></tr>
+    <tr><td><code>app/Http/Middleware/</code></td><td>The three role guards: <code>EnsureUserIsAdmin</code>, <code>EnsureUserIsTeacher</code>, <code>EnsureUserIsStudent</code>.</td><td>Gatekeepers</td></tr>
+    <tr><td><code>app/Http/Requests/</code></td><td>Form Requests: one class per form that checks permission and validates the input.</td><td>Input checkers</td></tr>
+    <tr><td><code>database/migrations/</code></td><td>The table definitions (the database schema as code).</td><td>Schema</td></tr>
+    <tr><td><code>database/seeders/</code></td><td>Demo data: 4 departments, 10 faculty, 18 courses, 30 students, attendance and marks.</td><td>Test data</td></tr>
+    <tr><td><code>bootstrap/app.php</code></td><td>Wires the app together: routes, middleware aliases, error rendering.</td><td>Setup</td></tr>
+    <tr><td><code>public/index.php</code></td><td>The single front door: every web request enters here.</td><td>Entry point</td></tr>
+    <tr><td><code>public/css/app.css</code></td><td>The one stylesheet (dark theme).</td><td>Styling</td></tr>
+    <tr><td><code>config/</code></td><td>Settings (database, sessions, timezone <code>Asia/Kolkata</code>, …).</td><td>Settings</td></tr>
+    <tr><td><code>app/Console/Commands/</code></td><td><code>app:create-admin</code>, the command that creates the first admin.</td><td>CLI tool</td></tr>
+  </table></div>
+</section>
+
+<!-- 3 ------------------------------------------------------------------ -->
+<section id="mvc">
+  <h2><span class="num">03</span>MVC in plain English</h2>
+  <p class="oneliner">MVC splits the app into three jobs: the <b>Model</b> knows the data, the <b>View</b> shows it, and the <b>Controller</b> decides what to do with a request.</p>
+
+  <div class="callout say"><strong class="label">An analogy you can use</strong>
+    A restaurant. The <b>controller</b> is the waiter: takes your order and coordinates. The <b>model</b> is the kitchen and pantry: knows the ingredients and the recipes (the data and its rules). The <b>view</b> is the plate: how the food is presented. The waiter never cooks, and the kitchen never talks to the customer.
+  </div>
+
+  <h3>One real example: the admin opens the Students page</h3>
+  <div class="flow">
+    <div class="step"><b>Route</b><span>The URL <code>/admin/students</code> is matched.</span><small>routes/web.php</small></div>
+    <div class="step c"><b>Controller</b><span>Reads the filters, asks the model for students.</span><small>Admin/StudentController@index</small></div>
+    <div class="step m"><b>Model</b><span>Builds the database query, returns Student objects.</span><small>app/Models/Student.php</small></div>
+    <div class="step v"><b>View</b><span>Loops over the students and prints the table.</span><small>views/students/index.blade.php</small></div>
+  </div>
+
+  <h3>The Controller: decides</h3>
+  <p>It receives the request, asks models for data, and picks a view (or redirects). It does no HTML and no SQL itself.</p>
+  <pre><code>Route::middleware([&#x27;auth&#x27;, &#x27;admin&#x27;])-&gt;prefix(&#x27;admin&#x27;)-&gt;name(&#x27;admin.&#x27;)-&gt;group(function () {
+    Route::get(&#x27;/dashboard&#x27;, [AdminDashboardController::class, &#x27;index&#x27;])-&gt;name(&#x27;dashboard&#x27;);
+    Route::resource(&#x27;students&#x27;, StudentController::class);   <span class="c">// 7 CRUD routes in one line</span>
+    Route::resource(&#x27;teachers&#x27;, TeacherController::class);
+    <span class="c">// ...departments, courses, attendance, assessments</span>
+});
+
+Route::middleware([&#x27;auth&#x27;, &#x27;teacher&#x27;])-&gt;prefix(&#x27;teacher&#x27;)-&gt;name(&#x27;teacher.&#x27;)-&gt;group(/* ... */);
+Route::middleware([&#x27;auth&#x27;, &#x27;student&#x27;])-&gt;prefix(&#x27;student&#x27;)-&gt;name(&#x27;student.&#x27;)-&gt;group(/* ... */);</code></pre>
+  <pre><code><span class="c">// app/Http/Controllers/Admin/StudentController.php  (simplified)</span>
+public function index(Request $request): View
+{
+    $students = Student::query()
+        -&gt;with([&#x27;department&#x27;, &#x27;user&#x27;])                 <span class="c">// load related rows in one go</span>
+        -&gt;where(&#x27;department_id&#x27;, $request-&gt;query(&#x27;department_id&#x27;))
+        -&gt;orderBy(&#x27;last_name&#x27;)
+        -&gt;paginate(10);                                <span class="c">// 10 per page</span>
+
+    return view(&#x27;students.index&#x27;, [&#x27;students&#x27; =&gt; $students]);
+}</code></pre>
+
+  <h3>The Model: knows the data</h3>
+  <p>A model is a PHP class for one table. It knows its columns, its relationships (a student <i>belongs to</i> a department and <i>has many</i> attendance records) and small rules about itself. Laravel's <b>Eloquent</b> turns <code>Student::query()->where(...)->get()</code> into SQL for us.</p>
+  <pre><code><span class="c">// app/Models/Student.php</span>
+class Student extends Model
+{
+    protected $fillable = [&#x27;student_number&#x27;, &#x27;first_name&#x27;, &#x27;last_name&#x27;, /* ... */];
+
+    public function department(): BelongsTo { return $this-&gt;belongsTo(Department::class); }
+    public function attendances(): HasMany  { return $this-&gt;hasMany(Attendance::class); }
+
+    public function getFullNameAttribute(): string   <span class="c">// usable as $student-&gt;full_name</span>
+    {
+        return trim(&quot;{$this-&gt;first_name} {$this-&gt;last_name}&quot;);
+    }
+}</code></pre>
+
+  <h3>The View: shows it</h3>
+  <p>Blade templates are HTML with a few helpers: <code>{{ }}</code> prints a value (safely escaped), <code>@foreach</code> loops, <code>@if</code> branches. Views receive data from the controller and never query the database.</p>
+  <pre><code><span class="c">{{-- resources/views/students/index.blade.php (simplified) --}}</span>
+@foreach ($students as $student)
+    &lt;tr&gt;
+        &lt;td&gt;{{ $student-&gt;student_number }}&lt;/td&gt;
+        &lt;td&gt;{{ $student-&gt;full_name }}&lt;/td&gt;
+        &lt;td&gt;{{ $student-&gt;department?-&gt;name }}&lt;/td&gt;
+    &lt;/tr&gt;
+@endforeach
+
+{{ $students-&gt;links() }}   <span class="c">{{-- pagination buttons --}}</span></code></pre>
+
+  <h3>Why this split is worth it</h3>
+  <ul>
+    <li><b>Easy to find things.</b> A bug in a page layout? Look in the view. Wrong numbers? Look in the controller or model.</li>
+    <li><b>Reuse.</b> The same <code>Student</code> model serves the admin list, the faculty roster and the student portal.</li>
+    <li><b>Safe changes.</b> You can restyle every page without touching data logic, and vice versa.</li>
+  </ul>
+  <p>Laravel adds two helpers around MVC that this app uses heavily: <b>middleware</b> (checks <i>who</i> you are before the controller runs) and <b>Form Requests</b> (checks <i>what</i> you sent before the controller runs). Both are explained below.</p>
+</section>
+
+<!-- 4 ------------------------------------------------------------------ -->
+<section id="lifecycle">
+  <h2><span class="num">04</span>Life of a request (under the hood)</h2>
+  <p class="oneliner">Every click goes through the same pipeline. Each stage can stop the request early.</p>
+  <ol class="timeline">
+    <li><b>The browser sends a request</b>, e.g. <code>POST /teacher/attendance</code> with a form.
+      <br><span class="where">public/index.php: the only entry point</span></li>
+    <li><b>Laravel boots</b> and loads the routes and middleware aliases.
+      <br><span class="where">bootstrap/app.php</span></li>
+    <li><b>Global clean-up</b>: text fields are trimmed and empty fields become <code>null</code>, so validation sees clean input.
+      <br><span class="where">Laravel's built-in TrimStrings, ConvertEmptyStringsToNull</span></li>
+    <li><b>Web middleware</b>: cookies are decrypted, the session is loaded from the <code>sessions</code> table, and the <b>CSRF token</b> is checked (forged form posts get HTTP 419).
+      <br><span class="where">Laravel's built-in web middleware group</span></li>
+    <li><b>Route matching</b>: the URL and method pick a controller method.
+      <br><span class="where">routes/web.php</span></li>
+    <li><b>Route middleware</b>: <code>auth</code> sends guests to the login page; <code>admin</code> / <code>teacher</code> / <code>student</code> return HTTP 403 for the wrong role.
+      <br><span class="where">app/Http/Middleware/EnsureUserIs*.php</span></li>
+    <li><b>Form Request</b> (for forms): <code>authorize()</code> checks permission, <code>rules()</code> validates each field, <code>after()</code> runs cross-field checks. Any failure redirects back with error messages; the controller never runs.
+      <br><span class="where">app/Http/Requests/*.php</span></li>
+    <li><b>Controller</b> does the work, using models (often inside a database transaction).
+      <br><span class="where">app/Http/Controllers/**</span></li>
+    <li><b>Response</b>: either a Blade view is rendered to HTML, or a redirect is sent with a flash message ("Attendance recorded successfully.").
+      <br><span class="where">resources/views/**</span></li>
+  </ol>
+  <div class="callout"><strong class="label">Key idea</strong>By the time a controller method runs, three things are already guaranteed: the user is signed in, they have the right role, and the input is valid. That's why the controllers are short.</div>
+</section>
+
+<!-- 5 ------------------------------------------------------------------ -->
+<section id="database">
+  <h2><span class="num">05</span>The database</h2>
+  <p class="oneliner">Seven tables of our own. Login accounts live in <code>users</code>; the academic profile lives in <code>students</code> or <code>teachers</code>, linked by <code>user_id</code>.</p>
+  <div class="schema">
+    <div class="tbl"><div class="t">users</div><div class="r">id, name</div><div class="r uq">email (unique)</div><div class="r">password (bcrypt)</div><div class="r">role</div></div>
+    <div class="tbl"><div class="t">departments</div><div class="r">id</div><div class="r uq">name (unique)</div><div class="r uq">code (unique)</div></div>
+    <div class="tbl"><div class="t">teachers</div><div class="r fk">user_id → users</div><div class="r uq">employee_number</div><div class="r fk">department_id → departments</div><div class="r">phone</div></div>
+    <div class="tbl"><div class="t">students</div><div class="r fk">user_id → users</div><div class="r uq">student_number</div><div class="r">first/last name, phone…</div><div class="r fk">department_id → departments</div><div class="r">year_of_study (semester)</div></div>
+    <div class="tbl"><div class="t">courses</div><div class="r uq">code</div><div class="r">name, credits, semester</div><div class="r fk">department_id → departments</div><div class="r fk">teacher_id → teachers (optional)</div></div>
+    <div class="tbl"><div class="t">attendances</div><div class="r fk">student_id, course_id</div><div class="r">attendance_date, status</div><div class="r fk">recorded_by_user_id</div><div class="r uq">unique: student + course + date</div></div>
+    <div class="tbl"><div class="t">assessments</div><div class="r fk">student_id, course_id</div><div class="r">assessment_name</div><div class="r">marks_obtained, max_marks, date</div><div class="r uq">unique: student + course + name</div></div>
+  </div>
+  <p>Blue lines are links to other tables (foreign keys); green ones are guaranteed unique by the database. Laravel also creates its own tables for sessions, cache and queued jobs.</p>
+
+  <h3>Three design decisions worth explaining</h3>
+  <div class="grid-2">
+    <div class="card"><h4>Account vs. profile</h4><p>Everyone logs in through <code>users</code>; the extra details sit in <code>students</code> or <code>teachers</code>. One login system for all roles, with role-specific data kept separate.</p></div>
+    <div class="card"><h4>Enrolment is implicit</h4><p>There's no enrolment table. A student is in a course when the <b>department</b> and <b>semester</b> match. Add a CSE Semester 3 student and they're instantly in every CSE Semester 3 course.</p></div>
+    <div class="card"><h4>Nothing is orphaned</h4><p>Every foreign key uses <code>restrictOnDelete()</code>: the database refuses to delete a row that other rows still point to. The controllers check first and show a friendly message.</p></div>
+  </div>
+  <pre><code><span class="c">// app/Models/Student.php</span>
+public function scopeEnrolledIn(Builder $query, Course $course): Builder
+{
+    return $query-&gt;where(&#x27;department_id&#x27;, $course-&gt;department_id)
+        -&gt;where(&#x27;year_of_study&#x27;, $course-&gt;semester);
+}
+
+<span class="c">// Used anywhere as:</span>
+$classList = Student::enrolledIn($course)-&gt;orderBy(&#x27;student_number&#x27;)-&gt;get();</code></pre>
+  <pre><code><span class="c">// database/migrations/..._create_attendances_table.php</span>
+Schema::create(&#x27;attendances&#x27;, function (Blueprint $table) {
+    $table-&gt;id();
+    $table-&gt;foreignId(&#x27;student_id&#x27;)-&gt;constrained(&#x27;students&#x27;)-&gt;restrictOnDelete();
+    $table-&gt;foreignId(&#x27;course_id&#x27;)-&gt;constrained(&#x27;courses&#x27;)-&gt;restrictOnDelete();
+    $table-&gt;date(&#x27;attendance_date&#x27;)-&gt;index();
+    $table-&gt;string(&#x27;status&#x27;, 20);
+    $table-&gt;foreignId(&#x27;recorded_by_user_id&#x27;)-&gt;constrained(&#x27;users&#x27;)-&gt;restrictOnDelete();
+    $table-&gt;timestamps();
+
+    <span class="c">// one record per student, course and day: enforced by the database itself</span>
+    $table-&gt;unique([&#x27;student_id&#x27;, &#x27;course_id&#x27;, &#x27;attendance_date&#x27;]);
+});</code></pre>
+</section>
+
+<!-- 6 ------------------------------------------------------------------ -->
+<section id="accounts">
+  <h2><span class="num">06</span>How accounts are created (“registration”)</h2>
+  <p class="oneliner">There is no public sign-up page on purpose. Every account is created on the server, by someone already trusted, with the role set in code.</p>
+  <div class="callout warn"><strong class="label">Why no self sign-up?</strong>In a college system you shouldn't be able to register yourself as faculty or admin. If the role came from a form, someone could edit the form and send <code>role=admin</code>. So the role is never accepted from user input at all.</div>
+
+  <h3>The three ways an account is born</h3>
+  <table>
+    <tr><th>Who</th><th>How</th><th>File</th></tr>
+    <tr><td>The first admin</td><td>Run <code>php artisan app:create-admin</code>. It asks for name, email and password (min 8 chars), and refuses to create a second admin unless you pass <code>--force</code> and confirm.</td><td><code>app/Console/Commands/CreateAdminCommand.php</code></td></tr>
+    <tr><td>Students &amp; faculty</td><td>The admin fills the Add Student / Add Faculty form. The login account and the profile are created together.</td><td><code>Admin/StudentController@store</code>, <code>Admin/TeacherController@store</code></td></tr>
+    <tr><td>Demo accounts</td><td><code>php artisan db:seed</code> creates them (all with password <code>password</code>).</td><td><code>database/seeders/</code></td></tr>
+  </table>
+
+  <h3>What happens when the admin clicks “Create” on a new student</h3>
+  <ol class="timeline">
+    <li><b>Validation first.</b> <code>StoreStudentRequest</code> checks the admin is an admin, the registration number is unique and alphanumeric, the email is real and unused, the password is 8+ characters, the phone is a valid mobile number, and so on.<br><span class="where">app/Http/Requests/StoreStudentRequest.php</span></li>
+    <li><b>One transaction.</b> Inside <code>DB::transaction</code>, the controller creates the <code>users</code> row with role <code>student</code>, then the <code>students</code> row pointing at it. If the second insert fails, the first is undone, so you never get a login without a profile.<br><span class="where">Admin/StudentController@store</span></li>
+    <li><b>Password hashed automatically.</b> The <code>User</code> model casts <code>password</code> as <code>hashed</code>, so it's stored as a bcrypt hash (12 rounds). The plain password is never saved.<br><span class="where">app/Models/User.php</span></li>
+    <li><b>Redirect with a message.</b> Back to the students list with “Student profile and login account created successfully.”</li>
+  </ol>
+  <pre><code><span class="c">// app/Http/Controllers/Admin/StudentController.php</span>
+public function store(StoreStudentRequest $request): RedirectResponse
+{
+    $validated = $request-&gt;validated();   <span class="c">// only reaches here if validation passed</span>
+
+    DB::transaction(function () use ($validated): void {
+        $user = User::createWithRole([
+            &#x27;name&#x27; =&gt; &quot;{$validated[&#x27;first_name&#x27;]} {$validated[&#x27;last_name&#x27;]}&quot;,
+            &#x27;email&#x27; =&gt; $validated[&#x27;email&#x27;],
+            &#x27;password&#x27; =&gt; $validated[&#x27;password&#x27;],      <span class="c">// hashed automatically</span>
+        ], User::ROLE_STUDENT);
+
+        Student::create([/* reg no, name, phone, ... */ &#x27;user_id&#x27; =&gt; $user-&gt;id]);
+    });
+
+    return redirect()-&gt;route(&#x27;admin.students.index&#x27;)
+        -&gt;with(&#x27;success&#x27;, &#x27;Student profile and login account created successfully.&#x27;);
+}</code></pre>
+  <pre><code><span class="c">// app/Models/User.php</span>
+public const ROLE_ADMIN = &#x27;admin&#x27;;
+public const ROLE_TEACHER = &#x27;teacher&#x27;;
+public const ROLE_STUDENT = &#x27;student&#x27;;
+
+<span class="c">// &#x27;role&#x27; is deliberately NOT here, so a form can never set it</span>
+protected $fillable = [&#x27;name&#x27;, &#x27;email&#x27;, &#x27;password&#x27;];
+
+protected function casts(): array
+{
+    return [&#x27;password&#x27; =&gt; &#x27;hashed&#x27;];   <span class="c">// always stored as a bcrypt hash</span>
+}
+
+public static function createWithRole(array $attributes, string $role): self
+{
+    if (! in_array($role, self::ROLES, true)) {
+        throw new \InvalidArgumentException(&quot;Invalid user role [{$role}].&quot;);
+    }
+
+    $user = new self([...]);   <span class="c">// name, email, password</span>
+    $user-&gt;role = $role;       <span class="c">// role is set explicitly, on the server only</span>
+    $user-&gt;save();
+
+    return $user;
+}</code></pre>
+</section>
+
+<!-- 7 ------------------------------------------------------------------ -->
+<section id="login">
+  <h2><span class="num">07</span>How login works</h2>
+  <p class="oneliner">One login page for everyone. You pick your role, and each role signs in with its own ID: registration number, employee code or email.</p>
+  <ol class="timeline">
+    <li><b>The form.</b> Choosing a role in the dropdown changes the label (Registration No / Employee Code / Email) with a few lines of JavaScript. The form posts to <code>/login</code>.<br><span class="where">resources/views/auth/login.blade.php</span></li>
+    <li><b>Validate.</b> Role must be one of the three; login ID and password are required.<br><span class="where">LoginController@store</span></li>
+    <li><b>Rate limit.</b> After 5 failed attempts for the same role + login ID + IP address, sign-in is locked for 60 seconds with a countdown message. This slows down password guessing.<br><span class="where">RateLimiter in LoginController</span></li>
+    <li><b>Find the account.</b> A student's registration number is looked up in <code>students</code> to find their <code>user_id</code>; a faculty employee code in <code>teachers</code>; an admin by email. IDs are upper-cased, emails lower-cased, so “f101” works.<br><span class="where">LoginController::attemptCredentials()</span></li>
+    <li><b>Check the password.</b> <code>Auth::attempt()</code> loads that user and compares the typed password against the stored bcrypt hash. Wrong → “Invalid Credentials.” and the failure is counted.</li>
+    <li><b>Check the role matches.</b> If a student's email was typed with “Admin” selected, the password may be right but the role isn't, so they're signed out again with “The selected role does not match this account.”</li>
+    <li><b>Check the profile exists.</b> A faculty or student login must have its profile row; otherwise it's refused.</li>
+    <li><b>Start a fresh session.</b> The session ID is regenerated (prevents session-fixation attacks), the failure counter is cleared, and the user is sent to their dashboard based on their role.<br><span class="where">User::dashboardRoute()</span></li>
+  </ol>
+  <pre><code><span class="c">// app/Http/Controllers/Auth/LoginController.php  (store method, trimmed)</span>
+$credentials = $request-&gt;validate([
+    &#x27;role&#x27; =&gt; [&#x27;required&#x27;, &#x27;string&#x27;, Rule::in(User::ROLES)],
+    &#x27;login_id&#x27; =&gt; [&#x27;required&#x27;, &#x27;string&#x27;, &#x27;max:255&#x27;],
+    &#x27;password&#x27; =&gt; [&#x27;required&#x27;, &#x27;string&#x27;],
+]);
+
+if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_FAILED_ATTEMPTS)) {   <span class="c">// 5 tries</span>
+    return $this-&gt;rejectLogin($request, &#x27;login_id&#x27;, &quot;Too many sign-in attempts...&quot;);
+}
+
+$attemptCredentials = $this-&gt;attemptCredentials($credentials);
+
+if ($attemptCredentials === null || ! Auth::attempt($attemptCredentials)) {
+    RateLimiter::hit($throttleKey, self::LOCKOUT_SECONDS);                  <span class="c">// count the failure</span>
+    return $this-&gt;rejectLogin($request, &#x27;login_id&#x27;, &#x27;Invalid Credentials.&#x27;);
+}
+
+if ($user-&gt;role !== $credentials[&#x27;role&#x27;]) {
+    return $this-&gt;rejectLogin($request, &#x27;role&#x27;, &#x27;The selected role does not match this account.&#x27;);
+}
+
+RateLimiter::clear($throttleKey);
+$request-&gt;session()-&gt;regenerate();                      <span class="c">// new session ID after login</span>
+return redirect()-&gt;route($user-&gt;dashboardRoute());</code></pre>
+  <pre><code><span class="c">// app/Http/Controllers/Auth/LoginController.php</span>
+private function attemptCredentials(array $credentials): ?array
+{
+    $loginId = trim($credentials[&#x27;login_id&#x27;]);
+
+    if ($credentials[&#x27;role&#x27;] === User::ROLE_ADMIN) {
+        return [&#x27;email&#x27; =&gt; strtolower($loginId), &#x27;password&#x27; =&gt; $credentials[&#x27;password&#x27;]];
+    }
+
+    $userId = $credentials[&#x27;role&#x27;] === User::ROLE_STUDENT
+        ? Student::query()-&gt;where(&#x27;student_number&#x27;, strtoupper($loginId))-&gt;value(&#x27;user_id&#x27;)
+        : Teacher::query()-&gt;where(&#x27;employee_number&#x27;, strtoupper($loginId))-&gt;value(&#x27;user_id&#x27;);
+
+    return $userId === null ? null : [&#x27;id&#x27; =&gt; $userId, &#x27;password&#x27; =&gt; $credentials[&#x27;password&#x27;]];
+}</code></pre>
+  <pre><code><span class="c">// app/Models/User.php</span>
+public function dashboardRoute(): string
+{
+    return match ($this-&gt;role) {
+        self::ROLE_ADMIN =&gt; &#x27;admin.dashboard&#x27;,
+        self::ROLE_TEACHER =&gt; &#x27;teacher.dashboard&#x27;,
+        default =&gt; &#x27;student.dashboard&#x27;,
+    };
+}</code></pre>
+
+  <h3>After login: how the app remembers you</h3>
+  <p>Laravel stores the session in the <code>sessions</code> table and gives the browser an encrypted cookie with the session ID. On every request the <code>auth</code> middleware reads it, and <code>$request->user()</code> returns the signed-in <code>User</code>.</p>
+
+  <h3>Logout</h3>
+  <p><code>LoginController@destroy</code> logs out, destroys the session, and issues a new CSRF token. The layout also forces a reload when a page is restored from the browser's back/forward cache, so pressing <b>Back</b> after signing out shows the login page, not a cached private page.</p>
+</section>
+
+<!-- 8 ------------------------------------------------------------------ -->
+<section id="rbac">
+  <h2><span class="num">08</span>How RBAC (role-based access control) works</h2>
+  <p class="oneliner">Each user has exactly one role. Access is checked in layers: the role decides which portal you can open, and ownership decides which records inside it you can touch.</p>
+
+  <h3>Layer 1: the role is stored safely</h3>
+  <p>The <code>users.role</code> column holds <code>admin</code>, <code>teacher</code> or <code>student</code>. It's not mass-assignable and only <code>User::createWithRole()</code> sets it (see section 6).</p>
+
+  <h3>Layer 2: route groups + role middleware</h3>
+  <p>All routes for a portal sit in one group with two middleware: <code>auth</code> (must be signed in) and the role guard. A student who types <code>/admin/dashboard</code> gets <b>403 Access denied</b>; the controller is never reached.</p>
+  <pre><code>Route::middleware([&#x27;auth&#x27;, &#x27;admin&#x27;])-&gt;prefix(&#x27;admin&#x27;)-&gt;name(&#x27;admin.&#x27;)-&gt;group(function () {
+    Route::get(&#x27;/dashboard&#x27;, [AdminDashboardController::class, &#x27;index&#x27;])-&gt;name(&#x27;dashboard&#x27;);
+    Route::resource(&#x27;students&#x27;, StudentController::class);   <span class="c">// 7 CRUD routes in one line</span>
+    Route::resource(&#x27;teachers&#x27;, TeacherController::class);
+    <span class="c">// ...departments, courses, attendance, assessments</span>
+});
+
+Route::middleware([&#x27;auth&#x27;, &#x27;teacher&#x27;])-&gt;prefix(&#x27;teacher&#x27;)-&gt;name(&#x27;teacher.&#x27;)-&gt;group(/* ... */);
+Route::middleware([&#x27;auth&#x27;, &#x27;student&#x27;])-&gt;prefix(&#x27;student&#x27;)-&gt;name(&#x27;student.&#x27;)-&gt;group(/* ... */);</code></pre>
+  <pre><code><span class="c">// bootstrap/app.php</span>
+-&gt;withMiddleware(function (Middleware $middleware): void {
+    $middleware-&gt;alias([
+        &#x27;admin&#x27; =&gt; EnsureUserIsAdmin::class,
+        &#x27;teacher&#x27; =&gt; EnsureUserIsTeacher::class,
+        &#x27;student&#x27; =&gt; EnsureUserIsStudent::class,
+    ]);
+})</code></pre>
+  <pre><code><span class="c">// app/Http/Middleware/EnsureUserIsAdmin.php</span>
+public function handle(Request $request, Closure $next): Response
+{
+    $user = $request-&gt;user();
+
+    if (! $user || ! $user-&gt;isAdmin()) {
+        abort(403, &#x27;Access denied. Administrator privileges are required.&#x27;);
+    }
+
+    return $next($request);   <span class="c">// allowed: carry on to the controller</span>
+}</code></pre>
+  <p>The teacher and student guards also require the linked profile (<code>$user->teacher</code> / <code>$user->student</code>) to exist.</p>
+
+  <h3>Layer 3: ownership inside a portal</h3>
+  <p>Being a faculty member isn't enough. You may only touch <b>your own</b> courses. Two places enforce this:</p>
+  <ul>
+    <li>Form Requests check it in <code>authorize()</code> before saving anything (e.g. <code>StoreAttendanceRequest</code>, <code>StoreAssessmentRequest</code>).</li>
+    <li>Controllers check it when viewing (e.g. <code>authorizeCourseAccess()</code>, and <code>Teacher/DashboardController@showCourse</code>).</li>
+  </ul>
+  <pre><code><span class="c">// app/Http/Controllers/Teacher/AttendanceController.php</span>
+private function authorizeCourseAccess(Request $request, Course $course): void
+{
+    $user = $request-&gt;user();
+
+    if ($user-&gt;isAdmin()) {
+        return;                                  <span class="c">// admins may see every course</span>
+    }
+
+    $teacher = $user-&gt;teacher;
+    if ($teacher === null || (int) $course-&gt;teacher_id !== (int) $teacher-&gt;id) {
+        abort(403, &#x27;You are not authorized to access attendance for this course.&#x27;);
+    }
+}</code></pre>
+  <p>Students are protected differently: their pages never take a student ID from the URL. The controller always loads <i>the signed-in user's own</i> profile, so there's no ID to tamper with.</p>
+  <pre><code><span class="c">// app/Http/Controllers/Student/DashboardController.php</span>
+private function resolveAuthorizedStudent(Request $request): Student
+{
+    <span class="c">// Always the signed-in user&#x27;s own profile, never an ID taken from the URL.</span>
+    return $request-&gt;user()-&gt;student()-&gt;with([&#x27;department&#x27;, &#x27;user&#x27;])-&gt;firstOrFail();
+}</code></pre>
+
+  <h3>Layer 4: the menu matches the role</h3>
+  <p>The layout shows only the links your role can use. This is for convenience; the real protection is layers 2 and 3.</p>
+  <pre><code><span class="c">{{-- resources/views/layouts/app.blade.php --}}</span>
+@if (auth()-&gt;user()-&gt;isAdmin())
+    &lt;a href=&quot;{{ route(&#x27;admin.students.index&#x27;) }}&quot;&gt;Students&lt;/a&gt;
+    &lt;a href=&quot;{{ route(&#x27;admin.teachers.index&#x27;) }}&quot;&gt;Faculty&lt;/a&gt;
+    <span class="c">{{-- ... --}}</span>
+@elseif (auth()-&gt;user()-&gt;isTeacher())
+    &lt;a href=&quot;{{ route(&#x27;teacher.courses.index&#x27;) }}&quot;&gt;My Courses&lt;/a&gt;
+    <span class="c">{{-- ... --}}</span>
+@elseif (auth()-&gt;user()-&gt;isStudent())
+    &lt;a href=&quot;{{ route(&#x27;student.courses&#x27;) }}&quot;&gt;Courses&lt;/a&gt;
+    <span class="c">{{-- ... --}}</span>
+@endif</code></pre>
+
+  <h3>Who can do what</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Action</th><th>Admin</th><th>Faculty</th><th>Student</th></tr>
+    <tr><td>Manage departments, courses, students, faculty</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+    <tr><td>Record attendance</td><td class="no">No</td><td class="own">Own courses</td><td class="no">No</td></tr>
+    <tr><td>Edit / delete attendance</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+    <tr><td>Record marks</td><td class="no">No</td><td class="own">Own courses</td><td class="no">No</td></tr>
+    <tr><td>Edit / delete marks</td><td class="yes">Yes</td><td class="own">Own courses</td><td class="no">No</td></tr>
+    <tr><td>View a course's student list</td><td class="yes">Via Students filters</td><td class="own">Own courses</td><td class="no">No</td></tr>
+    <tr><td>View attendance &amp; marks</td><td class="yes">All</td><td class="own">Own courses</td><td class="own">Own only</td></tr>
+    <tr><td>Update contact details &amp; password</td><td>(admin edits others)</td><td class="no">No</td><td class="own">Own only</td></tr>
+  </table></div>
+  <div class="callout"><strong class="label">Why admins can't record attendance or marks</strong>Only the person who taught the class should create those records, and every record stores <code>recorded_by_user_id</code>. The admin's role is to correct mistakes, which keeps a clear audit trail.</div>
+</section>
+
+<!-- 9 ------------------------------------------------------------------ -->
+<section id="features">
+  <h2><span class="num">09</span>How the features work</h2>
+
+  <h3>Admin management (CRUD)</h3>
+  <p class="oneliner">Students, faculty, departments and courses all follow the same Laravel “resource” pattern.</p>
+  <p><code>Route::resource('students', StudentController::class)</code> creates seven routes: <b>index</b> (list), <b>create</b> (form), <b>store</b> (save), <b>show</b> (view one), <b>edit</b> (form), <b>update</b> (save changes), <b>destroy</b> (delete). Each form posts to a Form Request, and each list is paginated and loads related data in one query (<code>with([...])</code>) to avoid slow “N+1” queries.</p>
+  <ul>
+    <li><b>Lists need a department filter first</b>, so the admin never loads every row at once.</li>
+    <li><b>Deletes are guarded</b>: a department with people or courses, a student with records, or a faculty member who teaches can't be deleted. You get a clear message instead.</li>
+    <li><b>Some fields lock once records exist</b>: a student's or course's department and semester can't change after attendance or marks are recorded, because that would silently change who is enrolled.</li>
+    <li><b>Faculty only teach their own department</b>: a course can only be assigned to faculty from the same department; the course form's dropdown filters itself to match.</li>
+  </ul>
+
+  <h3>Enrolment (who is in a course)</h3>
+  <p>Computed on the fly with the <code>enrolledIn</code> scope from section 5: same department + semester. Used by the faculty roster, the attendance form, the marks form and the validation rules.</p>
+
+  <h3>Taking attendance (faculty)</h3>
+  <ol class="timeline">
+    <li><b>Pick course and date</b> on the Record Attendance page. The page loads the class list using <code>enrolledIn</code>, hiding anyone already marked for that day.<br><span class="where">AttendanceController@create · views/attendance/create.blade.php</span></li>
+    <li><b>Everyone starts as Present</b>; the teacher switches some to Absent and submits the whole class at once.</li>
+    <li><b>Checks</b> (<code>StoreAttendanceRequest</code>): it's their course; the date isn't in the future or more than 6 months ago; each status is present/absent; and every unmarked student in the class is included.</li>
+    <li><b>Save as one batch</b> inside a transaction. Each student is re-checked (enrolled? already marked?). If any check fails, nothing is saved, so you never get half a class.</li>
+    <li><b>The database is the last guard</b>: a unique index makes a duplicate (same student, course and date) impossible even if two people submit at once.</li>
+    <li><b>Redirect</b> to the attendance list showing each student's status and their percentage in that course (present ÷ total, highlighted green at 75% and above).</li>
+  </ol>
+  <pre><code><span class="c">// app/Http/Requests/StoreAttendanceRequest.php  (shape of every Form Request)</span>
+class StoreAttendanceRequest extends FormRequest
+{
+    public function authorize(): bool      <span class="c">// 1. may this user do this at all?</span>
+    {
+        <span class="c">// faculty only, and only for a course they teach</span>
+    }
+
+    public function rules(): array         <span class="c">// 2. is each field valid?</span>
+    {
+        return [
+            &#x27;course_id&#x27; =&gt; [&#x27;required&#x27;, &#x27;integer&#x27;, &#x27;exists:courses,id&#x27;],
+            &#x27;attendance_date&#x27; =&gt; [&#x27;required&#x27;, &#x27;date&#x27;, &#x27;before_or_equal:today&#x27;,
+                                  &#x27;after_or_equal:&#x27;.Attendance::earliestRecordableDate()],
+            &#x27;statuses&#x27; =&gt; [&#x27;required&#x27;, &#x27;array&#x27;, &#x27;min:1&#x27;],
+            &#x27;statuses.*&#x27; =&gt; [&#x27;required&#x27;, Rule::in([&#x27;present&#x27;, &#x27;absent&#x27;])],
+        ];
+    }
+
+    public function after(): array         <span class="c">// 3. checks that need several fields or the database</span>
+    {
+        <span class="c">// every enrolled student who isn&#x27;t marked yet must be in this batch</span>
+    }
+}</code></pre>
+  <pre><code><span class="c">// app/Http/Controllers/Teacher/AttendanceController.php  (store, trimmed)</span>
+DB::transaction(function () use ($validated, $course, $request) {
+    foreach ($validated[&#x27;statuses&#x27;] as $studentId =&gt; $status) {
+        $student = Student::find((int) $studentId);
+
+        if (! $student-&gt;isEnrolledIn($course)) {
+            throw ValidationException::withMessages([...]);   <span class="c">// undo everything</span>
+        }
+
+        if (/* already recorded for this date */) {
+            throw ValidationException::withMessages([...]);
+        }
+
+        Attendance::create([
+            &#x27;student_id&#x27; =&gt; $student-&gt;id,
+            &#x27;course_id&#x27; =&gt; $course-&gt;id,
+            &#x27;attendance_date&#x27; =&gt; $validated[&#x27;attendance_date&#x27;],
+            &#x27;status&#x27; =&gt; $status,
+            &#x27;recorded_by_user_id&#x27; =&gt; $request-&gt;user()-&gt;id,     <span class="c">// who took it</span>
+        ]);
+    }
+});</code></pre>
+  <p>Mistakes? Faculty can't overwrite a day once taken; they ask the admin, who can edit or delete single records (<code>AttendanceController@edit/update/destroy</code>).</p>
+
+  <h3>Recording marks (faculty)</h3>
+  <ul>
+    <li>Pick course, student, assessment name (e.g. “Quiz 2”), date, marks obtained and maximum marks.</li>
+    <li>Rules: the student must be enrolled; marks can't be negative or above the maximum; the same assessment name can't be recorded twice for one student; and the first mark entered for “Quiz 2” in a course fixes its maximum (e.g. out of 20) for the whole class.</li>
+    <li>The percentage isn't stored. It's calculated whenever it's shown, by an accessor on the model.</li>
+  </ul>
+  <pre><code><span class="c">// app/Http/Requests/StoreAssessmentRequest.php  (rules, trimmed)</span>
+&#x27;assessment_name&#x27; =&gt; [&#x27;required&#x27;, &#x27;string&#x27;, &#x27;max:150&#x27;,
+    Rule::unique(&#x27;assessments&#x27;, &#x27;assessment_name&#x27;)            <span class="c">// no duplicate &quot;Quiz 1&quot;</span>
+        -&gt;where(fn ($q) =&gt; $q-&gt;where(&#x27;student_id&#x27;, $this-&gt;input(&#x27;student_id&#x27;))
+                             -&gt;where(&#x27;course_id&#x27;, $this-&gt;input(&#x27;course_id&#x27;)))],
+&#x27;marks_obtained&#x27; =&gt; [&#x27;required&#x27;, &#x27;integer&#x27;, &#x27;min:0&#x27;, &#x27;max:999&#x27;, &#x27;lte:max_marks&#x27;],
+&#x27;max_marks&#x27;      =&gt; [&#x27;required&#x27;, &#x27;integer&#x27;, &#x27;gt:0&#x27;, &#x27;max:999&#x27;],
+&#x27;assessment_date&#x27;=&gt; [&#x27;required&#x27;, &#x27;date&#x27;, &#x27;before_or_equal:today&#x27;, &#x27;after_or_equal:...&#x27;],</code></pre>
+  <pre><code><span class="c">// app/Models/Assessment.php</span>
+public function getPercentageAttribute(): float      <span class="c">// usable as $assessment-&gt;percentage</span>
+{
+    $max = $this-&gt;max_marks;
+    if ($max &lt;= 0) {
+        return 0.0;
+    }
+
+    return round(($this-&gt;marks_obtained / $max) * 100, 2);
+}</code></pre>
+
+  <h3>One controller, two portals</h3>
+  <p><code>Teacher/AttendanceController</code> and <code>Teacher/AssessmentController</code> serve both the faculty pages and the admin's review pages. They check the role and pick the right route names, which avoids duplicating the same logic in two controllers.</p>
+  <pre><code><span class="c">// app/Http/Controllers/Teacher/AssessmentController.php</span>
+private function routePrefix(Request $request): string
+{
+    return $request-&gt;user()-&gt;isAdmin() ? &#x27;admin&#x27; : &#x27;teacher&#x27;;
+}
+
+<span class="c">// later, the same code redirects to the right portal:</span>
+return redirect()-&gt;route($this-&gt;routePrefix($request).&#x27;.assessments.index&#x27;);</code></pre>
+
+  <h3>The student portal</h3>
+  <ul>
+    <li><b>Dashboard</b>: registration number, department, number of courses and overall attendance percentage, plus the profile.</li>
+    <li><b>Courses / Attendance / Assessments</b>: read-only, always filtered to the signed-in student.</li>
+    <li><b>Update profile</b>: only phone, date of birth, gender, address and password. Extra fields sent by a tampered form (department, name…) are ignored, because the controller only saves the validated safe fields. Changing the password requires the current password.</li>
+  </ul>
+</section>
+
+<!-- 10 ------------------------------------------------------------------ -->
+<section id="validation">
+  <h2><span class="num">10</span>Validation &amp; data safety</h2>
+  <p class="oneliner">Bad data is stopped in three places: in the browser (friendly hints), in Form Requests (the real check), and in the database (the final safety net).</p>
+  <h3>Form Requests: one class per form</h3>
+  <p>Each has <code>authorize()</code> (permission), <code>rules()</code> (field checks) and sometimes <code>after()</code> (checks that need several fields or the database). If anything fails, Laravel redirects back with the old input and the error under each field.</p>
+  <pre><code><span class="c">// app/Http/Requests/UpdateStudentRequest.php  (after hook, trimmed)</span>
+$changedFields = array_filter([
+    &#x27;department_id&#x27; =&gt; $this-&gt;integer(&#x27;department_id&#x27;) !== (int) $student-&gt;department_id ? &#x27;department&#x27; : null,
+    &#x27;year_of_study&#x27; =&gt; $this-&gt;integer(&#x27;year_of_study&#x27;) !== (int) $student-&gt;year_of_study ? &#x27;semester&#x27; : null,
+]);
+
+if ($changedFields !== [] &amp;&amp; $student-&gt;hasAcademicRecords()) {
+    <span class="c">// &quot;Cannot change the semester of a student who already has attendance or assessment records.&quot;</span>
+}</code></pre>
+  <h3>The main rules at a glance</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Field</th><th>Rule</th></tr>
+    <tr><td>Registration no. / employee code</td><td>Letters and numbers only, max 8 / 4 characters, unique.</td></tr>
+    <tr><td>Names</td><td>Letters, spaces, dots, apostrophes, hyphens (“D'Souza”, “Dr. R. K. Ray-Chaudhuri”).</td></tr>
+    <tr><td>Email</td><td>A real address with a domain, unique across all accounts.</td></tr>
+    <tr><td>Password</td><td>At least 8 characters; a student needs the current one to change it.</td></tr>
+    <tr><td>Phone</td><td>10-digit Indian mobile number, optional <code>+91</code>.</td></tr>
+    <tr><td>Date of birth</td><td>Age between 15 and 60.</td></tr>
+    <tr><td>Course code</td><td>Letters, numbers, dashes, underscores; unique.</td></tr>
+    <tr><td>Attendance / assessment dates</td><td>Not in the future, not more than 6 months ago.</td></tr>
+    <tr><td>Marks</td><td>0 to max marks; one max per assessment per course.</td></tr>
+  </table></div>
+  <p>The shared rules for names, phone, gender and date of birth live in one trait, <code>app/Http/Requests/Concerns/ValidatesPersonalDetails.php</code>, used by five forms.</p>
+  <h3>Database guarantees</h3>
+  <ul>
+    <li>Unique indexes: emails, registration numbers, employee codes, course codes, and one attendance/mark per student per day/assessment.</li>
+    <li>Foreign keys with <code>restrictOnDelete()</code>: nothing can be deleted while other records depend on it.</li>
+    <li>Transactions around multi-step saves (account + profile, a whole attendance batch).</li>
+  </ul>
+  <h3>Time zone</h3>
+  <p>The app runs on India time (<code>config/app.php → Asia/Kolkata</code>), so “today” on the server matches “today” for the user.</p>
+</section>
+
+<!-- 11 ------------------------------------------------------------------ -->
+<section id="security">
+  <h2><span class="num">11</span>Security checklist</h2>
+  <p class="oneliner">What protects the app, and where.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Threat</th><th>Protection</th><th>Where</th></tr>
+    <tr><td>Stolen passwords from the database</td><td>Passwords hashed with bcrypt (12 rounds), never stored in plain text.</td><td><code>User</code> model cast</td></tr>
+    <tr><td>Password guessing</td><td>5 failed attempts → 60-second lockout.</td><td><code>LoginController</code></td></tr>
+    <tr><td>Making yourself admin</td><td>Role isn't mass-assignable; only set in code.</td><td><code>User::createWithRole()</code></td></tr>
+    <tr><td>Opening another portal</td><td>Role middleware → 403.</td><td><code>EnsureUserIs*</code></td></tr>
+    <tr><td>Touching another teacher's course</td><td>Ownership checks → 403.</td><td>Form Requests, controllers</td></tr>
+    <tr><td>Forged form posts (CSRF)</td><td>Every form has <code>@csrf</code>; requests without a valid token get 419.</td><td>Blade forms + Laravel middleware</td></tr>
+    <tr><td>Script injection (XSS)</td><td><code>{{ }}</code> escapes everything printed.</td><td>All views</td></tr>
+    <tr><td>SQL injection</td><td>Eloquent uses parameter binding; no raw SQL built from input.</td><td>All queries</td></tr>
+    <tr><td>Session hijack after login</td><td>Session ID regenerated on login; invalidated on logout.</td><td><code>LoginController</code></td></tr>
+    <tr><td>Back button after logout</td><td>Page reloads from the server instead of the cache.</td><td><code>layouts/app.blade.php</code></td></tr>
+  </table></div>
+  <pre><code>&lt;form method=&quot;POST&quot; action=&quot;{{ route(&#x27;admin.students.store&#x27;) }}&quot;&gt;
+    @csrf                          <span class="c">{{-- hidden token: blocks forged submissions --}}</span>
+    ...
+&lt;/form&gt;
+
+{{ $student-&gt;full_name }}          <span class="c">{{-- escaped: &lt;script&gt; shows as text --}}</span></code></pre>
+</section>
+
+<!-- 12 ------------------------------------------------------------------ -->
+<section id="views">
+  <h2><span class="num">12</span>Views &amp; the UI</h2>
+  <p class="oneliner">Server-rendered pages: one shared layout, small reusable pieces, one stylesheet, a little plain JavaScript.</p>
+  <ul>
+    <li><b>Layout</b>: <code>layouts/app.blade.php</code> holds the top bar, role-based menu and flash messages; every page <code>@extends</code> it and fills in <code>@section('content')</code>.</li>
+    <li><b>Shared form pieces</b>: files starting with <code>_</code> (e.g. <code>students/_form.blade.php</code>) are included by both the create and edit pages, so a field is defined once.</li>
+    <li><b>Components</b>: <code>&lt;x-form-error field="email" /&gt;</code> shows a field's error; <code>flash-message</code> shows success/error banners.</li>
+    <li><b>Styling</b>: <code>public/css/app.css</code>, a dark theme with IBM Plex fonts. No CSS framework.</li>
+    <li><b>Small scripts</b>: the login label changes with the role; on admin filters the course list follows the chosen department; the course form shows only that department's faculty; date pickers block future dates; the student's profile form toggles open.</li>
+  </ul>
+</section>
+
+<!-- 13 ------------------------------------------------------------------ -->
+<section id="demo">
+  <h2><span class="num">13</span>Demo data &amp; running it</h2>
+  <p class="oneliner">One command builds the tables and fills them with realistic, repeatable demo data.</p>
+  <pre><code>composer install
+cp .env.example .env            <span class="c"># then set DB_DATABASE, DB_USERNAME, DB_PASSWORD</span>
+php artisan key:generate
+php artisan migrate --seed      <span class="c"># build tables + load demo data</span>
+php artisan serve               <span class="c"># http:<span class="c">//127.0.0.1:8000</span></span>
+
+php artisan app:create-admin    <span class="c"># create a real admin interactively (instead of the demo one)</span></code></pre>
+  <div class="table-wrap"><table>
+    <tr><th>Seeder</th><th>Creates</th></tr>
+    <tr><td><code>AdminSeeder</code></td><td>The admin: <code>admin@sms.test</code> / <code>password</code></td></tr>
+    <tr><td><code>DepartmentSeeder</code></td><td>CSE, ECE, ME, and an empty Civil Engineering (to demo a successful delete)</td></tr>
+    <tr><td><code>TeacherSeeder</code></td><td>10 faculty (F101–F303); F104 teaches nothing (to demo deleting faculty)</td></tr>
+    <tr><td><code>CourseSeeder</code></td><td>18 courses across Semesters 1, 3, 5; CS503 left unassigned</td></tr>
+    <tr><td><code>StudentSeeder</code></td><td>30 students with generated names, phones and addresses (some fields blank on purpose)</td></tr>
+    <tr><td><code>AttendanceSeeder</code></td><td>3 weeks of classes with varied attendance; <b>today left empty</b> for a live demo</td></tr>
+    <tr><td><code>AssessmentSeeder</code></td><td>Quiz 1, Assignment 1, Mid-Term marks; <b>Quiz 2 left free</b> for a live demo</td></tr>
+  </table></div>
+  <p>The data looks random but uses a fixed seed (<code>UsesStableRandomness</code>), so every run produces exactly the same records. Demo logins: admin <code>admin@sms.test</code>, faculty <code>F101</code>, student <code>CSE23001</code>, all with password <code>password</code>.</p>
+</section>
+
+<!-- 14 ------------------------------------------------------------------ -->
+<section id="questions">
+  <h2><span class="num">14</span>Questions developers may ask</h2>
+  <p class="oneliner">Short answers you can give on the spot.</p>
+  <details class="qa"><summary>Why Form Requests instead of validating in the controller?</summary><div class="a">They keep controllers short, put permission and validation in one obvious place per form, and run before the controller, so a controller can trust its input. Rules shared by several forms live in one trait.</div></details>
+  <details class="qa"><summary>Why middleware for roles instead of checking inside each controller?</summary><div class="a">One check covers a whole group of routes, so it can't be forgotten on a new page. Ownership (which course) still needs a per-record check, which is done in Form Requests and controllers.</div></details>
+  <details class="qa"><summary>Why not Laravel Policies?</summary><div class="a">The rules are simple (one role per user, one owner per course), so middleware plus small ownership checks are clear enough. If permissions grew (e.g. heads of department), moving the ownership checks into Policies would be the natural next step.</div></details>
+  <details class="qa"><summary>Why is enrolment implicit? What about electives?</summary><div class="a">In this college model everyone in a department and semester takes the same courses, so there's nothing to manage: adding a student enrols them everywhere they belong. Electives would need an <code>enrolments</code> table; the <code>enrolledIn</code> scope is the single place to change.</div></details>
+  <details class="qa"><summary>How do you stop two teachers saving the same attendance at once?</summary><div class="a">Validation checks first, the save runs in a transaction, and a unique database index on student + course + date makes a duplicate impossible even in a race.</div></details>
+  <details class="qa"><summary>How do you avoid slow pages (N+1 queries)?</summary><div class="a">Related data is loaded up front with <code>with(['department', 'user'])</code>, counts use <code>withCount()</code>, and lists are paginated.</div></details>
+  <details class="qa"><summary>Where are passwords stored and how?</summary><div class="a">In <code>users.password</code>, as a bcrypt hash (12 rounds) via Laravel's <code>hashed</code> cast. Login compares hashes with <code>Auth::attempt()</code>; the plain password is never stored.</div></details>
+  <details class="qa"><summary>Why can't a student register themselves?</summary><div class="a">Student and faculty records are official data owned by the college, and roles must never come from user input. The admin creates accounts; the first admin comes from the <code>app:create-admin</code> command.</div></details>
+  <details class="qa"><summary>Why does every attendance and mark record store who recorded it?</summary><div class="a">Accountability. <code>recorded_by_user_id</code> shows who took the attendance, and who entered or last edited a mark. It appears in the “Recorded By” column on the attendance and marks lists.</div></details>
+</section>
+
+<!-- 15 ------------------------------------------------------------------ -->
+<section id="limits">
+  <h2><span class="num">15</span>Honest limitations</h2>
+  <p class="oneliner">Worth saying before someone else does. Each is a clear next step.</p>
+  <ul>
+    <li><b>No automated tests yet.</b> Features and validation were checked by sending real requests, but there's no PHPUnit/Pest suite. Adding feature tests is the first improvement.</li>
+    <li><b>No “forgot password”.</b> The admin resets passwords from the edit form.</li>
+    <li><b>Implicit enrolment</b> can't model electives or repeat students (see Q&amp;A).</li>
+    <li><b>Vite isn't used.</b> <code>vite.config.js</code> is the Laravel default; the pages load <code>public/css/app.css</code> directly.</li>
+    <li><b>Timestamps before the timezone change</b> (<code>created_at</code>) were saved in UTC; dates of attendance and marks are unaffected.</li>
+  </ul>
+</section>
+
+<!-- 16 ------------------------------------------------------------------ -->
+<section id="cheatsheet">
+  <h2><span class="num">16</span>“Where is…?” cheat sheet</h2>
+  <div class="table-wrap"><table>
+    <tr><th>If someone asks about…</th><th>Open this file</th></tr>
+    <tr><td>All URLs and which portal they belong to</td><td><code>routes/web.php</code></td></tr>
+    <tr><td>Login, logout, lockout</td><td><code>app/Http/Controllers/Auth/LoginController.php</code></td></tr>
+    <tr><td>Role guards</td><td><code>app/Http/Middleware/EnsureUserIs*.php</code> + <code>bootstrap/app.php</code></td></tr>
+    <tr><td>How a role is assigned</td><td><code>app/Models/User.php</code> → <code>createWithRole()</code></td></tr>
+    <tr><td>Who is enrolled in a course</td><td><code>app/Models/Student.php</code> → <code>scopeEnrolledIn()</code></td></tr>
+    <tr><td>Creating a student + login</td><td><code>app/Http/Controllers/Admin/StudentController.php</code> → <code>store()</code></td></tr>
+    <tr><td>Taking attendance</td><td><code>app/Http/Controllers/Teacher/AttendanceController.php</code> + <code>StoreAttendanceRequest.php</code></td></tr>
+    <tr><td>Recording marks</td><td><code>app/Http/Controllers/Teacher/AssessmentController.php</code> + <code>StoreAssessmentRequest.php</code></td></tr>
+    <tr><td>Student's own pages</td><td><code>app/Http/Controllers/Student/DashboardController.php</code></td></tr>
+    <tr><td>Validation rules</td><td><code>app/Http/Requests/</code></td></tr>
+    <tr><td>Table structure</td><td><code>database/migrations/</code></td></tr>
+    <tr><td>Demo data</td><td><code>database/seeders/</code></td></tr>
+    <tr><td>Page layout and menu</td><td><code>resources/views/layouts/app.blade.php</code></td></tr>
+    <tr><td>Look and feel</td><td><code>public/css/app.css</code></td></tr>
+  </table></div>
+  <footer>Generated from the current codebase (Laravel 13, PHP 8.5). Code excerpts are trimmed for reading; open the named file to see the full version.</footer>
+</section>
+</main>
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    try {
+      var saved = localStorage.getItem('sms-guide-theme');
+      if (saved) { root.setAttribute('data-theme', saved); }
+    } catch (e) {}
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var dark = root.getAttribute('data-theme') === 'dark'
+        || (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var next = dark ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('sms-guide-theme', next); } catch (e) {}
+    });
+
+    var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+    var sections = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+    function highlight() {
+      var current = 0;
+      sections.forEach(function (s, i) { if (s && s.getBoundingClientRect().top < 140) { current = i; } });
+      links.forEach(function (a, i) { a.classList.toggle('active', i === current); });
+    }
+    window.addEventListener('scroll', highlight, { passive: true });
+    highlight();
+  })();
+</script>
+</body>
+</html>
